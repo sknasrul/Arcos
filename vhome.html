@@ -179,20 +179,27 @@
     gap: 16px;
   }
 
+```css
 .greeting-header h1 {
   font-weight: 700;
-  line-height: 1.1;
+  line-height: 1.3;
   min-width: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 0;
 }
-  .greet-line1 {color: var(--text-primary); }
+
 .greet-line2 {
-  font-size: 1rem;
+  font-size: large;
   font-weight: 400;
-  color: white;
+  color: var(--text-primary);
 }
+
+.wave-emoji {
+  display: inline-block;
+  font-size: larger;
+  transform-origin: 70% 70%;
+  animation: wave 2.4s ease-in-out infinite;
+}
+```
+
 
   @keyframes wave {
     0%, 60%, 100% { transform: rotate(0deg); }
@@ -201,14 +208,6 @@
     40% { transform: rotate(10deg); }
     50% { transform: rotate(0deg); }
   }
-.wave-emoji {
-  display: inline;
-  font-size: 1.8rem;
-  line-height: 1;
-  margin-top: 2px;
-    animation: wave 2.4s ease-in-out infinite;
-  }
-
   .avatar-wrap {
     position: relative;
     width: 56px;
