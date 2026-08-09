@@ -197,18 +197,12 @@ main{
 }
 .date-icon.day-present{background:rgba(255,159,10,0.16);}
 .date-icon.day-present .di-icon-bg{color:var(--shift);}
-.date-icon.day-shift{background:rgba(88,86,214,0.16);}
-.date-icon.day-shift .di-icon-bg{color:var(--night);}
-.date-icon.night-shift{background:rgba(88,86,214,0.16);}
-.date-icon.night-shift .di-icon-bg{color:var(--night);}
+.date-icon.night-present{background:rgba(88,86,214,0.16);}
+.date-icon.night-present .di-icon-bg{color:var(--night);}
 .date-icon.week-off{background:rgba(142,142,147,0.16);}
 .date-icon.week-off .di-icon-bg{color:#8e8e93;}
-.date-icon.absent{background:rgba(255,59,48,0.16);}
-.date-icon.absent .di-icon-bg{color:var(--resign);}
-.date-icon.training{background:rgba(175,82,222,0.16);}
-.date-icon.training .di-icon-bg{color:var(--training);}
-.date-icon.dl{background:rgba(0,199,190,0.16);}
-.date-icon.dl .di-icon-bg{color:var(--dl);}
+.date-icon.leave{background:rgba(255,59,48,0.16);}
+.date-icon.leave .di-icon-bg{color:var(--resign);}
 .date-icon.unknown{background:rgba(108,108,112,0.16);}
 .date-icon.unknown .di-icon-bg{color:var(--text-secondary);}
 .date-text{flex:1;min-width:0;}
@@ -320,20 +314,14 @@ var SHIFT_ICONS = {
   sun: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><path d="M12 1v3M12 20v3M4.22 4.22l2.12 2.12M17.66 17.66l2.12 2.12M1 12h3M20 12h3M4.22 19.78l2.12-2.12M17.66 6.34l2.12-2.12"/></svg>',
   moon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>',
   cup: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8h1a4 4 0 0 1 0 8h-1"/><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/><path d="M6 1v3M10 1v3M14 1v3"/></svg>',
-  briefcase: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>',
-  alert: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>',
-  book: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>',
-  file: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>'
+  alert: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>'
 };
 
 var STATUS_MAP = {
-  'day shift': { cls: 'day-shift', label: 'Day Shift', icon: SHIFT_ICONS.briefcase },
-  'night shift': { cls: 'night-shift', label: 'Night Shift', icon: SHIFT_ICONS.moon },
-  'week off': { cls: 'week-off', label: 'Week Off', icon: SHIFT_ICONS.cup },
   'day present': { cls: 'day-present', label: 'Day Present', icon: SHIFT_ICONS.sun },
-  'absent': { cls: 'absent', label: 'Absent', icon: SHIFT_ICONS.alert },
-  'training': { cls: 'training', label: 'Training', icon: SHIFT_ICONS.book },
-  'dl': { cls: 'dl', label: 'DL', icon: SHIFT_ICONS.file }
+  'night present': { cls: 'night-present', label: 'Night Present', icon: SHIFT_ICONS.moon },
+  'week off': { cls: 'week-off', label: 'Week Off', icon: SHIFT_ICONS.cup },
+  'leave': { cls: 'leave', label: 'Leave', icon: SHIFT_ICONS.alert }
 };
 var WEEKDAYS = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
 var MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
