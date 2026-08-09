@@ -409,29 +409,35 @@
 
   /* ---------- VIP card (matches reference design) ---------- */
 
+  /* True credit-card proportions: 85.60mm x 53.98mm */
   .vip-card {
     position: relative;
-    width: 90vw;
-    max-width: 420px;
-    border-radius: 24px;
-    padding: 28px 28px 26px;
+    width: min(90vw, 400px);
+    aspect-ratio: 85.6 / 53.98;
+    border-radius: 22px;
+    padding: 22px 26px;
     background:
-      radial-gradient(circle at 88% 92%, rgba(198, 138, 63, 0.38), transparent 55%),
-      radial-gradient(circle at 100% 0%, rgba(246, 211, 101, 0.08), transparent 45%),
-      linear-gradient(155deg, #1b1d29 0%, #101019 55%, #191a22 100%);
+      radial-gradient(130% 110% at 100% 100%, rgba(201, 140, 60, 0.55) 0%, rgba(140, 92, 44, 0.22) 32%, transparent 60%),
+      linear-gradient(160deg, #16171f 0%, #101018 45%, #0c0c11 100%);
     border: 1px solid rgba(246, 211, 101, 0.35);
     box-shadow: 0 24px 50px rgba(0,0,0,0.5), 0 0 0 1px rgba(246, 211, 101, 0.08) inset;
     color: var(--text-primary);
     display: flex;
     flex-direction: column;
+    justify-content: space-between;
     overflow: hidden;
   }
+  /* the diagonal white sheen line across the card */
   .vip-card::before {
     content: "";
     position: absolute;
-    top: -55%; right: -25%;
-    width: 70%; height: 200%;
-    background: linear-gradient(120deg, rgba(246, 211, 101, 0.08) 0%, transparent 55%);
+    inset: 0;
+    background: linear-gradient(122deg,
+      transparent 32%,
+      rgba(255, 255, 255, 0.05) 42%,
+      rgba(255, 255, 255, 0.16) 48%,
+      rgba(255, 255, 255, 0.07) 54%,
+      transparent 64%);
     pointer-events: none;
   }
 
@@ -445,69 +451,61 @@
   .vip-card-brand {
     display: flex;
     align-items: center;
-    gap: 7px;
+    gap: 6px;
     color: var(--gold-soft);
-    font-size: 14.5px;
+    font-size: 13px;
     font-weight: 800;
     letter-spacing: 0.06em;
   }
-  .vip-card-brand svg { width: 18px; height: 18px; }
+  .vip-card-brand svg { width: 16px; height: 16px; }
 
   .vip-card-chip {
-    width: 46px; height: 34px; border-radius: 8px;
-    background: linear-gradient(135deg, #e2c288, #f4e2ad, #e2c288);
-    box-shadow: 0 3px 8px rgba(0,0,0,0.35);
-    position: relative;
+    width: 48px; height: 32px; border-radius: 7px;
+    background: linear-gradient(135deg, #c99a4e 0%, #f4e2ad 45%, #e2c288 70%, #b8894a 100%);
+    box-shadow: 0 3px 8px rgba(0,0,0,0.4);
     flex-shrink: 0;
   }
-  .vip-card-chip::before {
-    content: "";
-    position: absolute; inset: 5px;
-    border: 1px solid rgba(15,23,42,0.25);
-    border-radius: 4px;
+
+  .vip-card-mid {
+    position: relative;
+    z-index: 1;
   }
 
   .vip-card-tag {
-    position: relative;
-    z-index: 1;
-    margin-top: 10px;
-    font-size: 11px;
+    font-size: 10px;
     font-weight: 700;
-    letter-spacing: 0.1em;
+    letter-spacing: 0.12em;
     color: var(--text-tertiary);
   }
 
   .vip-card-name {
-    position: relative;
-    z-index: 1;
-    margin-top: 22px;
-    font-size: 25px;
+    margin-top: 14px;
+    font-size: 23px;
     font-weight: 800;
-    letter-spacing: 0.01em;
+    letter-spacing: 0.05em;
     color: var(--text-primary);
   }
 
   .vip-card-details {
     position: relative;
     z-index: 1;
-    margin-top: 30px;
     display: grid;
     grid-template-columns: 1fr 1fr;
-    row-gap: 18px;
+    row-gap: 14px;
     column-gap: 16px;
   }
   .vip-card-field.full { grid-column: 1 / -1; }
   .vip-card-label {
     display: block;
-    font-size: 10px;
+    font-size: 9.5px;
     font-weight: 700;
     letter-spacing: 0.12em;
     color: var(--text-tertiary);
-    margin-bottom: 4px;
+    margin-bottom: 3px;
   }
   .vip-card-value {
     display: block;
-    font-size: 15.5px;
+    font-size: 14.5px;
     font-weight: 700;
     color: var(--text-primary);
   }
@@ -698,8 +696,10 @@
           </div>
           <div class="vip-card-chip"></div>
         </div>
-        <div class="vip-card-tag">PREMIUM ACCESS GRANTED</div>
-        <div class="vip-card-name" id="vipCardName">—</div>
+        <div class="vip-card-mid">
+          <div class="vip-card-tag">PREMIUM ACCESS GRANTED</div>
+          <div class="vip-card-name" id="vipCardName">—</div>
+        </div>
         <div class="vip-card-details">
           <div class="vip-card-field">
             <span class="vip-card-label">ARCOS ID</span>
