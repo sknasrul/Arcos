@@ -1,0 +1,1566 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Picker Productivity Deck — Blended vs Target IPP Analysis</title>
+<meta name="description" content="An animated data-analysis presentation of ARCOS picker productivity: blended IPP versus target, processed volume, manpower utilisation and load clearance, read live from the source sheet." />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700&family=Manrope:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+<style>
+:root{
+  --radius:0.625rem;
+  --background:oklch(0.988 0.004 240);
+  --foreground:oklch(0.24 0.035 264);
+  --brand:oklch(0.56 0.17 252);
+  --brand-deep:oklch(0.42 0.15 258);
+  --brand-soft:oklch(0.93 0.03 250);
+  --teal:oklch(0.72 0.12 196);
+  --amber:oklch(0.76 0.14 62);
+  --live:oklch(0.68 0.19 148);
+  --ink:oklch(0.24 0.035 264);
+  --ink-soft:oklch(0.52 0.03 258);
+  --surface:oklch(1 0 0);
+  --surface-2:oklch(0.975 0.006 245);
+  --hairline:oklch(0.91 0.012 250);
+  --primary-foreground:oklch(0.99 0.005 250);
+  --gradient-brand:linear-gradient(135deg, var(--brand-deep), var(--brand) 45%, var(--teal));
+  --gradient-canvas:
+    radial-gradient(1100px 620px at 12% -8%, oklch(0.93 0.05 250 / 0.9), transparent 60%),
+    radial-gradient(900px 520px at 92% 4%, oklch(0.94 0.045 196 / 0.85), transparent 62%),
+    radial-gradient(700px 500px at 60% 110%, oklch(0.95 0.04 62 / 0.55), transparent 65%);
+  --shadow-soft:0 1px 2px oklch(0.42 0.06 258 / 0.05), 0 18px 40px -24px oklch(0.42 0.09 258 / 0.28);
+  --shadow-lift:0 2px 6px oklch(0.42 0.06 258 / 0.06), 0 34px 70px -32px oklch(0.42 0.11 258 / 0.36);
+  --shadow-glow:0 0 0 1px oklch(0.56 0.17 252 / 0.12), 0 22px 60px -26px oklch(0.56 0.17 252 / 0.45);
+  --font-display:"Sora", ui-sans-serif, system-ui, sans-serif;
+  --font-sans:"Manrope", ui-sans-serif, system-ui, sans-serif;
+  --font-mono:"JetBrains Mono", ui-monospace, monospace;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0;
+  background-color:var(--background);
+  color:var(--foreground);
+  font-family:var(--font-sans);
+  -webkit-font-smoothing:antialiased;
+}
+h1,h2,h3,h4{font-family:var(--font-display);letter-spacing:-0.028em;margin:0}
+a{color:inherit;text-decoration:none}
+button{font:inherit;cursor:pointer;background:none;border:none;color:inherit}
+input{font:inherit}
+svg{display:block}
+kbd{font-family:var(--font-mono)}
+
+.canvas-aura{background-image:var(--gradient-canvas)}
+.text-gradient{
+  background-image:var(--gradient-brand);
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+}
+.panel{
+  background:color-mix(in oklab, var(--surface) 88%, transparent);
+  backdrop-filter:blur(14px);
+  border:1px solid var(--hairline);
+  border-radius:1.75rem;
+  box-shadow:var(--shadow-soft);
+}
+.panel-lift{
+  background:color-mix(in oklab, var(--surface) 92%, transparent);
+  backdrop-filter:blur(16px);
+  border:1px solid var(--hairline);
+  border-radius:2rem;
+  box-shadow:var(--shadow-lift);
+}
+.eyebrow{
+  font-size:0.6875rem;font-weight:700;letter-spacing:0.18em;
+  text-transform:uppercase;color:var(--ink-soft);
+  display:flex;align-items:center;gap:.5rem;
+}
+.num{font-variant-numeric:tabular-nums;font-feature-settings:"tnum"}
+.reveal{opacity:0;transform:translate3d(0,26px,0);transition:opacity .85s cubic-bezier(.16,1,.3,1), transform .85s cubic-bezier(.16,1,.3,1)}
+.reveal-in{opacity:1;transform:none}
+
+@keyframes pulse-ring{0%{transform:scale(.6);opacity:.75}70%{transform:scale(2.6);opacity:0}100%{transform:scale(2.6);opacity:0}}
+.animate-pulse-ring{animation:pulse-ring 2.4s cubic-bezier(.2,.8,.2,1) infinite}
+.animate-ping{animation:ping 1.4s cubic-bezier(0,0,.2,1) infinite}
+@keyframes ping{75%,100%{transform:scale(2.2);opacity:0}}
+
+.wrap{max-width:80rem;margin:0 auto;padding:0 1.25rem}
+
+/* header */
+.progress-bar{position:fixed;inset-inline:0;top:0;z-index:40;height:3px;background:transparent}
+.progress-fill{height:100%;transform-origin:left;background:var(--gradient-brand)}
+header.topbar{
+  position:sticky;top:0;z-index:30;border-bottom:1px solid var(--hairline);
+  background:color-mix(in oklab, var(--background) 80%, transparent);
+  backdrop-filter:blur(20px);
+}
+.topbar-inner{display:flex;align-items:center;gap:1rem;padding:0.875rem 1.25rem;max-width:80rem;margin:0 auto}
+.brand-mark{
+  display:grid;place-items:center;height:2rem;width:2rem;border-radius:0.75rem;
+  color:var(--primary-foreground);background:var(--gradient-brand);box-shadow:var(--shadow-glow);
+  flex-shrink:0;
+}
+.brand-mark svg{height:1rem;width:1rem}
+.brand-text p{margin:0;line-height:1.2}
+.brand-text .title{font-size:.875rem;font-weight:600;color:var(--ink)}
+.brand-text .sub{font-size:10px;letter-spacing:.02em;color:var(--ink-soft)}
+nav.tabs{margin-left:auto;display:none;align-items:center;gap:.25rem}
+@media (min-width:1024px){nav.tabs{display:flex}}
+nav.tabs a{
+  display:flex;align-items:center;gap:.375rem;border-radius:9999px;
+  padding:.375rem .875rem;font-size:.75rem;font-weight:500;color:var(--ink-soft);
+  transition:all .2s;
+}
+nav.tabs a svg{height:.875rem;width:.875rem}
+nav.tabs a.active{background:var(--brand-soft);color:var(--brand-deep)}
+nav.tabs a:hover{color:var(--brand)}
+.topbar-right{margin-left:auto;display:flex;align-items:center;gap:.5rem}
+@media (min-width:1024px){.topbar-right{margin-left:0}}
+.live-pill{
+  display:none;align-items:center;gap:.5rem;border-radius:9999px;border:1px solid var(--hairline);
+  background:var(--surface);padding:.375rem .75rem;font-size:11px;font-weight:500;color:var(--ink-soft);
+}
+@media (min-width:640px){.live-pill{display:flex}}
+.live-dot-wrap{position:relative;display:flex;height:.5rem;width:.5rem}
+.live-dot-ping{position:absolute;display:inline-flex;height:100%;width:100%;border-radius:9999px;background:var(--live);opacity:.75}
+.live-dot{position:relative;display:inline-flex;height:.5rem;width:.5rem;border-radius:9999px;background:var(--live)}
+.icon-btn{
+  display:grid;place-items:center;height:2rem;width:2rem;border-radius:9999px;
+  border:1px solid var(--hairline);background:var(--surface);color:var(--ink-soft);transition:color .2s;
+}
+.icon-btn:hover{color:var(--brand)}
+.icon-btn svg{height:.875rem;width:.875rem}
+
+main{max-width:80rem;margin:0 auto;padding:0 1.25rem}
+
+/* hero */
+.hero{padding-top:4rem;padding-bottom:1rem}
+.hero-grid{display:grid;gap:2.5rem;align-items:end}
+@media (min-width:1024px){.hero-grid{grid-template-columns:1.15fr 0.85fr}}
+.hero h1{margin-top:1.25rem;font-size:2.25rem;line-height:1.05;color:var(--ink);font-weight:600}
+@media (min-width:640px){.hero h1{font-size:3.75rem}}
+.hero p.lead{margin-top:1.25rem;max-width:36rem;font-size:1rem;line-height:1.6;color:var(--ink-soft)}
+.hero-actions{margin-top:1.75rem;display:flex;flex-wrap:wrap;align-items:center;gap:.75rem}
+.btn-primary{
+  display:flex;align-items:center;gap:.5rem;border-radius:9999px;padding:.625rem 1.25rem;
+  font-size:.875rem;font-weight:600;color:var(--primary-foreground);
+  background:var(--gradient-brand);box-shadow:var(--shadow-glow);transition:transform .2s;
+}
+.btn-primary:hover{transform:translateY(-2px)}
+.btn-primary svg{height:1rem;width:1rem;transition:transform .2s}
+.btn-primary:hover svg{transform:translateX(4px)}
+.btn-ghost{
+  display:flex;align-items:center;gap:.5rem;border-radius:9999px;border:1px solid var(--hairline);
+  background:var(--surface);padding:.625rem 1.25rem;font-size:.875rem;font-weight:500;color:var(--ink);
+  transition:border-color .2s;
+}
+.btn-ghost:hover{border-color:var(--brand)}
+.btn-ghost svg{height:.875rem;width:.875rem}
+.synced-label{font-size:.75rem;color:var(--ink-soft)}
+.synced-label kbd{border:1px solid var(--hairline);border-radius:.25rem;padding:0 .25rem}
+
+.stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+
+.stat-card{position:relative;overflow:hidden;padding:1.25rem;transition:transform .5s}
+.stat-card:hover{transform:translateY(-4px)}
+.stat-glow{position:absolute;right:-2rem;top:-2.5rem;height:7rem;width:7rem;border-radius:9999px;opacity:.15;filter:blur(24px);transition:opacity .5s}
+.stat-card:hover .stat-glow{opacity:.35}
+.stat-top{display:flex;align-items:center;justify-content:space-between}
+.stat-top .icon{opacity:.7}
+.stat-top .icon svg{height:1rem;width:1rem}
+.stat-value{margin-top:.75rem;font-family:var(--font-display);font-size:1.875rem;font-weight:600;color:var(--ink)}
+.stat-value .suffix{margin-left:.125rem;font-size:1.125rem;color:var(--ink-soft)}
+.stat-hint{margin-top:.375rem;font-size:.75rem;line-height:1.5;color:var(--ink-soft)}
+.stat-bar{position:absolute;bottom:0;left:0;height:3px;border-radius:9999px;transition:width 1s;width:0}
+
+/* sections */
+section.deck-section{scroll-margin-top:7rem;border-top:1px solid var(--hairline);padding:5rem 0}
+section.deck-section:first-of-type{border-top:none}
+.section-head{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:1.5rem}
+.section-head .maxw{max-width:42rem}
+.section-head h2{margin-top:1rem;font-size:1.875rem;font-weight:600;color:var(--ink)}
+@media (min-width:640px){.section-head h2{font-size:2.25rem}}
+.section-head .desc{margin-top:.75rem;font-size:.875rem;line-height:1.6;color:var(--ink-soft)}
+@media (min-width:640px){.section-head .desc{font-size:1rem}}
+.section-body{margin-top:2.5rem}
+.eyebrow-dash{display:inline-block;height:.375rem;width:2rem;border-radius:9999px;background:var(--gradient-brand)}
+
+.range-pills{display:flex;flex-wrap:wrap;align-items:center;gap:.5rem}
+.pill{
+  border-radius:9999px;padding:.375rem .875rem;font-size:.75rem;font-weight:600;transition:all .2s;
+  border:1px solid var(--hairline);background:var(--surface);color:var(--ink-soft);
+}
+.pill:hover{border-color:var(--brand)}
+.pill.active{color:var(--primary-foreground);background:var(--gradient-brand);border-color:transparent}
+.pill-icon{display:flex;align-items:center;gap:.375rem}
+.pill-icon svg{height:.875rem;width:.875rem}
+
+.chart-card-head{
+  display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:1rem;
+  border-bottom:1px solid var(--hairline);padding:1rem 1.5rem;
+}
+.legend-row{display:flex;flex-wrap:wrap;align-items:center;gap:1.25rem;font-size:.75rem}
+.legend-item{display:flex;align-items:center;gap:.5rem;color:var(--ink-soft)}
+.legend-swatch{display:inline-block;height:2px;width:1.5rem;border-radius:9999px}
+.legend-live{display:flex;align-items:center;gap:.375rem;color:var(--live)}
+.legend-live .dot{height:.5rem;width:.5rem;border-radius:9999px;background:var(--live)}
+.toggle-row{display:flex;align-items:center;gap:.5rem}
+.toggle-btn{
+  display:flex;align-items:center;gap:.5rem;border-radius:9999px;border:1px solid var(--hairline);
+  background:var(--surface);padding:.375rem .75rem;font-size:.75rem;font-weight:500;color:var(--ink);
+}
+.toggle-track{position:relative;height:.875rem;width:1.5rem;border-radius:9999px;background:var(--hairline);transition:background .2s}
+.toggle-track.on{background:var(--brand)}
+.toggle-thumb{position:absolute;top:.125rem;left:.125rem;height:.625rem;width:.625rem;border-radius:9999px;background:#fff;transition:left .2s}
+.toggle-track.on .toggle-thumb{left:.75rem}
+
+.chart-pad{padding:1rem .75rem .5rem}
+@media (min-width:640px){.chart-pad{padding:1rem 1.25rem .5rem}}
+
+.readout-grid{display:grid;gap:1px;border-top:1px solid var(--hairline);background:var(--hairline)}
+@media (min-width:640px){.readout-grid.cols-4{grid-template-columns:repeat(4,1fr)}
+  .readout-grid.cols-3{grid-template-columns:repeat(3,1fr)}}
+.readout{background:var(--surface);padding:1rem 1.25rem}
+.readout .val{margin-top:.375rem;font-family:var(--font-display);font-size:1.25rem;font-weight:600;color:var(--ink)}
+
+.grid-throughput{display:grid;gap:1rem}
+@media (min-width:1024px){.grid-throughput{grid-template-columns:1.55fr 1fr}}
+.side-stack{display:grid;gap:1rem}
+
+.grid-attain{display:grid;gap:1rem}
+@media (min-width:1024px){.grid-attain{grid-template-columns:1fr 2fr}}
+.gauge-panel{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:2rem}
+.gauge-caption{margin-top:.25rem;max-width:15rem;text-align:center;font-size:.75rem;color:var(--ink-soft)}
+.gauge-value{font-family:var(--font-display);font-size:1.875rem;font-weight:600;color:var(--ink)}
+
+.load-row{display:flex;align-items:center;gap:.75rem}
+.load-date{width:3.5rem;flex-shrink:0;font-size:.75rem;color:var(--ink-soft)}
+.load-track{height:.625rem;flex:1;overflow:hidden;border-radius:9999px;background:var(--brand-soft)}
+.load-fill{height:100%;border-radius:9999px;width:0;background:var(--gradient-brand);transition:width 1.05s cubic-bezier(.16,1,.3,1)}
+.load-pct{width:4rem;flex-shrink:0;text-align:right;font-size:.75rem;font-weight:600;color:var(--ink)}
+
+/* insights */
+.insights-grid{display:grid;gap:1rem}
+@media (min-width:768px){.insights-grid{grid-template-columns:1fr 1fr}}
+.insight-card{display:flex;gap:1rem;padding:1.25rem;transition:transform .5s}
+.insight-card:hover{transform:translateY(-4px)}
+.insight-icon{display:grid;place-items:center;height:2.5rem;width:2.5rem;flex-shrink:0;border-radius:1rem}
+.insight-icon svg{height:1.25rem;width:1.25rem}
+.insight-title{font-size:.875rem;font-weight:600;color:var(--ink)}
+.insight-body{margin-top:.375rem;font-size:.875rem;line-height:1.6;color:var(--ink-soft)}
+
+/* table */
+.table-toolbar{display:flex;flex-wrap:wrap;align-items:center;gap:.75rem;border-bottom:1px solid var(--hairline);padding:1rem 1.25rem}
+.search-box{
+  display:flex;flex:1 1 200px;align-items:center;gap:.5rem;border-radius:9999px;
+  border:1px solid var(--hairline);background:var(--surface-2);padding:.5rem 1rem;
+}
+.search-box svg{height:1rem;width:1rem;color:var(--ink-soft);flex-shrink:0}
+.search-box input{flex:1;background:transparent;border:none;outline:none;font-size:.875rem;color:var(--ink)}
+.search-box input::placeholder{color:var(--ink-soft)}
+.row-count{font-size:.75rem;color:var(--ink-soft)}
+.export-btn{
+  display:flex;align-items:center;gap:.5rem;border-radius:9999px;padding:.5rem 1rem;
+  font-size:.75rem;font-weight:600;color:var(--primary-foreground);
+  background:var(--gradient-brand);box-shadow:var(--shadow-glow);transition:transform .2s;
+}
+.export-btn:hover{transform:translateY(-2px)}
+.export-btn svg{height:.875rem;width:.875rem}
+.table-scroll{max-height:26rem;overflow:auto}
+table{width:100%;border-collapse:collapse;font-size:.875rem}
+thead{position:sticky;top:0;z-index:10;background:color-mix(in oklab, var(--surface-2) 95%, transparent);backdrop-filter:blur(6px)}
+th{padding:.75rem 1.25rem;font-size:.75rem;font-weight:600;color:var(--ink-soft);text-align:left}
+th.num-col{text-align:right}
+th button{display:inline-flex;align-items:center;gap:.375rem;transition:color .2s}
+th button:hover{color:var(--brand)}
+th button svg{height:.75rem;width:.75rem;opacity:.6}
+td{padding:.625rem 1.25rem;color:var(--ink)}
+td.num{font-variant-numeric:tabular-nums;text-align:right}
+tr.data-row{border-top:1px solid var(--hairline);transition:background .2s;opacity:0}
+tr.data-row:hover{background:color-mix(in oklab, var(--brand-soft) 60%, transparent)}
+.attain-good{color:var(--live)}
+.attain-bad{color:var(--ink-soft)}
+
+/* footer */
+footer.deck-footer{border-top:1px solid var(--hairline);padding:2.5rem 0}
+.footer-inner{
+  display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:1rem;
+  font-size:.75rem;color:var(--ink-soft);
+}
+.footer-right{display:flex;align-items:center;gap:1rem}
+.footer-hint{display:flex;align-items:center;gap:.375rem}
+.footer-hint svg{height:.75rem;width:.75rem}
+.footer-link{font-weight:600;color:var(--brand)}
+
+/* preloader */
+#preloader{
+  position:fixed;inset:0;z-index:50;display:grid;place-items:center;background:var(--background);
+  transition:opacity .95s cubic-bezier(.16,1,.3,1), transform 1s cubic-bezier(.16,1,.3,1), filter .9s ease;
+}
+.pl-wrap{position:relative;display:grid;place-items:center}
+.pl-ring{position:absolute;height:4rem;width:4rem;border-radius:9999px;background:var(--gradient-brand);opacity:.14}
+.pl-dot{position:relative;display:block;border-radius:9999px;background:var(--gradient-brand);box-shadow:var(--shadow-glow);width:18px;height:18px;transition:width .8s cubic-bezier(.16,1,.3,1), height .8s cubic-bezier(.16,1,.3,1)}
+#preloader.burst .pl-dot{width:120px;height:120px}
+#preloader.burst .pl-ring{opacity:.22}
+.pl-status{position:absolute;bottom:4rem;font-size:.6875rem;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--ink-soft);transition:opacity .4s ease}
+#preloader.burst .pl-status{opacity:0}
+#preloader.zoomout{opacity:0;transform:scale(1.9);filter:blur(14px)}
+
+#app{opacity:0;transform:scale(0.965);transition:opacity 1s cubic-bezier(.16,1,.3,1) .05s, transform 1.15s cubic-bezier(.16,1,.3,1)}
+#app.revealed{opacity:1;transform:none}
+
+.chart-tooltip{
+  position:absolute;top:.75rem;z-index:10;min-width:11rem;padding:.75rem 1rem;font-size:.75rem;
+  pointer-events:none;display:none;
+}
+.chart-tooltip .row{display:flex;align-items:center;justify-content:space-between;gap:1rem;padding:.125rem 0}
+.chart-tooltip .row .l{display:flex;align-items:center;gap:.5rem;color:var(--ink-soft)}
+.chart-tooltip .row .l .sw{display:inline-block;height:.5rem;width:.5rem;border-radius:9999px}
+.chart-tooltip .row .v{font-weight:600;color:var(--ink)}
+
+.bar-tooltip{
+  position:absolute;bottom:100%;left:50%;transform:translateX(-50%);margin-bottom:.5rem;
+  padding:.5rem .75rem;font-size:.75rem;white-space:nowrap;z-index:10;display:none;
+}
+.bars-wrap{width:100%}
+.bars-row{display:flex;align-items:flex-end;gap:3px}
+.bar-col{position:relative;display:flex;height:100%;flex:1;align-items:flex-end}
+.bar-fill{position:relative;width:100%;border-radius:.375rem .375rem 0 0;height:0;background:linear-gradient(180deg, var(--brand), color-mix(in oklab, var(--teal) 70%, transparent));transition:height .95s cubic-bezier(.16,1,.3,1), filter .25s ease}
+.bar-secondary-line{position:absolute;inset-inline:0;border-top:1px dashed var(--amber);opacity:0;transition:opacity .6s ease}
+.bar-labels{margin-top:.5rem;display:flex;gap:3px}
+.bar-label{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;text-align:center;font-size:10px;color:var(--ink-soft)}
+</style>
+</head>
+<body>
+
+<div id="preloader" class="canvas-aura">
+  <div class="pl-wrap">
+    <span class="pl-ring" style="animation:pulse-ring 2.4s cubic-bezier(.2,.8,.2,1) 0s infinite"></span>
+    <span class="pl-ring" style="animation:pulse-ring 2.4s cubic-bezier(.2,.8,.2,1) .4s infinite"></span>
+    <span class="pl-ring" style="animation:pulse-ring 2.4s cubic-bezier(.2,.8,.2,1) .8s infinite"></span>
+    <span class="pl-dot"></span>
+  </div>
+  <p class="pl-status" id="pl-status">Reading live sheet</p>
+</div>
+
+<div id="app" class="canvas-aura">
+  <div class="progress-bar"><div class="progress-fill" id="scroll-progress" style="transform:scaleX(0)"></div></div>
+
+  <header class="topbar">
+    <div class="topbar-inner">
+      <span class="brand-mark">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 6c.6.5 1.2 1 2.5 1C7 7 7 5 9.5 5c2.3 0 2.3 2 4.5 2 2.3 0 2.3-2 4.5-2 1.3 0 1.9.5 2.5 1"/><path d="M2 12c.6.5 1.2 1 2.5 1 2.5 0 2.5-2 5-2 2.3 0 2.3 2 4.5 2 2.3 0 2.3-2 4.5-2 1.3 0 1.9.5 2.5 1"/><path d="M2 18c.6.5 1.2 1 2.5 1 2.5 0 2.5-2 5-2 2.3 0 2.3 2 4.5 2 2.3 0 2.3-2 4.5-2 1.3 0 1.9.5 2.5 1"/></svg>
+      </span>
+      <div class="brand-text">
+        <p class="title">ARCOS Pick Analytics</p>
+        <p class="sub">Productivity intelligence deck</p>
+      </div>
+      <nav class="tabs" id="nav-tabs"></nav>
+      <div class="topbar-right">
+        <span class="live-pill">
+          <span class="live-dot-wrap"><span class="live-dot-ping animate-ping"></span><span class="live-dot"></span></span>
+          Live stream
+        </span>
+        <button class="icon-btn" id="fullscreen-btn" aria-label="Present fullscreen">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/></svg>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div class="hero-grid">
+        <div>
+          <span class="eyebrow"><span class="eyebrow-dash"></span><span id="hero-days-label">Operations data story</span></span>
+          <h1>Picker productivity,<br /><span class="text-gradient">blended against target.</span></h1>
+          <p class="lead" id="hero-lead"></p>
+          <div class="hero-actions">
+            <a href="#productivity" class="btn-primary">
+              Start the walkthrough
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+            </a>
+            <a href="#" target="_blank" rel="noreferrer" class="btn-ghost" id="source-sheet-link">
+              Source sheet
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><path d="M15 3h6v6"/><path d="M10 14 21 3"/></svg>
+            </a>
+            <span class="synced-label num" id="synced-label">Synced just now · press <kbd>&darr;</kbd> to advance</span>
+          </div>
+        </div>
+        <div class="stat-grid" id="hero-stats"></div>
+      </div>
+    </section>
+
+    <!-- 1 productivity -->
+    <section id="productivity" class="deck-section">
+      <div class="section-head reveal" data-reveal>
+        <div class="maxw">
+          <span class="eyebrow"><span class="eyebrow-dash"></span>Chart 01 · The headline</span>
+          <h2>Productivity: blended IPP vs target</h2>
+          <p class="desc">The line starts as a single point and grows across the window. The green head marks the live edge of the dataset — the sheet is still being written to.</p>
+        </div>
+        <div class="range-pills" id="range-pills"></div>
+      </div>
+      <div class="section-body">
+        <div class="panel-lift" style="overflow:hidden">
+          <div class="chart-card-head">
+            <div class="legend-row" id="main-legend"></div>
+            <div class="toggle-row">
+              <button class="toggle-btn" id="toggle-smooth"><span class="toggle-track on"><span class="toggle-thumb"></span></span>Smoothing</button>
+              <button class="toggle-btn" id="toggle-avg"><span class="toggle-track"><span class="toggle-thumb"></span></span>Avg incl. TL</button>
+            </div>
+          </div>
+          <div class="chart-pad">
+            <div id="main-chart"></div>
+          </div>
+          <div class="readout-grid cols-4" id="main-readouts"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 2 throughput -->
+    <section id="throughput" class="deck-section">
+      <div class="section-head reveal" data-reveal>
+        <div class="maxw">
+          <span class="eyebrow"><span class="eyebrow-dash"></span>Chart 02 · Volume</span>
+          <h2>Processed volume against projected load</h2>
+          <p class="desc" id="throughput-desc"></p>
+        </div>
+      </div>
+      <div class="section-body">
+        <div class="grid-throughput">
+          <div class="panel-lift" style="padding:1.5rem">
+            <div id="bars-chart"></div>
+            <div class="legend-row" style="margin-top:1.5rem">
+              <span class="legend-item"><span class="legend-swatch" style="background:var(--brand)"></span>Processed quantity</span>
+              <span class="legend-item"><span class="legend-swatch" style="background:repeating-linear-gradient(90deg, var(--amber) 0 5px, transparent 5px 9px)"></span>Projected load</span>
+            </div>
+          </div>
+          <div class="side-stack" id="throughput-stats"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 3 workforce -->
+    <section id="workforce" class="deck-section">
+      <div class="section-head reveal" data-reveal>
+        <div class="maxw">
+          <span class="eyebrow"><span class="eyebrow-dash"></span>Chart 03 · Capacity</span>
+          <h2>Manpower on floor vs output per head</h2>
+          <p class="desc">Headcount is the volume lever; IPP is the efficiency lever. Watching them together shows whether extra bodies are actually converting into units.</p>
+        </div>
+      </div>
+      <div class="section-body">
+        <div class="panel-lift" style="padding:1rem 1.5rem">
+          <div id="workforce-chart"></div>
+          <div class="readout-grid cols-3" id="workforce-readouts"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 4 attainment -->
+    <section id="attainment" class="deck-section">
+      <div class="section-head reveal" data-reveal>
+        <div class="maxw">
+          <span class="eyebrow"><span class="eyebrow-dash"></span>Chart 04 · Quality of execution</span>
+          <h2>Target attainment and load clearance</h2>
+          <p class="desc">How much of the hourly target the floor actually converts, and how much of each day's projected load walks out the door.</p>
+        </div>
+      </div>
+      <div class="section-body">
+        <div class="grid-attain">
+          <div class="panel-lift gauge-panel" id="gauge-panel"></div>
+          <div class="panel-lift" style="padding:1.5rem">
+            <p class="eyebrow">Load cleared per day</p>
+            <div id="load-rows" style="margin-top:1.25rem;display:flex;flex-direction:column;gap:.625rem"></div>
+            <p style="margin-top:1.5rem;font-size:.75rem;color:var(--ink-soft)" id="load-caption"></p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 5 ledger -->
+    <section id="ledger" class="deck-section">
+      <div class="section-head reveal" data-reveal>
+        <div class="maxw">
+          <span class="eyebrow"><span class="eyebrow-dash"></span>Appendix · Row-level ledger</span>
+          <h2>Every day, every column</h2>
+          <p class="desc">Sort, filter and export the underlying rows exactly as they sit in the sheet.</p>
+        </div>
+      </div>
+      <div class="section-body">
+        <div class="panel-lift" style="overflow:hidden">
+          <div class="table-toolbar">
+            <div class="search-box">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+              <input type="text" id="table-search" placeholder="Filter by date…" />
+            </div>
+            <span class="row-count num" id="row-count">0 rows</span>
+            <button class="export-btn" id="export-btn">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M7 10l5 5 5-5"/><path d="M12 15V3"/></svg>
+              Export view
+            </button>
+          </div>
+          <div class="table-scroll">
+            <table>
+              <thead><tr id="table-head"></tr></thead>
+              <tbody id="table-body"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 6 readout -->
+    <section id="readout" class="deck-section">
+      <div class="section-head reveal" data-reveal>
+        <div class="maxw">
+          <span class="eyebrow"><span class="eyebrow-dash"></span>Closing · Analyst readout</span>
+          <h2>What the data is telling us</h2>
+          <p class="desc">Four takeaways generated directly from the selected window.</p>
+        </div>
+      </div>
+      <div class="section-body">
+        <div class="insights-grid" id="insights-grid"></div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="deck-footer">
+    <div class="wrap footer-inner">
+      <p id="footer-summary"></p>
+      <div class="footer-right">
+        <span class="footer-hint">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+          &uarr; &darr; navigate · R replay · F fullscreen
+        </span>
+        <a href="#" target="_blank" rel="noreferrer" class="footer-link" id="source-sheet-link-2">Open source data</a>
+      </div>
+    </div>
+  </footer>
+</div>
+
+<script>
+(function () {
+  "use strict";
+
+  var SHEET_ID = "1fIV4lYk-1cijkGsFl8xgKJF4oXWp3HETSzHJMRwR5Zo";
+  var SHEET_GID = "1067706484";
+  var SHEET_URL = "https://docs.google.com/spreadsheets/d/" + SHEET_ID + "/edit?gid=" + SHEET_GID + "#gid=" + SHEET_GID;
+  var SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/" + SHEET_ID + "/export?format=csv&gid=" + SHEET_GID;
+
+  var MONTHS = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+  var DATE_RE = /^(\d{1,2})-([A-Za-z]{3})$/;
+
+  function num(raw) {
+    if (!raw) return 0;
+    var clean = String(raw).replace(/[,%\s]/g, "");
+    if (!clean || clean.indexOf("#") !== -1) return 0;
+    var n = Number(clean);
+    return isFinite(n) ? n : 0;
+  }
+
+  function parseCsv(text) {
+    var rows = [], row = [], cell = "", quoted = false;
+    for (var i = 0; i < text.length; i++) {
+      var ch = text[i];
+      if (quoted) {
+        if (ch === '"') {
+          if (text[i + 1] === '"') { cell += '"'; i++; } else quoted = false;
+        } else cell += ch;
+        continue;
+      }
+      if (ch === '"') quoted = true;
+      else if (ch === ",") { row.push(cell); cell = ""; }
+      else if (ch === "\n") { row.push(cell); rows.push(row); row = []; cell = ""; }
+      else if (ch !== "\r") cell += ch;
+    }
+    row.push(cell); rows.push(row);
+    return rows;
+  }
+
+  function toPickRows(table) {
+    var out = [];
+    for (var t = 0; t < table.length; t++) {
+      var r = table[t];
+      var key = (r[0] || "").trim();
+      var m = DATE_RE.exec(key);
+      if (!m) continue;
+      var monthIndex = -1;
+      for (var mi = 0; mi < MONTHS.length; mi++) if (MONTHS[mi].toLowerCase() === m[2].toLowerCase()) { monthIndex = mi; break; }
+      if (monthIndex < 0) continue;
+
+      var processed = num(r[14]) || (num(r[12]) + num(r[13]));
+      if (processed <= 0) continue;
+
+      var plan = num(r[1]) + num(r[2]);
+      var present = num(r[3]) + num(r[4]);
+      var pickers = num(r[5]) + num(r[6]);
+      var tl = num(r[7]) + num(r[8]);
+      var blendedIpp = num(r[18]) || num(r[19]);
+      var targetIpp = num(r[21]) || 180;
+      var projectionLoad = num(r[10]);
+
+      out.push({
+        date: String(monthIndex + 1).padStart(2, "0") + "-" + m[1].padStart(2, "0"),
+        label: m[1] + " " + MONTHS[monthIndex],
+        plan: plan, present: present, pickers: pickers, tl: tl,
+        totalMP: num(r[9]), projectionLoad: projectionLoad, requiredWorkforce: num(r[11]),
+        processed: processed, remaining: num(r[15]), deltaPct: num(r[16]), capacityQty: num(r[17]),
+        blendedIpp: blendedIpp, targetIpp: targetIpp, dailyAvgIpp: num(r[20]),
+        blendedShift: num(r[22]) || num(r[23]), targetShift: num(r[24]) || 1440,
+        attainment: targetIpp ? (blendedIpp / targetIpp) * 100 : 0,
+        fillRate: plan ? (present / plan) * 100 : 0
+      });
+    }
+    out.sort(function (a, b) { return a.date < b.date ? -1 : a.date > b.date ? 1 : 0; });
+    return out;
+  }
+
+  function mean(xs) { return xs.length ? xs.reduce(function (a, b) { return a + b; }, 0) / xs.length : 0; }
+
+  function computeStats(rows) {
+    if (!rows.length) {
+      return { days:0, totalProcessed:0, avgProcessed:0, avgBlendedIpp:0, targetIpp:180, attainment:0,
+        bestDay:null, worstDay:null, peakLoadPct:0, avgLoadPct:0, avgManpower:0, avgFillRate:0,
+        perHeadPerDay:0, trend:0, daysAboveTarget:0, totalRemaining:0 };
+    }
+    var ipp = rows.map(function (r) { return r.blendedIpp; }).filter(function (x) { return x > 0; });
+    var avgBlendedIpp = mean(ipp);
+    var targetIpp = rows[rows.length - 1].targetIpp || 180;
+    var sorted = rows.slice().sort(function (a, b) { return b.blendedIpp - a.blendedIpp; });
+    var half = Math.max(1, Math.floor(rows.length / 2));
+    var firstHalf = mean(rows.slice(0, half).map(function (r) { return r.blendedIpp; }));
+    var lastHalf = mean(rows.slice(-half).map(function (r) { return r.blendedIpp; }));
+    var loads = rows.map(function (r) { return r.deltaPct; }).filter(function (x) { return x > 0; });
+
+    return {
+      days: rows.length,
+      totalProcessed: rows.reduce(function (a, r) { return a + r.processed; }, 0),
+      avgProcessed: mean(rows.map(function (r) { return r.processed; })),
+      avgBlendedIpp: avgBlendedIpp,
+      targetIpp: targetIpp,
+      attainment: targetIpp ? (avgBlendedIpp / targetIpp) * 100 : 0,
+      bestDay: sorted[0] || null,
+      worstDay: sorted[sorted.length - 1] || null,
+      peakLoadPct: Math.max.apply(null, [0].concat(loads)),
+      avgLoadPct: mean(loads),
+      avgManpower: mean(rows.map(function (r) { return r.totalMP; })),
+      avgFillRate: mean(rows.map(function (r) { return r.fillRate; }).filter(function (x) { return x > 0; })),
+      perHeadPerDay: mean(rows.filter(function (r) { return r.totalMP > 0; }).map(function (r) { return r.processed / r.totalMP; })),
+      trend: firstHalf ? ((lastHalf - firstHalf) / firstHalf) * 100 : 0,
+      daysAboveTarget: rows.filter(function (r) { return r.blendedIpp >= r.targetIpp; }).length,
+      totalRemaining: rows.reduce(function (a, r) { return a + r.remaining; }, 0)
+    };
+  }
+
+  var fmt = {
+    int: function (n) { return Math.round(n).toLocaleString("en-US"); },
+    compact: function (n) {
+      if (n >= 1000000) return (n / 1000000).toFixed(2) + "M";
+      if (n >= 1000) return (n / 1000).toFixed(1) + "K";
+      return String(Math.round(n));
+    },
+    pct: function (n, d) { d = d === undefined ? 1 : d; return n.toFixed(d) + "%"; }
+  };
+
+  // ---------- app state ----------
+  var state = {
+    allRows: [],
+    rows: [],
+    stats: null,
+    range: "all",
+    smooth: true,
+    showAvg: false,
+    replay: 0,
+    revealed: false,
+    hoverIdx: null,
+    fetchedAt: null,
+    source: "unavailable"
+  };
+
+  var NAV = [
+    { id: "productivity", label: "Productivity", icon: iconTrend() },
+    { id: "throughput", label: "Throughput", icon: iconBoxes() },
+    { id: "workforce", label: "Workforce", icon: iconUsers() },
+    { id: "attainment", label: "Attainment", icon: iconGauge() },
+    { id: "ledger", label: "Ledger", icon: iconTable() },
+    { id: "readout", label: "Readout", icon: iconActivity() }
+  ];
+  var RANGES = [
+    { id: "all", label: "Full window" },
+    { id: "30", label: "Last 30d" },
+    { id: "14", label: "Last 14d" },
+    { id: "7", label: "Last 7d" }
+  ];
+
+  function iconTrend(){return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg>';}
+  function iconBoxes(){return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/><path d="M3.3 7 12 12l8.7-5"/><path d="M12 22V12"/></svg>';}
+  function iconUsers(){return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>';}
+  function iconGauge(){return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 14 4-4"/><path d="M3.34 19a10 10 0 1 1 17.32 0"/></svg>';}
+  function iconTable(){return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v18"/><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M3 9h18"/><path d="M3 15h18"/></svg>';}
+  function iconActivity(){return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>';}
+  function iconTarget(){return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>';}
+  function iconBar(){return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M18 17V9"/><path d="M13 17V5"/><path d="M8 17v-3"/></svg>';}
+  function iconWaves(){return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 6c.6.5 1.2 1 2.5 1C7 7 7 5 9.5 5c2.3 0 2.3 2 4.5 2 2.3 0 2.3-2 4.5-2 1.3 0 1.9.5 2.5 1"/><path d="M2 12c.6.5 1.2 1 2.5 1 2.5 0 2.5-2 5-2 2.3 0 2.3 2 4.5 2 2.3 0 2.3-2 4.5-2 1.3 0 1.9.5 2.5 1"/><path d="M2 18c.6.5 1.2 1 2.5 1 2.5 0 2.5-2 5-2 2.3 0 2.3 2 4.5 2 2.3 0 2.3-2 4.5-2 1.3 0 1.9.5 2.5 1"/></svg>';}
+  function iconRefresh(){return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 0 1 15-6.7L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-15 6.7L3 16"/><path d="M8 16H3v5"/></svg>';}
+  function iconArrowUpDown(){return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21 16-4 4-4-4"/><path d="M17 20V4"/><path d="m3 8 4-4 4 4"/><path d="M7 4v16"/></svg>';}
+  function iconArrowUp(){return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 7h10v10"/><path d="M7 17 17 7"/></svg>';}
+  function iconArrowDown(){return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 7v10H7"/><path d="M17 7 7 17"/></svg>';}
+  function iconSparkles(){return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.581a.5.5 0 0 1 0 .964L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z"/></svg>';}
+
+  function el(tag, attrs, children) {
+    var e = document.createElement(tag);
+    if (attrs) for (var k in attrs) {
+      if (k === "class") e.className = attrs[k];
+      else if (k === "html") e.innerHTML = attrs[k];
+      else if (k === "text") e.textContent = attrs[k];
+      else e.setAttribute(k, attrs[k]);
+    }
+    if (children) for (var i = 0; i < children.length; i++) if (children[i]) e.appendChild(children[i]);
+    return e;
+  }
+
+  function computeRows() {
+    if (state.range === "all") state.rows = state.allRows;
+    else state.rows = state.allRows.slice(-Number(state.range));
+    state.stats = computeStats(state.rows);
+  }
+
+  function labels() { return state.rows.map(function (r) { return r.label; }); }
+  function last() { return state.rows[state.rows.length - 1]; }
+  function hovered() { return state.hoverIdx !== null ? state.rows[state.hoverIdx] : undefined; }
+
+  // ---------- count up ----------
+  function easeOutCube(t) { return 1 - Math.pow(1 - t, 3); }
+  function countUp(target, value, duration, delay, format) {
+    var start = null;
+    function tick(ts) {
+      if (start === null) start = ts;
+      var t = Math.min(1, Math.max(0, (ts - start - delay) / duration));
+      var v = value * easeOutCube(t);
+      target.textContent = format(v);
+      if (t < 1) requestAnimationFrame(tick);
+    }
+    requestAnimationFrame(tick);
+  }
+
+  // ---------- reveal on scroll ----------
+  var revealObserver = new IntersectionObserver(function (entries) {
+    entries.forEach(function (entry) {
+      if (entry.isIntersecting) {
+        entry.target.classList.add("reveal-in");
+        entry.target.dispatchEvent(new CustomEvent("reveal-shown"));
+        revealObserver.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.18, rootMargin: "0px 0px -8% 0px" });
+
+  // ---------- Nav / header ----------
+  function buildNav() {
+    var nav = document.getElementById("nav-tabs");
+    nav.innerHTML = "";
+    NAV.forEach(function (n) {
+      var a = el("a", { href: "#" + n.id, "data-nav": n.id, html: n.icon + n.label });
+      nav.appendChild(a);
+    });
+  }
+
+  function updateActiveNav() {
+    var current = NAV[0].id;
+    NAV.forEach(function (n) {
+      var sec = document.getElementById(n.id);
+      if (sec && sec.getBoundingClientRect().top <= 180) current = n.id;
+    });
+    document.querySelectorAll("[data-nav]").forEach(function (a) {
+      a.classList.toggle("active", a.getAttribute("data-nav") === current);
+    });
+    return current;
+  }
+
+  // ---------- Hero ----------
+  function renderHero() {
+    document.getElementById("hero-days-label").textContent = "Operations data story · " + state.stats.days + " recorded days";
+    document.getElementById("hero-lead").textContent =
+      "A presentation-grade read of the ARCOS pick floor — blended items per picker hour versus the " +
+      fmt.int(state.stats.targetIpp) + " IPP target, throughput against projected load, and the manpower behind every unit moved. Every figure below is pulled straight from the source sheet.";
+    document.getElementById("source-sheet-link").href = SHEET_URL;
+    document.getElementById("source-sheet-link-2").href = SHEET_URL;
+
+    var wrap = document.getElementById("hero-stats");
+    wrap.innerHTML = "";
+    var cards = [
+      { label: "Units processed", value: state.stats.totalProcessed, format: fmt.compact, hint: "across " + state.stats.days + " operating days", icon: iconBoxes(), tone: "var(--brand)", delay: 80 },
+      { label: "Avg blended IPP", value: state.stats.avgBlendedIpp, format: fmt.int, hint: "target " + fmt.int(state.stats.targetIpp) + " / hour", icon: iconTarget(), tone: "var(--teal)", delay: 180 },
+      { label: "Target attainment", value: state.stats.attainment, format: function (n) { return n.toFixed(1); }, suffix: "%", hint: state.stats.daysAboveTarget + " days at or above target", icon: iconGauge(), tone: "var(--amber)", delay: 280 },
+      { label: "Avg load cleared", value: state.stats.avgLoadPct, format: function (n) { return n.toFixed(1); }, suffix: "%", hint: "peak " + fmt.pct(state.stats.peakLoadPct) + " of projection", icon: iconBar(), tone: "var(--live)", delay: 380 }
+    ];
+    cards.forEach(function (c) { wrap.appendChild(buildStatCard(c)); });
+  }
+
+  function buildStatCard(c) {
+    var card = el("div", { class: "panel stat-card reveal", style: "transition-delay:" + c.delay + "ms" });
+    card.appendChild(el("div", { class: "stat-glow", style: "background:" + c.tone }));
+    var top = el("div", { class: "stat-top" });
+    top.appendChild(el("span", { class: "eyebrow", text: c.label }));
+    top.appendChild(el("span", { class: "icon", style: "color:" + c.tone, html: c.icon }));
+    card.appendChild(top);
+    var valWrap = el("div", { class: "stat-value num" });
+    var valNum = el("span", { text: "0" });
+    valWrap.appendChild(valNum);
+    if (c.suffix) valWrap.appendChild(el("span", { class: "suffix", text: c.suffix }));
+    card.appendChild(valWrap);
+    if (c.hint) card.appendChild(el("p", { class: "stat-hint", text: c.hint }));
+    var bar = el("div", { class: "stat-bar", style: "background:" + c.tone + ";transition-delay:" + c.delay + "ms" });
+    card.appendChild(bar);
+
+    revealObserver.observe(card);
+    card.addEventListener("reveal-shown", function () {
+      countUp(valNum, c.value, 1500, c.delay, c.format);
+      bar.style.width = "100%";
+    });
+    return card;
+  }
+
+  // ---------- Section headers ----------
+  document.querySelectorAll("[data-reveal]").forEach(function (h) { revealObserver.observe(h); });
+
+  // ---------- Range pills ----------
+  function buildRangePills() {
+    var wrap = document.getElementById("range-pills");
+    wrap.innerHTML = "";
+    RANGES.forEach(function (r) {
+      var b = el("button", { class: "pill" + (state.range === r.id ? " active" : ""), text: r.label });
+      b.addEventListener("click", function () {
+        state.range = r.id;
+        state.replay++;
+        computeRows();
+        renderAll();
+      });
+      wrap.appendChild(b);
+    });
+    var replayBtn = el("button", { class: "pill pill-icon", html: iconRefresh() + " Replay" });
+    replayBtn.addEventListener("click", function () { state.replay++; renderAll(); });
+    wrap.appendChild(replayBtn);
+  }
+
+  // ---------- Legend ----------
+  function legendItem(color, label, dashed) {
+    var sw = "background:" + (dashed ? "repeating-linear-gradient(90deg, " + color + " 0 5px, transparent 5px 9px)" : color);
+    return el("span", { class: "legend-item", html: '<span class="legend-swatch" style="' + sw + '"></span>' + label });
+  }
+
+  function renderMainLegend() {
+    var wrap = document.getElementById("main-legend");
+    wrap.innerHTML = "";
+    wrap.appendChild(legendItem("var(--brand)", "Blended IPP / hour", false));
+    wrap.appendChild(legendItem("var(--amber)", "Target IPP / hour", true));
+    if (state.showAvg) wrap.appendChild(legendItem("var(--teal)", "Daily avg IPP (incl. TL)", true));
+    var live = el("span", { class: "legend-live", html: '<span class="dot"></span>Live edge' });
+    wrap.appendChild(live);
+  }
+
+  // ---------- Toggles ----------
+  function setupToggles() {
+    var smoothBtn = document.getElementById("toggle-smooth");
+    var avgBtn = document.getElementById("toggle-avg");
+    function paint() {
+      smoothBtn.querySelector(".toggle-track").classList.toggle("on", state.smooth);
+      avgBtn.querySelector(".toggle-track").classList.toggle("on", state.showAvg);
+    }
+    smoothBtn.addEventListener("click", function () { state.smooth = !state.smooth; paint(); renderProductivity(); });
+    avgBtn.addEventListener("click", function () { state.showAvg = !state.showAvg; paint(); renderMainLegend(); renderProductivity(); });
+    paint();
+  }
+
+  // ---------- Readouts ----------
+  function readout(label, value, tone) {
+    var d = el("div", { class: "readout" });
+    d.appendChild(el("p", { class: "eyebrow", text: label }));
+    d.appendChild(el("p", { class: "val num", text: value, style: tone ? "color:" + tone : "" }));
+    return d;
+  }
+
+  // ---------- Chart (SVG line chart) ----------
+  var PAD = { l: 58, r: 30, t: 26, b: 36 };
+  function easeInOut(t) { return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2; }
+
+  function buildPath(pts, smooth) {
+    if (pts.length < 2) return "";
+    var d = "M" + pts[0].x + "," + pts[0].y;
+    if (!smooth) {
+      for (var i = 1; i < pts.length; i++) d += " L" + pts[i].x + "," + pts[i].y;
+      return d;
+    }
+    for (var j = 0; j < pts.length - 1; j++) {
+      var p0 = pts[j - 1] || pts[j];
+      var p1 = pts[j];
+      var p2 = pts[j + 1];
+      var p3 = pts[j + 2] || p2;
+      var c1x = p1.x + (p2.x - p0.x) / 6.2;
+      var c1y = p1.y + (p2.y - p0.y) / 6.2;
+      var c2x = p2.x - (p3.x - p1.x) / 6.2;
+      var c2y = p2.y - (p3.y - p1.y) / 6.2;
+      d += " C" + c1x + "," + c1y + " " + c2x + "," + c2y + " " + p2.x + "," + p2.y;
+    }
+    return d;
+  }
+
+  var SVGNS = "http://www.w3.org/2000/svg";
+  function svgEl(tag, attrs) {
+    var e = document.createElementNS(SVGNS, tag);
+    if (attrs) for (var k in attrs) e.setAttribute(k, attrs[k]);
+    return e;
+  }
+
+  function renderLineChart(container, cfg) {
+    container.innerHTML = "";
+    var labelsArr = cfg.labels;
+    var series = cfg.series;
+    var height = cfg.height || 400;
+    var smooth = cfg.smooth !== false;
+    var duration = cfg.duration || 2400;
+    var onHoverIndex = cfg.onHoverIndex;
+
+    var wrap = el("div", { style: "position:relative;width:100%" });
+    container.appendChild(wrap);
+    var width = Math.max(320, container.clientWidth || wrap.clientWidth || 900);
+
+    var n = labelsArr.length;
+    var innerW = width - PAD.l - PAD.r;
+    var innerH = height - PAD.t - PAD.b;
+
+    var allVals = [];
+    for (var i = 0; i < n; i++) for (var s = 0; s < series.length; s++) allVals.push(series[s].get(i));
+    var finite = allVals.filter(function (v) { return isFinite(v); });
+    var lo = finite.length ? Math.min.apply(null, finite) : 0;
+    var hi = finite.length ? Math.max.apply(null, finite) : 1;
+    var span = hi - lo || hi || 1;
+    var min = Math.max(0, lo - span * 0.22);
+    var max = hi + span * 0.16;
+
+    function x(idx) { return PAD.l + (n <= 1 ? innerW / 2 : (idx * innerW) / (n - 1)); }
+    function y(v) { return PAD.t + innerH - ((v - min) / (max - min || 1)) * innerH; }
+
+    var paths = series.map(function (sr) {
+      var pts = [];
+      for (var idx = 0; idx < n; idx++) pts.push({ x: x(idx), y: y(sr.get(idx)) });
+      return { s: sr, pts: pts, d: buildPath(pts, smooth) };
+    });
+
+    var svg = svgEl("svg", { width: width, height: height, viewBox: "0 0 " + width + " " + height, style: "display:block;touch-action:pan-y;user-select:none;overflow:visible" });
+    wrap.appendChild(svg);
+
+    var defs = svgEl("defs");
+    svg.appendChild(defs);
+    series.forEach(function (sr) {
+      var g = svgEl("linearGradient", { id: "fill-" + sr.key, x1: "0", y1: "0", x2: "0", y2: "1" });
+      g.appendChild(svgEl("stop", { offset: "0%", "stop-color": sr.color, "stop-opacity": "0.32" }));
+      g.appendChild(svgEl("stop", { offset: "55%", "stop-color": sr.color, "stop-opacity": "0.1" }));
+      g.appendChild(svgEl("stop", { offset: "100%", "stop-color": sr.color, "stop-opacity": "0" }));
+      defs.appendChild(g);
+      var g2 = svgEl("linearGradient", { id: "stroke-" + sr.key, x1: "0", y1: "0", x2: "1", y2: "0" });
+      g2.appendChild(svgEl("stop", { offset: "0%", "stop-color": "var(--brand-deep)" }));
+      g2.appendChild(svgEl("stop", { offset: "55%", "stop-color": sr.color }));
+      g2.appendChild(svgEl("stop", { offset: "100%", "stop-color": "var(--teal)" }));
+      defs.appendChild(g2);
+    });
+    var filter = svgEl("filter", { id: "chart-glow-" + cfg.uid, x: "-40%", y: "-40%", width: "180%", height: "180%" });
+    filter.appendChild(svgEl("feGaussianBlur", { stdDeviation: "7", result: "b" }));
+    var merge = svgEl("feMerge");
+    merge.appendChild(svgEl("feMergeNode", { "in": "b" }));
+    merge.appendChild(svgEl("feMergeNode", { "in": "SourceGraphic" }));
+    filter.appendChild(merge);
+    defs.appendChild(filter);
+
+    var ticks = [];
+    for (var ti = 0; ti <= 4; ti++) ticks.push(min + ((max - min) * ti) / 4);
+    ticks.forEach(function (t, ti) {
+      svg.appendChild(svgEl("line", {
+        x1: PAD.l, x2: width - PAD.r, y1: y(t), y2: y(t),
+        stroke: "var(--hairline)", "stroke-width": 1,
+        "stroke-dasharray": ti === 0 ? "" : "3 6"
+      }));
+      var txt = svgEl("text", { x: PAD.l - 12, y: y(t) + 4, "text-anchor": "end", class: "num", style: "fill:var(--ink-soft);font-size:11px" });
+      txt.textContent = Math.round(t).toLocaleString("en-US");
+      svg.appendChild(txt);
+    });
+
+    var labelEvery = Math.max(1, Math.ceil(n / (width < 620 ? 5 : 10)));
+    labelsArr.forEach(function (l, idx) {
+      if (idx % labelEvery === 0 || idx === n - 1) {
+        var txt = svgEl("text", { x: x(idx), y: height - 10, "text-anchor": "middle", style: "fill:var(--ink-soft);font-size:10.5px;letter-spacing:.02em" });
+        txt.textContent = l;
+        svg.appendChild(txt);
+      }
+    });
+
+    var headPath = null;
+    var mainPts = null;
+    paths.forEach(function (p, si) {
+      var isMain = si === 0;
+      var g = svgEl("g");
+      if (p.s.area) {
+        var areaD = p.d + " L" + p.pts[p.pts.length - 1].x + "," + (PAD.t + innerH) + " L" + p.pts[0].x + "," + (PAD.t + innerH) + " Z";
+        var areaPath = svgEl("path", { d: areaD, fill: "url(#fill-" + p.s.key + ")", class: "area-path" });
+        g.appendChild(areaPath);
+        p._areaPath = areaPath;
+      }
+      var line = svgEl("path", {
+        d: p.d, fill: "none",
+        stroke: isMain ? "url(#stroke-" + p.s.key + ")" : p.s.color,
+        "stroke-width": isMain ? 3.4 : 2, "stroke-linecap": "round"
+      });
+      if (p.s.dashed) line.setAttribute("stroke-dasharray", "14 11");
+      if (isMain) line.setAttribute("filter", "url(#chart-glow-" + cfg.uid + ")");
+      g.appendChild(line);
+      p._line = line;
+      if (isMain) { headPath = line; mainPts = p.pts; }
+
+      if (isMain) {
+        p.pts.forEach(function (pt, idx) {
+          var circ = svgEl("circle", { cx: pt.x, cy: pt.y, r: 2.6, fill: "var(--surface)", stroke: p.s.color, "stroke-width": 2, opacity: 0, style: "transition:r .18s ease, opacity .35s ease" });
+          g.appendChild(circ);
+          p._dots = p._dots || [];
+          p._dots.push(circ);
+        });
+      }
+      svg.appendChild(g);
+    });
+
+    var crosshair = svgEl("line", { stroke: "var(--brand)", "stroke-width": 1, "stroke-dasharray": "4 5", opacity: 0 });
+    svg.appendChild(crosshair);
+
+    var headGroup = svgEl("g", { opacity: 0 });
+    var pulse1 = svgEl("circle", { r: 7, fill: "var(--live)", opacity: 0.22, class: "animate-pulse-ring" });
+    var pulse2 = svgEl("circle", { r: 7, fill: "var(--live)", opacity: 0.18, class: "animate-pulse-ring", style: "animation-delay:1.2s" });
+    pulse1.style.display = "none"; pulse2.style.display = "none";
+    var headDot = svgEl("circle", { r: 9, fill: "var(--brand)", stroke: "var(--surface)", "stroke-width": 3 });
+    headGroup.appendChild(pulse1); headGroup.appendChild(pulse2); headGroup.appendChild(headDot);
+    svg.appendChild(headGroup);
+
+    var tooltip = el("div", { class: "panel chart-tooltip" });
+    wrap.appendChild(tooltip);
+
+    var progress = 0;
+    var doneFlag = false;
+
+    function updateFrame() {
+      paths.forEach(function (p) {
+        if (p.s.dashed) {
+          p._line.style.opacity = Math.max(0, progress * 1.4 - 0.4);
+        } else {
+          var len = p._line.getTotalLength();
+          p._line.setAttribute("stroke-dasharray", len);
+          p._line.setAttribute("stroke-dashoffset", (1 - progress) * len);
+        }
+        if (p._areaPath) {
+          p._areaPath.style.opacity = Math.max(0, progress * 1.1 - 0.1);
+          p._areaPath.style.clipPath = "inset(0 " + (1 - progress) * 100 + "% 0 0)";
+        }
+        if (p._dots) {
+          p._dots.forEach(function (dot, idx) {
+            var reached = progress >= idx / Math.max(1, n - 1);
+            dot.setAttribute("opacity", reached ? (state.hoverIdx === null || state.hoverIdx === idx ? 1 : 0.45) : 0);
+          });
+        }
+      });
+
+      if (headPath) {
+        try {
+          var len2 = headPath.getTotalLength();
+          var pt = headPath.getPointAtLength(len2 * progress);
+          headGroup.setAttribute("transform", "translate(" + pt.x + " " + pt.y + ")");
+          headGroup.setAttribute("opacity", 1);
+          doneFlag = progress > 0.995;
+          pulse1.style.display = doneFlag ? "" : "none";
+          pulse2.style.display = doneFlag ? "" : "none";
+          headDot.setAttribute("r", doneFlag ? 6 : 9 + (1 - progress) * 7);
+          headDot.setAttribute("fill", doneFlag ? "var(--live)" : "var(--brand)");
+          headDot.setAttribute("stroke-width", doneFlag ? 2.5 : 3);
+        } catch (e) {}
+      }
+    }
+
+    if (cfg.active) {
+      var start = null;
+      function step(ts) {
+        if (start === null) start = ts;
+        var t = Math.min(1, (ts - start) / duration);
+        progress = easeInOut(t);
+        updateFrame();
+        if (t < 1) requestAnimationFrame(step);
+      }
+      requestAnimationFrame(step);
+    } else {
+      progress = 0;
+      updateFrame();
+    }
+
+    function showHover(idx) {
+      state.hoverIdx = idx;
+      if (onHoverIndex) onHoverIndex(idx);
+      if (idx === null || !doneFlag) {
+        tooltip.style.display = "none";
+        crosshair.setAttribute("opacity", 0);
+        return;
+      }
+      crosshair.setAttribute("x1", x(idx)); crosshair.setAttribute("x2", x(idx));
+      crosshair.setAttribute("y1", PAD.t); crosshair.setAttribute("y2", PAD.t + innerH);
+      crosshair.setAttribute("opacity", 0.5);
+
+      tooltip.style.display = "block";
+      var left = Math.min(Math.max(x(idx) - 88, 0), Math.max(0, width - 190));
+      tooltip.style.left = left + "px";
+      tooltip.innerHTML = '<div class="eyebrow" style="margin-bottom:.5rem">' + labelsArr[idx] + "</div>";
+      series.forEach(function (sr) {
+        var v = sr.get(idx);
+        var fv = sr.format ? sr.format(v) : Math.round(v).toLocaleString("en-US");
+        var row = el("div", { class: "row" });
+        row.innerHTML = '<span class="l"><span class="sw" style="background:' + sr.color + '"></span>' + sr.label + '</span><span class="v num">' + fv + "</span>";
+        tooltip.appendChild(row);
+      });
+
+      paths.forEach(function (p) {
+        if (p._dots) p._dots.forEach(function (dot, di) { dot.setAttribute("opacity", di === idx ? 1 : 0.45); dot.setAttribute("r", di === idx ? 5.5 : 2.6); });
+      });
+    }
+
+    svg.addEventListener("pointermove", function (evt) {
+      var rect = svg.getBoundingClientRect();
+      var px = (evt.clientX - rect.left) * (width / rect.width);
+      var raw = ((px - PAD.l) / (innerW || 1)) * (n - 1);
+      var idx = Math.min(n - 1, Math.max(0, Math.round(raw)));
+      showHover(idx);
+    });
+    svg.addEventListener("pointerleave", function () { showHover(null); });
+
+    var ro = new ResizeObserver(function () {
+      var newW = container.clientWidth;
+      if (newW && Math.abs(newW - width) > 24) {
+        renderLineChart(container, cfg);
+        ro.disconnect();
+      }
+    });
+    ro.observe(container);
+  }
+
+  // ---------- Productivity section ----------
+  function renderProductivity() {
+    var mainSeries = [
+      { key: "blended-" + state.replay, label: "Blended IPP / hour", color: "var(--brand)", get: function (i) { return (state.rows[i] && state.rows[i].blendedIpp) || 0; }, area: true, live: true },
+      { key: "target-" + state.replay, label: "Target IPP / hour", color: "var(--amber)", get: function (i) { return (state.rows[i] && state.rows[i].targetIpp) || 180; }, dashed: true }
+    ];
+    if (state.showAvg) mainSeries.push({ key: "avg-" + state.replay, label: "Daily avg IPP (incl. TL)", color: "var(--teal)", get: function (i) { return (state.rows[i] && state.rows[i].dailyAvgIpp) || 0; }, dashed: true });
+
+    renderLineChart(document.getElementById("main-chart"), {
+      uid: "main", labels: labels(), series: mainSeries, active: state.revealed, smooth: state.smooth, height: 440,
+      onHoverIndex: function (idx) { state.hoverIdx = idx; renderMainReadouts(); }
+    });
+    renderMainReadouts();
+  }
+
+  function renderMainReadouts() {
+    var wrap = document.getElementById("main-readouts");
+    wrap.innerHTML = "";
+    var h = hovered();
+    var l = last();
+    wrap.appendChild(readout(h ? h.label + " · blended IPP" : "Peak blended IPP", fmt.int(h ? h.blendedIpp : (state.stats.bestDay ? state.stats.bestDay.blendedIpp : 0))));
+    wrap.appendChild(readout(h ? "Processed that day" : "Best day", h ? fmt.int(h.processed) : (state.stats.bestDay ? state.stats.bestDay.label : "—")));
+    var trendTone = (h ? h.attainment >= 100 : state.stats.trend >= 0) ? "var(--live)" : "var(--amber)";
+    wrap.appendChild(readout(h ? "vs target" : "Window trend", h ? fmt.pct(h.attainment) : ((state.stats.trend >= 0 ? "+" : "") + fmt.pct(state.stats.trend)), trendTone));
+    wrap.appendChild(readout(h ? "Manpower on floor" : "Latest reading", h ? fmt.int(h.totalMP) : (fmt.int(l ? l.blendedIpp : 0) + " IPP")));
+  }
+
+  // ---------- Throughput / bars ----------
+  function renderBars(container, data, cfg) {
+    container.innerHTML = "";
+    var height = cfg.height || 300;
+    var active = cfg.active;
+    var max = Math.max.apply(null, [1].concat(data.map(function (d) { return Math.max(d.value, d.secondary || 0); })));
+    var labelEvery = Math.max(1, Math.ceil(data.length / 9));
+
+    var barsWrap = el("div", { class: "bars-wrap" });
+    var row = el("div", { class: "bars-row", style: "height:" + height + "px" });
+    var labelsRow = el("div", { class: "bar-labels" });
+
+    data.forEach(function (d, i) {
+      var h = (d.value / max) * 100;
+      var sh = d.secondary ? (d.secondary / max) * 100 : 0;
+      var col = el("div", { class: "bar-col" });
+      if (sh > 0) {
+        var secLine = el("div", { class: "bar-secondary-line", style: "bottom:" + sh + "%" });
+        col.appendChild(secLine);
+        if (active) requestAnimationFrame(function () { secLine.style.opacity = "0.8"; });
+      }
+      var fill = el("div", { class: "bar-fill", style: "transition-delay:" + (i * 26) + "ms" });
+      col.appendChild(fill);
+      var tip = el("div", { class: "panel bar-tooltip" });
+      tip.innerHTML = '<div class="eyebrow" style="margin-bottom:.25rem">' + d.label + '</div><div class="num" style="font-weight:600;color:var(--ink)">' + (cfg.valueLabel || "Value") + ": " + fmt.int(d.value) + "</div>" +
+        (d.secondary !== undefined && cfg.secondaryLabel ? '<div class="num" style="color:var(--ink-soft)">' + cfg.secondaryLabel + ": " + fmt.int(d.secondary) + "</div>" : "");
+      col.appendChild(tip);
+
+      col.addEventListener("pointerenter", function () {
+        tip.style.display = "block";
+        fill.style.background = "linear-gradient(180deg, var(--brand-deep), var(--teal))";
+        row.querySelectorAll(".bar-fill").forEach(function (f) { if (f !== fill) f.style.filter = "saturate(.5) opacity(.6)"; });
+      });
+      col.addEventListener("pointerleave", function () {
+        tip.style.display = "none";
+        fill.style.background = "";
+        row.querySelectorAll(".bar-fill").forEach(function (f) { f.style.filter = "none"; });
+      });
+
+      row.appendChild(col);
+      if (active) requestAnimationFrame(function () { fill.style.height = h + "%"; });
+
+      labelsRow.appendChild(el("div", { class: "bar-label", text: i % labelEvery === 0 ? d.label.split(" ")[0] : "" }));
+    });
+
+    barsWrap.appendChild(row);
+    barsWrap.appendChild(labelsRow);
+    container.appendChild(barsWrap);
+  }
+
+  function renderThroughput() {
+    document.getElementById("throughput-desc").textContent =
+      "Daily processed quantity in gradient columns, with the dashed marker showing the " + fmt.compact((last() && last().projectionLoad) || 0) + " unit projection each day carries.";
+    renderBars(document.getElementById("bars-chart"), state.rows.map(function (r) { return { label: r.label, value: r.processed, secondary: r.projectionLoad }; }), {
+      active: state.revealed, valueLabel: "Processed", secondaryLabel: "Projection", height: 320
+    });
+
+    var wrap = document.getElementById("throughput-stats");
+    wrap.innerHTML = "";
+    wrap.appendChild(buildStatCard({ label: "Avg daily processed", value: state.stats.avgProcessed, format: fmt.compact, hint: "mean across the selected window", icon: iconBoxes(), tone: "var(--brand)", delay: 0 }));
+    wrap.appendChild(buildStatCard({ label: "Backlog left on table", value: state.stats.totalRemaining, format: fmt.compact, hint: "cumulative unprocessed projection", icon: iconWaves(), tone: "var(--amber)", delay: 120 }));
+    wrap.appendChild(buildStatCard({ label: "Units per head / day", value: state.stats.perHeadPerDay, format: fmt.int, hint: "processed quantity ÷ total manpower", icon: iconUsers(), tone: "var(--teal)", delay: 240 }));
+  }
+
+  // ---------- Workforce ----------
+  function renderWorkforce() {
+    renderLineChart(document.getElementById("workforce-chart"), {
+      uid: "wf",
+      labels: labels(),
+      series: [
+        { key: "mp-" + state.replay, label: "Total manpower", color: "var(--brand)", get: function (i) { return (state.rows[i] && state.rows[i].totalMP) || 0; }, area: true, live: true },
+        { key: "pickers-" + state.replay, label: "Pickers deployed", color: "var(--teal)", get: function (i) { return (state.rows[i] && state.rows[i].pickers) || 0; }, dashed: true },
+        { key: "plan-" + state.replay, label: "Workforce plan", color: "var(--amber)", get: function (i) { return (state.rows[i] && state.rows[i].plan) || 0; }, dashed: true }
+      ],
+      active: state.revealed, smooth: state.smooth, height: 360
+    });
+    var wrap = document.getElementById("workforce-readouts");
+    wrap.innerHTML = "";
+    var l = last();
+    wrap.appendChild(readout("Avg manpower", fmt.int(state.stats.avgManpower)));
+    wrap.appendChild(readout("Plan fill rate", fmt.pct(state.stats.avgFillRate)));
+    wrap.appendChild(readout("Required per projection", fmt.int(l ? l.requiredWorkforce : 0)));
+  }
+
+  // ---------- Attainment / gauge ----------
+  function renderGauge(container, value, active) {
+    container.innerHTML = "";
+    var size = 190, r = size / 2 - 16, c = 2 * Math.PI * r;
+    var svg = svgEl("svg", { width: size, height: size, viewBox: "0 0 " + size + " " + size, style: "transform:rotate(-90deg)" });
+    var defs = svgEl("defs");
+    var grad = svgEl("linearGradient", { id: "gauge-grad", x1: "0", y1: "0", x2: "1", y2: "1" });
+    grad.appendChild(svgEl("stop", { offset: "0%", "stop-color": "var(--brand-deep)" }));
+    grad.appendChild(svgEl("stop", { offset: "55%", "stop-color": "var(--brand)" }));
+    grad.appendChild(svgEl("stop", { offset: "100%", "stop-color": "var(--teal)" }));
+    defs.appendChild(grad);
+    svg.appendChild(defs);
+    svg.appendChild(svgEl("circle", { cx: size / 2, cy: size / 2, r: r, fill: "none", stroke: "var(--brand-soft)", "stroke-width": 14 }));
+    var arc = svgEl("circle", { cx: size / 2, cy: size / 2, r: r, fill: "none", stroke: "url(#gauge-grad)", "stroke-width": 14, "stroke-linecap": "round", "stroke-dasharray": c, "stroke-dashoffset": c });
+    svg.appendChild(arc);
+
+    var textWrap = el("div", { style: "margin-top:-62%;display:flex;flex-direction:column;align-items:center;padding-bottom:1.5rem" });
+    var valueSpan = el("span", { class: "gauge-value num", text: "0.0%" });
+    textWrap.appendChild(valueSpan);
+    textWrap.appendChild(el("span", { class: "eyebrow", text: "Target attainment", style: "margin-top:.25rem" }));
+
+    container.appendChild(svg);
+    container.appendChild(textWrap);
+
+    if (active) {
+      var start = null, duration = 1800, delay = 200;
+      function tick(ts) {
+        if (start === null) start = ts;
+        var t = Math.min(1, Math.max(0, (ts - start - delay) / duration));
+        var shown = value * easeOutCube(t);
+        var ratio = Math.min(1, Math.max(0, shown / 100));
+        arc.setAttribute("stroke-dashoffset", c * (1 - ratio));
+        valueSpan.textContent = shown.toFixed(1) + "%";
+        if (t < 1) requestAnimationFrame(tick);
+      }
+      requestAnimationFrame(tick);
+    }
+  }
+
+  function renderAttainment() {
+    var gaugePanel = document.getElementById("gauge-panel");
+    gaugePanel.innerHTML = "";
+    renderGauge(gaugePanel, state.stats.attainment, state.revealed);
+    var caption = el("p", { class: "gauge-caption", text: fmt.int(state.stats.avgBlendedIpp) + " blended IPP against a " + fmt.int(state.stats.targetIpp) + " IPP standard." });
+    gaugePanel.appendChild(caption);
+
+    var loadRows = document.getElementById("load-rows");
+    loadRows.innerHTML = "";
+    var slice = state.rows.slice(-10);
+    slice.forEach(function (r, i) {
+      var row = el("div", { class: "load-row" });
+      row.appendChild(el("span", { class: "load-date num", text: r.label }));
+      var track = el("div", { class: "load-track" });
+      var fill = el("div", { class: "load-fill", style: "transition-delay:" + (i * 70) + "ms" });
+      track.appendChild(fill);
+      row.appendChild(track);
+      row.appendChild(el("span", { class: "load-pct num", text: fmt.pct(r.deltaPct) }));
+      loadRows.appendChild(row);
+      if (state.revealed) {
+        var pct = Math.min(100, r.deltaPct);
+        var color = r.deltaPct >= state.stats.avgLoadPct ? "linear-gradient(90deg, var(--brand-deep), var(--live))" : "var(--gradient-brand)";
+        requestAnimationFrame(function () { fill.style.width = pct + "%"; fill.style.background = color; });
+      }
+    });
+    document.getElementById("load-caption").textContent = "Bars in green beat the " + fmt.pct(state.stats.avgLoadPct) + " window average clearance.";
+  }
+
+  // ---------- Ledger table ----------
+  var COLS = [
+    { key: "label", head: "Date", render: function (r) { return r.label; } },
+    { key: "totalMP", head: "Manpower", num: true, render: function (r) { return fmt.int(r.totalMP); } },
+    { key: "processed", head: "Processed qty", num: true, render: function (r) { return fmt.int(r.processed); } },
+    { key: "blendedIpp", head: "Blended IPP", num: true, render: function (r) { return fmt.int(r.blendedIpp); } },
+    { key: "deltaPct", head: "Load cleared", num: true, render: function (r) { return fmt.pct(r.deltaPct, 2); } },
+    { key: "attainment", head: "vs Target", num: true, render: function (r) { return fmt.pct(r.attainment); } }
+  ];
+  var tableState = { q: "", sortKey: "label", sortDir: 1 };
+
+  function tableView() {
+    var q = tableState.q.trim().toLowerCase();
+    var filtered = state.rows.filter(function (r) { return r.label.toLowerCase().indexOf(q) !== -1; });
+    return filtered.slice().sort(function (a, b) {
+      var av = a[tableState.sortKey], bv = b[tableState.sortKey];
+      if (typeof av === "string" || typeof bv === "string") return String(av).localeCompare(String(bv)) * tableState.sortDir;
+      return (av - bv) * tableState.sortDir;
+    });
+  }
+
+  function renderTableHead() {
+    var head = document.getElementById("table-head");
+    head.innerHTML = "";
+    COLS.forEach(function (c) {
+      var th = el("th", { class: c.num ? "num-col" : "" });
+      var btn = el("button", { html: c.head + iconArrowUpDown() });
+      btn.addEventListener("click", function () {
+        if (tableState.sortKey === c.key) tableState.sortDir = tableState.sortDir === 1 ? -1 : 1;
+        else { tableState.sortKey = c.key; tableState.sortDir = 1; }
+        renderTableBody();
+      });
+      th.appendChild(btn);
+      head.appendChild(th);
+    });
+  }
+
+  function renderTableBody() {
+    var body = document.getElementById("table-body");
+    body.innerHTML = "";
+    var view = tableView();
+    document.getElementById("row-count").textContent = view.length + " rows";
+    view.forEach(function (r, i) {
+      var tr = el("tr", { class: "data-row", style: "transition:opacity .5s ease " + Math.min(i * 24, 600) + "ms" });
+      COLS.forEach(function (c) {
+        var cls = c.num ? "num" : "";
+        if (c.key === "attainment") cls += r.attainment >= 100 ? " attain-good" : " attain-bad";
+        var td = el("td", { class: cls, text: c.render(r) });
+        if (!c.num) td.style.fontWeight = "500";
+        tr.appendChild(td);
+      });
+      body.appendChild(tr);
+      if (state.revealed) requestAnimationFrame(function () { tr.style.opacity = "1"; });
+    });
+  }
+
+  function exportCsv() {
+    var view = tableView();
+    var head = COLS.map(function (c) { return c.head; }).join(",");
+    var body = view.map(function (r) { return COLS.map(function (c) { return c.render(r).replace(/,/g, ""); }).join(","); }).join("\n");
+    var blob = new Blob([head + "\n" + body], { type: "text/csv" });
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement("a");
+    a.href = url; a.download = "arcos-picker-productivity.csv"; a.click();
+    URL.revokeObjectURL(url);
+  }
+
+  function renderLedger() {
+    renderTableHead();
+    renderTableBody();
+  }
+
+  // ---------- Insights ----------
+  function insightCard(icon, title, body, tone, delay) {
+    var card = el("div", { class: "panel insight-card reveal", style: "transition-delay:" + delay + "ms" });
+    card.appendChild(el("span", { class: "insight-icon", style: "background:color-mix(in oklab, " + tone + " 16%, transparent);color:" + tone, html: icon }));
+    var textWrap = el("div");
+    textWrap.appendChild(el("h3", { class: "insight-title", text: title }));
+    textWrap.appendChild(el("p", { class: "insight-body", text: body }));
+    card.appendChild(textWrap);
+    revealObserver.observe(card);
+    return card;
+  }
+
+  function renderInsights() {
+    var wrap = document.getElementById("insights-grid");
+    wrap.innerHTML = "";
+    var l = last();
+    var gap = state.stats.targetIpp - state.stats.avgBlendedIpp;
+    var trendUp = state.stats.trend >= 0;
+
+    var items = [
+      {
+        icon: iconGauge(),
+        title: "Blended IPP is averaging " + fmt.int(state.stats.avgBlendedIpp) + " against a " + fmt.int(state.stats.targetIpp) + " target",
+        body: "That is " + fmt.pct(state.stats.attainment) + " target attainment, leaving a standing gap of " + fmt.int(gap) + " items per picker per hour. Closing half of that gap alone would add roughly " + fmt.compact((gap / 2) * 8 * state.stats.avgManpower) + " units of daily throughput at current headcount.",
+        tone: "var(--brand)"
+      },
+      {
+        icon: trendUp ? iconArrowUp() : iconArrowDown(),
+        title: (trendUp ? "Improving" : "Softening") + " trend of " + fmt.pct(Math.abs(state.stats.trend)) + " across the window",
+        body: "Comparing the first and second halves of the " + state.stats.days + " recorded days, blended productivity moved " + (trendUp ? "up" : "down") + " " + fmt.pct(Math.abs(state.stats.trend)) + ". Peak performance was " + fmt.int(state.stats.bestDay ? state.stats.bestDay.blendedIpp : 0) + " IPP on " + (state.stats.bestDay ? state.stats.bestDay.label : "—") + ", the floor was " + fmt.int(state.stats.worstDay ? state.stats.worstDay.blendedIpp : 0) + " IPP on " + (state.stats.worstDay ? state.stats.worstDay.label : "—") + ".",
+        tone: trendUp ? "var(--live)" : "var(--amber)"
+      },
+      {
+        icon: iconUsers(),
+        title: fmt.int(state.stats.avgManpower) + " average manpower clears " + fmt.pct(state.stats.avgLoadPct) + " of the projected load",
+        body: "Each head processes about " + fmt.int(state.stats.perHeadPerDay) + " items per day. The plan calls for " + fmt.int(l ? l.requiredWorkforce : 0) + " associates against a " + fmt.compact(l ? l.projectionLoad : 0) + " unit daily projection, so the roster is the binding constraint before productivity is.",
+        tone: "var(--teal)"
+      },
+      {
+        icon: iconSparkles(),
+        title: "Best day cleared " + fmt.pct(state.stats.peakLoadPct) + " of the projection",
+        body: state.stats.daysAboveTarget + " of " + state.stats.days + " days met or beat the hourly target. Replicating the staffing and flow of the top quartile days is the fastest lever available — no additional hiring required.",
+        tone: "var(--amber)"
+      }
+    ];
+
+    items.forEach(function (it, i) { wrap.appendChild(insightCard(it.icon, it.title, it.body, it.tone, i * 110)); });
+  }
+
+  // ---------- Footer ----------
+  function renderFooter() {
+    document.getElementById("footer-summary").textContent =
+      "ARCOS pick productivity deck · " + state.stats.days + " days · " + (state.source === "live" ? "read from the published sheet" : "sheet unreachable");
+  }
+
+  // ---------- Full render ----------
+  function renderAll() {
+    computeRows();
+    buildRangePills();
+    renderMainLegend();
+    renderHero();
+    renderProductivity();
+    renderThroughput();
+    renderWorkforce();
+    renderAttainment();
+    renderLedger();
+    renderInsights();
+    renderFooter();
+    var syncedLabel = document.getElementById("synced-label");
+    if (state.fetchedAt) {
+      syncedLabel.innerHTML = "Synced " + new Date(state.fetchedAt).toLocaleString("en-GB") + " · press <kbd>&darr;</kbd> to advance";
+    }
+  }
+
+  // ---------- Preloader ----------
+  function runPreloader(ready) {
+    var pre = document.getElementById("preloader");
+    var status = document.getElementById("pl-status");
+    var app = document.getElementById("app");
+    if (ready) status.textContent = "Dataset synced";
+    setTimeout(function () {
+      pre.classList.add("burst");
+      setTimeout(function () {
+        pre.classList.add("zoomout");
+        state.revealed = true;
+        app.classList.add("revealed");
+        renderProductivity();
+        renderThroughput();
+        renderWorkforce();
+        renderAttainment();
+        renderLedger();
+        var wrap = document.getElementById("hero-stats");
+        wrap.querySelectorAll(".stat-card").forEach(function (c) { c.dispatchEvent(new CustomEvent("reveal-shown")); c.classList.add("reveal-in"); revealObserver.unobserve(c); });
+        setTimeout(function () { pre.style.display = "none"; }, 1000);
+      }, 780);
+    }, 850);
+  }
+
+  // ---------- Scroll / keyboard ----------
+  function setupScrollAndKeys() {
+    function onScroll() {
+      var h = document.documentElement;
+      var ratio = h.scrollTop / Math.max(1, h.scrollHeight - h.clientHeight);
+      document.getElementById("scroll-progress").style.transform = "scaleX(" + ratio + ")";
+      updateActiveNav();
+    }
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+
+    document.addEventListener("keydown", function (e) {
+      if (e.target instanceof HTMLInputElement) return;
+      var current = updateActiveNav();
+      var idx = NAV.findIndex(function (n) { return n.id === current; });
+      if (e.key === "ArrowDown" || e.key === "PageDown" || e.key === " ") {
+        var next = NAV[Math.min(NAV.length - 1, idx + 1)];
+        if (next) { e.preventDefault(); document.getElementById(next.id).scrollIntoView({ behavior: "smooth" }); }
+      }
+      if (e.key === "ArrowUp" || e.key === "PageUp") {
+        var prev = NAV[Math.max(0, idx - 1)];
+        if (prev) { e.preventDefault(); document.getElementById(prev.id).scrollIntoView({ behavior: "smooth" }); }
+      }
+      if (e.key.toLowerCase() === "r") { state.replay++; renderProductivity(); renderThroughput(); renderWorkforce(); }
+      if (e.key.toLowerCase() === "f") { if (document.documentElement.requestFullscreen) document.documentElement.requestFullscreen(); }
+    });
+
+    document.getElementById("fullscreen-btn").addEventListener("click", function () {
+      if (document.documentElement.requestFullscreen) document.documentElement.requestFullscreen();
+    });
+  }
+
+  // ---------- Init ----------
+  function init() {
+    buildNav();
+    setupToggles();
+    setupScrollAndKeys();
+    document.getElementById("table-search").addEventListener("input", function (e) {
+      tableState.q = e.target.value;
+      renderTableBody();
+    });
+    document.getElementById("export-btn").addEventListener("click", exportCsv);
+
+    fetch(SHEET_CSV_URL)
+      .then(function (res) { if (!res.ok) throw new Error("bad response"); return res.text(); })
+      .then(function (text) {
+        var rows = toPickRows(parseCsv(text));
+        state.allRows = rows;
+        state.source = rows.length ? "live" : "unavailable";
+        state.fetchedAt = new Date().toISOString();
+        computeRows();
+        renderAll();
+        runPreloader(state.allRows.length > 0);
+      })
+      .catch(function () {
+        state.allRows = [];
+        state.source = "unavailable";
+        state.fetchedAt = new Date().toISOString();
+        computeRows();
+        renderAll();
+        runPreloader(true);
+      });
+  }
+
+  document.addEventListener("DOMContentLoaded", init);
+})();
+</script>
+</body>
+</html>
