@@ -4,1562 +4,1854 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Picker Productivity Deck — Blended vs Target IPP Analysis</title>
-<meta name="description" content="An animated data-analysis presentation of ARCOS picker productivity: blended IPP versus target, processed volume, manpower utilisation and load clearance, read live from the source sheet." />
-<link rel="preconnect" href="https://fonts.googleapis.com" />
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700&family=Manrope:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+<meta name="description" content="An animated data-analysis presentation of ARCOS picker productivity: blended IPP versus target, processed volume, manpower utilisation and load clearance." />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700&family=Manrope:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
+/* ============ DESIGN TOKENS ============ */
 :root{
-  --radius:0.625rem;
-  --background:oklch(0.988 0.004 240);
-  --foreground:oklch(0.24 0.035 264);
-  --brand:oklch(0.56 0.17 252);
-  --brand-deep:oklch(0.42 0.15 258);
-  --brand-soft:oklch(0.93 0.03 250);
-  --teal:oklch(0.72 0.12 196);
-  --amber:oklch(0.76 0.14 62);
-  --live:oklch(0.68 0.19 148);
-  --ink:oklch(0.24 0.035 264);
-  --ink-soft:oklch(0.52 0.03 258);
-  --surface:oklch(1 0 0);
-  --surface-2:oklch(0.975 0.006 245);
-  --hairline:oklch(0.91 0.012 250);
-  --primary-foreground:oklch(0.99 0.005 250);
-  --gradient-brand:linear-gradient(135deg, var(--brand-deep), var(--brand) 45%, var(--teal));
+  --radius: 0.625rem;
+  --background: oklch(0.988 0.004 240);
+  --foreground: oklch(0.24 0.035 264);
+
+  --brand: oklch(0.56 0.17 252);
+  --brand-deep: oklch(0.42 0.15 258);
+  --brand-soft: oklch(0.93 0.03 250);
+  --teal: oklch(0.72 0.12 196);
+  --amber: oklch(0.76 0.14 62);
+  --live: oklch(0.68 0.19 148);
+  --ink: oklch(0.24 0.035 264);
+  --ink-soft: oklch(0.52 0.03 258);
+  --surface: oklch(1 0 0);
+  --surface-2: oklch(0.975 0.006 245);
+  --hairline: oklch(0.91 0.012 250);
+  --primary-foreground: oklch(0.99 0.005 250);
+
+  --gradient-brand: linear-gradient(135deg, var(--brand-deep), var(--brand) 45%, var(--teal));
   --gradient-canvas:
     radial-gradient(1100px 620px at 12% -8%, oklch(0.93 0.05 250 / 0.9), transparent 60%),
     radial-gradient(900px 520px at 92% 4%, oklch(0.94 0.045 196 / 0.85), transparent 62%),
     radial-gradient(700px 500px at 60% 110%, oklch(0.95 0.04 62 / 0.55), transparent 65%);
-  --shadow-soft:0 1px 2px oklch(0.42 0.06 258 / 0.05), 0 18px 40px -24px oklch(0.42 0.09 258 / 0.28);
-  --shadow-lift:0 2px 6px oklch(0.42 0.06 258 / 0.06), 0 34px 70px -32px oklch(0.42 0.11 258 / 0.36);
-  --shadow-glow:0 0 0 1px oklch(0.56 0.17 252 / 0.12), 0 22px 60px -26px oklch(0.56 0.17 252 / 0.45);
-  --font-display:"Sora", ui-sans-serif, system-ui, sans-serif;
-  --font-sans:"Manrope", ui-sans-serif, system-ui, sans-serif;
-  --font-mono:"JetBrains Mono", ui-monospace, monospace;
+  --shadow-soft: 0 1px 2px oklch(0.42 0.06 258 / 0.05), 0 18px 40px -24px oklch(0.42 0.09 258 / 0.28);
+  --shadow-lift: 0 2px 6px oklch(0.42 0.06 258 / 0.06), 0 34px 70px -32px oklch(0.42 0.11 258 / 0.36);
+  --shadow-glow: 0 0 0 1px oklch(0.56 0.17 252 / 0.12), 0 22px 60px -26px oklch(0.56 0.17 252 / 0.45);
+
+  --font-display: "Sora", ui-sans-serif, system-ui, sans-serif;
+  --font-sans: "Manrope", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, monospace;
 }
-*{box-sizing:border-box}
-html{scroll-behavior:smooth}
+
+*{box-sizing:border-box; border-color: var(--hairline);}
+html{scroll-behavior:smooth;}
 body{
   margin:0;
-  background-color:var(--background);
-  color:var(--foreground);
-  font-family:var(--font-sans);
-  -webkit-font-smoothing:antialiased;
+  background-color: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  background-image: var(--gradient-canvas);
+  background-attachment: fixed;
 }
-h1,h2,h3,h4{font-family:var(--font-display);letter-spacing:-0.028em;margin:0}
-a{color:inherit;text-decoration:none}
-button{font:inherit;cursor:pointer;background:none;border:none;color:inherit}
-input{font:inherit}
-svg{display:block}
-kbd{font-family:var(--font-mono)}
+h1,h2,h3,h4{ font-family: var(--font-display); letter-spacing:-0.028em; margin:0; }
+p{margin:0;}
+a{color:inherit; text-decoration:none;}
+button{font-family:inherit; cursor:pointer; background:none; border:none; color:inherit;}
+kbd{font-family: var(--font-mono);}
+img,svg{display:block;}
 
-.canvas-aura{background-image:var(--gradient-canvas)}
+.num{ font-variant-numeric: tabular-nums; font-feature-settings:"tnum"; }
+.eyebrow{
+  font-size:0.6875rem; font-weight:700; letter-spacing:0.18em;
+  text-transform:uppercase; color: var(--ink-soft);
+}
 .text-gradient{
-  background-image:var(--gradient-brand);
-  -webkit-background-clip:text;background-clip:text;color:transparent;
+  background-image: var(--gradient-brand);
+  -webkit-background-clip:text; background-clip:text; color:transparent;
 }
 .panel{
-  background:color-mix(in oklab, var(--surface) 88%, transparent);
-  backdrop-filter:blur(14px);
+  background: color-mix(in oklab, var(--surface) 88%, transparent);
+  backdrop-filter: blur(14px);
   border:1px solid var(--hairline);
-  border-radius:1.75rem;
-  box-shadow:var(--shadow-soft);
+  border-radius: calc(var(--radius) + 12px);
+  box-shadow: var(--shadow-soft);
 }
 .panel-lift{
-  background:color-mix(in oklab, var(--surface) 92%, transparent);
-  backdrop-filter:blur(16px);
+  background: color-mix(in oklab, var(--surface) 92%, transparent);
+  backdrop-filter: blur(16px);
   border:1px solid var(--hairline);
-  border-radius:2rem;
-  box-shadow:var(--shadow-lift);
+  border-radius: calc(var(--radius) + 16px);
+  box-shadow: var(--shadow-lift);
 }
-.eyebrow{
-  font-size:0.6875rem;font-weight:700;letter-spacing:0.18em;
-  text-transform:uppercase;color:var(--ink-soft);
-  display:flex;align-items:center;gap:.5rem;
+.reveal{
+  opacity:0;
+  transform: translate3d(0,26px,0);
+  transition: opacity .85s cubic-bezier(.16,1,.3,1), transform .85s cubic-bezier(.16,1,.3,1);
 }
-.num{font-variant-numeric:tabular-nums;font-feature-settings:"tnum"}
-.reveal{opacity:0;transform:translate3d(0,26px,0);transition:opacity .85s cubic-bezier(.16,1,.3,1), transform .85s cubic-bezier(.16,1,.3,1)}
-.reveal-in{opacity:1;transform:none}
+.reveal-in{ opacity:1; transform:none; }
 
-@keyframes pulse-ring{0%{transform:scale(.6);opacity:.75}70%{transform:scale(2.6);opacity:0}100%{transform:scale(2.6);opacity:0}}
-.animate-pulse-ring{animation:pulse-ring 2.4s cubic-bezier(.2,.8,.2,1) infinite}
-.animate-ping{animation:ping 1.4s cubic-bezier(0,0,.2,1) infinite}
-@keyframes ping{75%,100%{transform:scale(2.2);opacity:0}}
+@keyframes pulse-ring{
+  0%{transform:scale(.6);opacity:.75;}
+  70%{transform:scale(2.6);opacity:0;}
+  100%{transform:scale(2.6);opacity:0;}
+}
+.animate-ping{ animation: pulse-ring 1.6s cubic-bezier(0,0,.2,1) infinite; }
+.animate-pulse-ring{ animation: pulse-ring 2.4s cubic-bezier(.2,.8,.2,1) infinite; }
 
-.wrap{max-width:80rem;margin:0 auto;padding:0 1.25rem}
+@media (prefers-reduced-motion: reduce){
+  *,*::before,*::after{ animation-duration:.01ms !important; transition-duration:.01ms !important; }
+}
+
+/* ============ LAYOUT UTILITIES (small hand-rolled set) ============ */
+.wrap{ max-width:80rem; margin:0 auto; padding:0 1.25rem; }
+.min-h-screen{ min-height:100vh; }
+.container-app{
+  opacity:0; transform: scale(.965);
+  transition: opacity 1s cubic-bezier(.16,1,.3,1) .05s, transform 1.15s cubic-bezier(.16,1,.3,1);
+}
+.container-app.revealed{ opacity:1; transform:none; }
+
+/* progress bar */
+.progressbar{ position:fixed; inset:0 0 auto 0; top:0; z-index:40; height:3px; background:transparent; }
+.progressbar-fill{ height:100%; transform-origin:left; background: var(--gradient-brand); transform:scaleX(0); transition: transform .1s linear; }
 
 /* header */
-.progress-bar{position:fixed;inset-inline:0;top:0;z-index:40;height:3px;background:transparent}
-.progress-fill{height:100%;transform-origin:left;background:var(--gradient-brand)}
-header.topbar{
-  position:sticky;top:0;z-index:30;border-bottom:1px solid var(--hairline);
-  background:color-mix(in oklab, var(--background) 80%, transparent);
-  backdrop-filter:blur(20px);
+header.site-header{
+  position:sticky; top:0; z-index:30;
+  border-bottom:1px solid var(--hairline);
+  background: color-mix(in oklab, var(--background) 80%, transparent);
+  backdrop-filter: blur(20px);
 }
-.topbar-inner{display:flex;align-items:center;gap:1rem;padding:0.875rem 1.25rem;max-width:80rem;margin:0 auto}
+.header-inner{ display:flex; align-items:center; gap:1rem; padding:0.875rem 0; }
 .brand-mark{
-  display:grid;place-items:center;height:2rem;width:2rem;border-radius:0.75rem;
-  color:var(--primary-foreground);background:var(--gradient-brand);box-shadow:var(--shadow-glow);
-  flex-shrink:0;
+  display:grid; place-items:center; height:2rem; width:2rem; border-radius:0.75rem;
+  background: var(--gradient-brand); box-shadow: var(--shadow-glow); color:var(--primary-foreground); flex-shrink:0;
 }
-.brand-mark svg{height:1rem;width:1rem}
-.brand-text p{margin:0;line-height:1.2}
-.brand-text .title{font-size:.875rem;font-weight:600;color:var(--ink)}
-.brand-text .sub{font-size:10px;letter-spacing:.02em;color:var(--ink-soft)}
-nav.tabs{margin-left:auto;display:none;align-items:center;gap:.25rem}
-@media (min-width:1024px){nav.tabs{display:flex}}
-nav.tabs a{
-  display:flex;align-items:center;gap:.375rem;border-radius:9999px;
-  padding:.375rem .875rem;font-size:.75rem;font-weight:500;color:var(--ink-soft);
-  transition:all .2s;
+.brand-text p{ line-height:1.2; }
+.brand-text .title{ font-size:0.875rem; font-weight:600; color:var(--ink); }
+.brand-text .sub{ font-size:0.625rem; letter-spacing:0.02em; color:var(--ink-soft); }
+nav.top-nav{ margin-left:auto; display:none; align-items:center; gap:0.25rem; }
+@media (min-width:1024px){ nav.top-nav{ display:flex; } }
+nav.top-nav a{
+  display:flex; align-items:center; gap:0.375rem; border-radius:9999px;
+  padding:0.375rem 0.75rem; font-size:0.75rem; font-weight:500; color:var(--ink-soft);
+  transition: all .2s ease;
 }
-nav.tabs a svg{height:.875rem;width:.875rem}
-nav.tabs a.active{background:var(--brand-soft);color:var(--brand-deep)}
-nav.tabs a:hover{color:var(--brand)}
-.topbar-right{margin-left:auto;display:flex;align-items:center;gap:.5rem}
-@media (min-width:1024px){.topbar-right{margin-left:0}}
+nav.top-nav a svg{ height:0.875rem; width:0.875rem; }
+nav.top-nav a.active{ background: var(--brand-soft); color: var(--brand-deep); }
+nav.top-nav a:hover{ color: var(--brand); }
+.header-actions{ margin-left:auto; display:flex; align-items:center; gap:0.5rem; }
+@media (min-width:1024px){ .header-actions{ margin-left:0; } }
 .live-pill{
-  display:none;align-items:center;gap:.5rem;border-radius:9999px;border:1px solid var(--hairline);
-  background:var(--surface);padding:.375rem .75rem;font-size:11px;font-weight:500;color:var(--ink-soft);
+  display:none; align-items:center; gap:0.5rem; border-radius:9999px; border:1px solid var(--hairline);
+  background:var(--surface); padding:0.375rem 0.75rem; font-size:0.6875rem; font-weight:500; color:var(--ink-soft);
 }
-@media (min-width:640px){.live-pill{display:flex}}
-.live-dot-wrap{position:relative;display:flex;height:.5rem;width:.5rem}
-.live-dot-ping{position:absolute;display:inline-flex;height:100%;width:100%;border-radius:9999px;background:var(--live);opacity:.75}
-.live-dot{position:relative;display:inline-flex;height:.5rem;width:.5rem;border-radius:9999px;background:var(--live)}
+@media (min-width:640px){ .live-pill{ display:flex; } }
+.live-dot-wrap{ position:relative; display:flex; height:0.5rem; width:0.5rem; }
+.live-dot-ping{ position:absolute; display:inline-flex; height:100%; width:100%; border-radius:9999px; background: var(--live); opacity:.75; }
+.live-dot{ position:relative; display:inline-flex; height:0.5rem; width:0.5rem; border-radius:9999px; background: var(--live); }
 .icon-btn{
-  display:grid;place-items:center;height:2rem;width:2rem;border-radius:9999px;
-  border:1px solid var(--hairline);background:var(--surface);color:var(--ink-soft);transition:color .2s;
+  display:grid; place-items:center; height:2rem; width:2rem; border-radius:9999px;
+  border:1px solid var(--hairline); background:var(--surface); color:var(--ink-soft); transition: color .2s ease;
 }
-.icon-btn:hover{color:var(--brand)}
-.icon-btn svg{height:.875rem;width:.875rem}
-
-main{max-width:80rem;margin:0 auto;padding:0 1.25rem}
+.icon-btn:hover{ color:var(--brand); }
+.icon-btn svg{ height:0.875rem; width:0.875rem; }
 
 /* hero */
-.hero{padding-top:4rem;padding-bottom:1rem}
-.hero-grid{display:grid;gap:2.5rem;align-items:end}
-@media (min-width:1024px){.hero-grid{grid-template-columns:1.15fr 0.85fr}}
-.hero h1{margin-top:1.25rem;font-size:2.25rem;line-height:1.05;color:var(--ink);font-weight:600}
-@media (min-width:640px){.hero h1{font-size:3.75rem}}
-.hero p.lead{margin-top:1.25rem;max-width:36rem;font-size:1rem;line-height:1.6;color:var(--ink-soft)}
-.hero-actions{margin-top:1.75rem;display:flex;flex-wrap:wrap;align-items:center;gap:.75rem}
+.hero{ padding: 4rem 0 1rem; }
+.hero-grid{ display:grid; gap:2.5rem; align-items:end; }
+@media (min-width:1024px){ .hero-grid{ grid-template-columns: 1.15fr 0.85fr; } }
+.eyebrow-dash{ display:inline-block; height:0.375rem; width:2rem; border-radius:9999px; background: var(--gradient-brand); margin-right:0.5rem;}
+h1.hero-title{ margin-top:1.25rem; font-size:2.25rem; font-weight:600; line-height:1.05; color: var(--ink); }
+@media (min-width:640px){ h1.hero-title{ font-size:3.75rem; } }
+.hero-desc{ margin-top:1.25rem; max-width:36rem; font-size:1rem; line-height:1.65; color: var(--ink-soft); }
+.hero-cta-row{ margin-top:1.75rem; display:flex; flex-wrap:wrap; align-items:center; gap:0.75rem; }
 .btn-primary{
-  display:flex;align-items:center;gap:.5rem;border-radius:9999px;padding:.625rem 1.25rem;
-  font-size:.875rem;font-weight:600;color:var(--primary-foreground);
-  background:var(--gradient-brand);box-shadow:var(--shadow-glow);transition:transform .2s;
+  display:flex; align-items:center; gap:0.5rem; border-radius:9999px; padding:0.625rem 1.25rem;
+  font-size:0.875rem; font-weight:600; color: var(--primary-foreground);
+  background: var(--gradient-brand); box-shadow: var(--shadow-glow);
+  transition: transform .2s ease;
 }
-.btn-primary:hover{transform:translateY(-2px)}
-.btn-primary svg{height:1rem;width:1rem;transition:transform .2s}
-.btn-primary:hover svg{transform:translateX(4px)}
-.btn-ghost{
-  display:flex;align-items:center;gap:.5rem;border-radius:9999px;border:1px solid var(--hairline);
-  background:var(--surface);padding:.625rem 1.25rem;font-size:.875rem;font-weight:500;color:var(--ink);
-  transition:border-color .2s;
+.btn-primary:hover{ transform: translateY(-2px); }
+.btn-primary svg{ height:1rem; width:1rem; transition: transform .2s ease; }
+.btn-primary:hover svg{ transform: translateX(3px); }
+.btn-secondary{
+  display:flex; align-items:center; gap:0.5rem; border-radius:9999px; border:1px solid var(--hairline);
+  background:var(--surface); padding:0.625rem 1.25rem; font-size:0.875rem; font-weight:500; color: var(--ink);
+  transition: border-color .2s ease;
 }
-.btn-ghost:hover{border-color:var(--brand)}
-.btn-ghost svg{height:.875rem;width:.875rem}
-.synced-label{font-size:.75rem;color:var(--ink-soft)}
-.synced-label kbd{border:1px solid var(--hairline);border-radius:.25rem;padding:0 .25rem}
+.btn-secondary:hover{ border-color: var(--brand); }
+.btn-secondary svg{ height:0.875rem; width:0.875rem; }
+.sync-note{ font-size:0.75rem; color:var(--ink-soft); }
+.sync-note kbd{ border-radius:0.25rem; border:1px solid var(--hairline); padding:0 0.25rem; }
 
-.stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
-
-.stat-card{position:relative;overflow:hidden;padding:1.25rem;transition:transform .5s}
-.stat-card:hover{transform:translateY(-4px)}
-.stat-glow{position:absolute;right:-2rem;top:-2.5rem;height:7rem;width:7rem;border-radius:9999px;opacity:.15;filter:blur(24px);transition:opacity .5s}
-.stat-card:hover .stat-glow{opacity:.35}
-.stat-top{display:flex;align-items:center;justify-content:space-between}
-.stat-top .icon{opacity:.7}
-.stat-top .icon svg{height:1rem;width:1rem}
-.stat-value{margin-top:.75rem;font-family:var(--font-display);font-size:1.875rem;font-weight:600;color:var(--ink)}
-.stat-value .suffix{margin-left:.125rem;font-size:1.125rem;color:var(--ink-soft)}
-.stat-hint{margin-top:.375rem;font-size:.75rem;line-height:1.5;color:var(--ink-soft)}
-.stat-bar{position:absolute;bottom:0;left:0;height:3px;border-radius:9999px;transition:width 1s;width:0}
+.stat-grid{ display:grid; grid-template-columns: 1fr 1fr; gap:1rem; }
+.statcard{
+  position:relative; overflow:hidden; padding:1.25rem;
+  transition: transform .5s ease;
+}
+.statcard:hover{ transform: translateY(-4px); }
+.statcard-glow{
+  position:absolute; right:-2rem; top:-2.5rem; height:7rem; width:7rem; border-radius:9999px;
+  opacity:.15; filter: blur(24px); transition: opacity .5s ease;
+}
+.statcard:hover .statcard-glow{ opacity:.35; }
+.statcard-top{ display:flex; align-items:center; justify-content:space-between; }
+.statcard-top svg{ height:1rem; width:1rem; opacity:.7; }
+.statcard-value{ margin-top:0.75rem; font-family: var(--font-display); font-size:1.875rem; font-weight:600; color: var(--ink); }
+.statcard-suffix{ margin-left:0.125rem; font-size:1.125rem; color:var(--ink-soft); }
+.statcard-hint{ margin-top:0.375rem; font-size:0.75rem; line-height:1.5; color:var(--ink-soft); }
+.statcard-bar{ position:absolute; bottom:0; left:0; height:3px; border-radius:9999px; width:0%; transition: width 1s ease; }
 
 /* sections */
-section.deck-section{scroll-margin-top:7rem;border-top:1px solid var(--hairline);padding:5rem 0}
-section.deck-section:first-of-type{border-top:none}
-.section-head{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:1.5rem}
-.section-head .maxw{max-width:42rem}
-.section-head h2{margin-top:1rem;font-size:1.875rem;font-weight:600;color:var(--ink)}
-@media (min-width:640px){.section-head h2{font-size:2.25rem}}
-.section-head .desc{margin-top:.75rem;font-size:.875rem;line-height:1.6;color:var(--ink-soft)}
-@media (min-width:640px){.section-head .desc{font-size:1rem}}
-.section-body{margin-top:2.5rem}
-.eyebrow-dash{display:inline-block;height:.375rem;width:2rem;border-radius:9999px;background:var(--gradient-brand)}
+main{ position:relative; z-index:1; }
+section.deck-section{ scroll-margin-top:7rem; border-top:1px solid var(--hairline); padding:5rem 0; }
+section.deck-section:first-of-type{ border-top:none; }
+.section-head{ display:flex; flex-wrap:wrap; align-items:flex-end; justify-content:space-between; gap:1.5rem; }
+.section-head-text{ max-width:42rem; }
+.section-head h2{ margin-top:1rem; font-size:1.875rem; font-weight:600; color:var(--ink); }
+@media (min-width:640px){ .section-head h2{ font-size:2.25rem; } }
+.section-head p.desc{ margin-top:0.75rem; font-size:0.875rem; line-height:1.65; color:var(--ink-soft); }
+@media (min-width:640px){ .section-head p.desc{ font-size:1rem; } }
+.section-body{ margin-top:2.5rem; }
 
-.range-pills{display:flex;flex-wrap:wrap;align-items:center;gap:.5rem}
-.pill{
-  border-radius:9999px;padding:.375rem .875rem;font-size:.75rem;font-weight:600;transition:all .2s;
-  border:1px solid var(--hairline);background:var(--surface);color:var(--ink-soft);
+.pill-group{ display:flex; flex-wrap:wrap; align-items:center; gap:0.5rem; }
+.pill-btn{
+  border-radius:9999px; padding:0.375rem 0.875rem; font-size:0.75rem; font-weight:600;
+  border:1px solid var(--hairline); background:var(--surface); color:var(--ink-soft); transition: all .2s ease;
 }
-.pill:hover{border-color:var(--brand)}
-.pill.active{color:var(--primary-foreground);background:var(--gradient-brand);border-color:transparent}
-.pill-icon{display:flex;align-items:center;gap:.375rem}
-.pill-icon svg{height:.875rem;width:.875rem}
+.pill-btn:hover{ border-color: var(--brand); }
+.pill-btn.active{ color: var(--primary-foreground); background: var(--gradient-brand); border-color:transparent; }
+.pill-btn.replay{ display:flex; align-items:center; gap:0.375rem; color:var(--ink); }
+.pill-btn.replay svg{ height:0.875rem; width:0.875rem; }
 
 .chart-card-head{
-  display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:1rem;
-  border-bottom:1px solid var(--hairline);padding:1rem 1.5rem;
+  display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:1rem;
+  border-bottom:1px solid var(--hairline); padding:1rem 1.5rem;
 }
-.legend-row{display:flex;flex-wrap:wrap;align-items:center;gap:1.25rem;font-size:.75rem}
-.legend-item{display:flex;align-items:center;gap:.5rem;color:var(--ink-soft)}
-.legend-swatch{display:inline-block;height:2px;width:1.5rem;border-radius:9999px}
-.legend-live{display:flex;align-items:center;gap:.375rem;color:var(--live)}
-.legend-live .dot{height:.5rem;width:.5rem;border-radius:9999px;background:var(--live)}
-.toggle-row{display:flex;align-items:center;gap:.5rem}
+.legend-row{ display:flex; flex-wrap:wrap; align-items:center; gap:1.25rem; font-size:0.75rem; }
+.legend-item{ display:flex; align-items:center; gap:0.5rem; color:var(--ink-soft); }
+.legend-swatch{ display:inline-block; height:0.125rem; width:1.5rem; border-radius:9999px; }
+.legend-live{ display:flex; align-items:center; gap:0.375rem; color: var(--live); }
+.legend-live .dot{ height:0.5rem; width:0.5rem; border-radius:9999px; background:var(--live); }
+
+.toggle-row{ display:flex; align-items:center; gap:0.5rem; }
 .toggle-btn{
-  display:flex;align-items:center;gap:.5rem;border-radius:9999px;border:1px solid var(--hairline);
-  background:var(--surface);padding:.375rem .75rem;font-size:.75rem;font-weight:500;color:var(--ink);
+  display:flex; align-items:center; gap:0.5rem; border-radius:9999px; border:1px solid var(--hairline);
+  background: var(--surface); padding:0.375rem 0.75rem; font-size:0.75rem; font-weight:500; color:var(--ink);
 }
-.toggle-track{position:relative;height:.875rem;width:1.5rem;border-radius:9999px;background:var(--hairline);transition:background .2s}
-.toggle-track.on{background:var(--brand)}
-.toggle-thumb{position:absolute;top:.125rem;left:.125rem;height:.625rem;width:.625rem;border-radius:9999px;background:#fff;transition:left .2s}
-.toggle-track.on .toggle-thumb{left:.75rem}
+.toggle-track{ position:relative; height:0.875rem; width:1.5rem; border-radius:9999px; background: var(--hairline); transition:background .2s ease; }
+.toggle-track.on{ background: var(--brand); }
+.toggle-knob{ position:absolute; top:2px; left:2px; height:0.625rem; width:0.625rem; border-radius:9999px; background:#fff; transition:left .2s ease; }
+.toggle-track.on .toggle-knob{ left:12px; }
 
-.chart-pad{padding:1rem .75rem .5rem}
-@media (min-width:640px){.chart-pad{padding:1rem 1.25rem .5rem}}
+.chart-pad{ padding: 1rem 0.75rem 0.5rem; }
+@media (min-width:640px){ .chart-pad{ padding:1rem 1.25rem 0.5rem; } }
 
-.readout-grid{display:grid;gap:1px;border-top:1px solid var(--hairline);background:var(--hairline)}
-@media (min-width:640px){.readout-grid.cols-4{grid-template-columns:repeat(4,1fr)}
-  .readout-grid.cols-3{grid-template-columns:repeat(3,1fr)}}
-.readout{background:var(--surface);padding:1rem 1.25rem}
-.readout .val{margin-top:.375rem;font-family:var(--font-display);font-size:1.25rem;font-weight:600;color:var(--ink)}
+.readout-grid{ display:grid; gap:1px; border-top:1px solid var(--hairline); background: var(--hairline); }
+@media (min-width:640px){ .readout-grid{ grid-template-columns: repeat(4,1fr); } }
+.readout-cell{ background:var(--surface); padding:1rem 1.25rem; }
+.readout-cell .num{ margin-top:0.375rem; font-family:var(--font-display); font-size:1.25rem; font-weight:600; color:var(--ink); }
 
-.grid-throughput{display:grid;gap:1rem}
-@media (min-width:1024px){.grid-throughput{grid-template-columns:1.55fr 1fr}}
-.side-stack{display:grid;gap:1rem}
-
-.grid-attain{display:grid;gap:1rem}
-@media (min-width:1024px){.grid-attain{grid-template-columns:1fr 2fr}}
-.gauge-panel{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:2rem}
-.gauge-caption{margin-top:.25rem;max-width:15rem;text-align:center;font-size:.75rem;color:var(--ink-soft)}
-.gauge-value{font-family:var(--font-display);font-size:1.875rem;font-weight:600;color:var(--ink)}
-
-.load-row{display:flex;align-items:center;gap:.75rem}
-.load-date{width:3.5rem;flex-shrink:0;font-size:.75rem;color:var(--ink-soft)}
-.load-track{height:.625rem;flex:1;overflow:hidden;border-radius:9999px;background:var(--brand-soft)}
-.load-fill{height:100%;border-radius:9999px;width:0;background:var(--gradient-brand);transition:width 1.05s cubic-bezier(.16,1,.3,1)}
-.load-pct{width:4rem;flex-shrink:0;text-align:right;font-size:.75rem;font-weight:600;color:var(--ink)}
+/* chart svg */
+.chart-wrap{ position:relative; width:100%; }
+.chart-tooltip{
+  position:absolute; top:0.75rem; z-index:10; min-width:11rem; padding:0.75rem 1rem; font-size:0.75rem;
+  pointer-events:none;
+}
+.chart-tooltip-row{ display:flex; align-items:center; justify-content:space-between; gap:1rem; padding:0.125rem 0; }
+.chart-tooltip-label{ display:flex; align-items:center; gap:0.5rem; color:var(--ink-soft); }
+.chart-tooltip-dot{ display:inline-block; height:0.5rem; width:0.5rem; border-radius:9999px; }
+.chart-tooltip-val{ font-weight:600; color:var(--ink); }
 
 /* insights */
-.insights-grid{display:grid;gap:1rem}
-@media (min-width:768px){.insights-grid{grid-template-columns:1fr 1fr}}
-.insight-card{display:flex;gap:1rem;padding:1.25rem;transition:transform .5s}
-.insight-card:hover{transform:translateY(-4px)}
-.insight-icon{display:grid;place-items:center;height:2.5rem;width:2.5rem;flex-shrink:0;border-radius:1rem}
-.insight-icon svg{height:1.25rem;width:1.25rem}
-.insight-title{font-size:.875rem;font-weight:600;color:var(--ink)}
-.insight-body{margin-top:.375rem;font-size:.875rem;line-height:1.6;color:var(--ink-soft)}
+.insight-grid{ display:grid; gap:1rem; }
+@media (min-width:768px){ .insight-grid{ grid-template-columns:1fr 1fr; } }
+.insight-hero{ grid-column: 1 / -1; padding:1.5rem; }
+.insight-hero-row{ display:flex; flex-wrap:wrap; align-items:center; gap:1rem; }
+.insight-hero-icon{ display:grid; place-items:center; height:2.75rem; width:2.75rem; border-radius:1rem; background: var(--gradient-brand); color: var(--primary-foreground); flex-shrink:0; }
+.insight-hero-icon svg{ height:1.25rem; width:1.25rem; }
+.insight-hero-text{ min-width:14rem; flex:1; }
+.insight-hero-text p.body{ margin-top:0.375rem; font-size:1rem; line-height:1.65; color:var(--ink); }
+@media (min-width:640px){ .insight-hero-text p.body{ font-size:1.125rem; } }
+
+.finding{ padding:1.5rem; transition: transform .5s ease; }
+.finding:hover{ transform: translateY(-4px); }
+.finding-top{ display:flex; align-items:center; gap:0.75rem; }
+.finding-icon{ display:grid; place-items:center; height:2.25rem; width:2.25rem; border-radius:1rem; flex-shrink:0; }
+.finding-icon svg{ height:1.25rem; width:1.25rem; }
+.finding h3{ margin-top:1rem; font-size:1.125rem; font-weight:600; line-height:1.35; color:var(--ink); }
+.finding p.plain{ margin-top:0.5rem; font-size:0.875rem; line-height:1.65; color:var(--ink-soft); }
+.finding p.detail{ margin-top:1rem; border-top:1px solid var(--hairline); padding-top:0.75rem; font-size:0.75rem; line-height:1.65; color:var(--ink-soft); }
+.finding p.detail strong{ color:var(--ink); font-weight:600; }
+
+/* throughput */
+.throughput-grid{ display:grid; gap:1rem; }
+@media (min-width:1024px){ .throughput-grid{ grid-template-columns: 1.55fr 1fr; } }
+.bars-panel{ padding:1.5rem; }
+.bars-legend{ margin-top:1.5rem; display:flex; flex-wrap:wrap; align-items:center; gap:1.5rem; font-size:0.75rem; color:var(--ink-soft); }
+.stat-col{ display:grid; gap:1rem; }
+
+/* bars */
+.bars-row{ display:flex; align-items:flex-end; gap:3px; }
+.bar-col{ position:relative; display:flex; height:100%; flex:1; align-items:flex-end; }
+.bar-secondary-line{ position:absolute; inset-inline:0; border-top:1px dashed var(--amber); opacity:0; transition:opacity .6s ease; }
+.bar-fill{ position:relative; width:100%; border-radius:0.375rem 0.375rem 0 0; height:0%; background:linear-gradient(180deg, var(--brand), color-mix(in oklab, var(--teal) 70%, transparent)); transition: height .95s cubic-bezier(.16,1,.3,1), filter .25s ease; }
+.bars-labels{ margin-top:0.5rem; display:flex; gap:3px; }
+.bars-labels span{ flex:1; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; text-align:center; font-size:0.625rem; color:var(--ink-soft); }
+.bar-tooltip{ position:absolute; bottom:100%; left:50%; z-index:10; margin-bottom:0.5rem; transform:translateX(-50%); white-space:nowrap; padding:0.5rem 0.75rem; font-size:0.75rem; }
+
+/* attainment */
+.attain-grid{ display:grid; gap:1rem; }
+@media (min-width:1024px){ .attain-grid{ grid-template-columns: 1fr 2fr; } }
+.gauge-panel{ display:flex; flex-direction:column; align-items:center; justify-content:center; padding:2rem; }
+.gauge-value{ font-family:var(--font-display); font-size:1.875rem; font-weight:600; color:var(--ink); }
+.gauge-caption{ margin-top:0.25rem; max-width:15rem; text-align:center; font-size:0.75rem; color:var(--ink-soft); }
+.load-panel{ padding:1.5rem; }
+.load-row{ display:flex; align-items:center; gap:0.75rem; margin-top:0.625rem; }
+.load-label{ width:3.5rem; flex-shrink:0; font-size:0.75rem; color:var(--ink-soft); }
+.load-track{ height:0.625rem; flex:1; overflow:hidden; border-radius:9999px; background: var(--brand-soft); }
+.load-fill{ height:100%; border-radius:9999px; width:0%; background: var(--gradient-brand); }
+.load-pct{ width:4rem; flex-shrink:0; text-align:right; font-size:0.75rem; font-weight:600; color:var(--ink); }
+.load-note{ margin-top:1.5rem; font-size:0.75rem; color:var(--ink-soft); }
 
 /* table */
-.table-toolbar{display:flex;flex-wrap:wrap;align-items:center;gap:.75rem;border-bottom:1px solid var(--hairline);padding:1rem 1.25rem}
-.search-box{
-  display:flex;flex:1 1 200px;align-items:center;gap:.5rem;border-radius:9999px;
-  border:1px solid var(--hairline);background:var(--surface-2);padding:.5rem 1rem;
-}
-.search-box svg{height:1rem;width:1rem;color:var(--ink-soft);flex-shrink:0}
-.search-box input{flex:1;background:transparent;border:none;outline:none;font-size:.875rem;color:var(--ink)}
-.search-box input::placeholder{color:var(--ink-soft)}
-.row-count{font-size:.75rem;color:var(--ink-soft)}
-.export-btn{
-  display:flex;align-items:center;gap:.5rem;border-radius:9999px;padding:.5rem 1rem;
-  font-size:.75rem;font-weight:600;color:var(--primary-foreground);
-  background:var(--gradient-brand);box-shadow:var(--shadow-glow);transition:transform .2s;
-}
-.export-btn:hover{transform:translateY(-2px)}
-.export-btn svg{height:.875rem;width:.875rem}
-.table-scroll{max-height:26rem;overflow:auto}
-table{width:100%;border-collapse:collapse;font-size:.875rem}
-thead{position:sticky;top:0;z-index:10;background:color-mix(in oklab, var(--surface-2) 95%, transparent);backdrop-filter:blur(6px)}
-th{padding:.75rem 1.25rem;font-size:.75rem;font-weight:600;color:var(--ink-soft);text-align:left}
-th.num-col{text-align:right}
-th button{display:inline-flex;align-items:center;gap:.375rem;transition:color .2s}
-th button:hover{color:var(--brand)}
-th button svg{height:.75rem;width:.75rem;opacity:.6}
-td{padding:.625rem 1.25rem;color:var(--ink)}
-td.num{font-variant-numeric:tabular-nums;text-align:right}
-tr.data-row{border-top:1px solid var(--hairline);transition:background .2s;opacity:0}
-tr.data-row:hover{background:color-mix(in oklab, var(--brand-soft) 60%, transparent)}
-.attain-good{color:var(--live)}
-.attain-bad{color:var(--ink-soft)}
+.table-card{ overflow:hidden; }
+.table-toolbar{ display:flex; flex-wrap:wrap; align-items:center; gap:0.75rem; border-bottom:1px solid var(--hairline); padding:1rem 1.25rem; }
+.search-box{ display:flex; flex:1; align-items:center; gap:0.5rem; border-radius:9999px; border:1px solid var(--hairline); background:var(--surface-2); padding:0.5rem 1rem; min-width:10rem; }
+.search-box svg{ height:1rem; width:1rem; color:var(--ink-soft); flex-shrink:0; }
+.search-box input{ width:100%; border:none; background:transparent; font-size:0.875rem; outline:none; color:var(--ink); font-family:inherit; }
+.search-box input::placeholder{ color:var(--ink-soft); }
+.export-btn{ display:flex; align-items:center; gap:0.5rem; border-radius:9999px; padding:0.5rem 1rem; font-size:0.75rem; font-weight:600; color:var(--primary-foreground); background:var(--gradient-brand); box-shadow: var(--shadow-glow); transition: transform .2s ease; }
+.export-btn:hover{ transform: translateY(-2px); }
+.export-btn svg{ height:0.875rem; width:0.875rem; }
+.table-scroll{ max-height:26rem; overflow:auto; }
+table{ width:100%; border-collapse:collapse; font-size:0.875rem; }
+thead{ position:sticky; top:0; z-index:10; background: color-mix(in oklab, var(--surface-2) 95%, transparent); backdrop-filter: blur(8px); }
+th{ padding:0.75rem 1.25rem; text-align:left; font-size:0.75rem; font-weight:600; color:var(--ink-soft); }
+th.num-col{ text-align:right; }
+th button{ display:inline-flex; align-items:center; gap:0.375rem; transition: color .2s ease; }
+th button:hover{ color: var(--brand); }
+th button svg{ height:0.75rem; width:0.75rem; opacity:.6; }
+tbody tr{ border-top:1px solid var(--hairline); transition: background .2s ease; opacity:0; }
+tbody tr:hover{ background: color-mix(in oklab, var(--brand-soft) 60%, transparent); }
+td{ padding:0.625rem 1.25rem; color:var(--ink); }
+td.num{ text-align:right; }
+td.medium{ font-weight:500; }
+td.attain-good{ color: var(--live); }
+td.attain-neutral{ color: var(--ink-soft); }
+
+/* summary */
+.summary-grid{ display:grid; gap:1rem; }
+@media (min-width:1024px){ .summary-grid{ grid-template-columns: 1.3fr 1fr; } }
+.summary-head{ border-bottom:1px solid var(--hairline); padding:1rem 1.25rem; }
+.summary-head p.sub{ margin-top:0.25rem; font-size:0.875rem; color:var(--ink-soft); }
+.summary-table tr{ border-top:1px solid var(--hairline); }
+.summary-table td{ padding:0.75rem 1.25rem; }
+.summary-table td.lbl{ font-size:0.875rem; font-weight:500; color:var(--ink); }
+.summary-table td.val{ text-align:right; font-size:0.875rem; font-weight:600; color:var(--ink); }
+.summary-table td.note{ font-size:0.75rem; color:var(--ink-soft); }
+.glossary-panel{ padding:1.5rem; }
+.glossary-item{ margin-top:1rem; }
+.glossary-item dt{ font-size:0.875rem; font-weight:600; color:var(--ink); }
+.glossary-item dd{ margin:0.25rem 0 0; font-size:0.875rem; line-height:1.65; color:var(--ink-soft); }
 
 /* footer */
-footer.deck-footer{border-top:1px solid var(--hairline);padding:2.5rem 0}
-.footer-inner{
-  display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:1rem;
-  font-size:.75rem;color:var(--ink-soft);
-}
-.footer-right{display:flex;align-items:center;gap:1rem}
-.footer-hint{display:flex;align-items:center;gap:.375rem}
-.footer-hint svg{height:.75rem;width:.75rem}
-.footer-link{font-weight:600;color:var(--brand)}
+footer{ border-top:1px solid var(--hairline); padding:2.5rem 0; }
+.footer-inner{ display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:1rem; font-size:0.75rem; color:var(--ink-soft); }
+.footer-links{ display:flex; align-items:center; gap:1rem; }
+.footer-links .kbd-hint{ display:flex; align-items:center; gap:0.375rem; }
+.footer-links .kbd-hint svg{ height:0.75rem; width:0.75rem; }
+.footer-links a{ font-weight:600; color: var(--brand); }
 
 /* preloader */
 #preloader{
-  position:fixed;inset:0;z-index:50;display:grid;place-items:center;background:var(--background);
-  transition:opacity .95s cubic-bezier(.16,1,.3,1), transform 1s cubic-bezier(.16,1,.3,1), filter .9s ease;
+  position:fixed; inset:0; z-index:50; display:grid; place-items:center;
+  background-color: var(--background); background-image: var(--gradient-canvas);
+  transition: opacity .95s cubic-bezier(.16,1,.3,1), transform 1s cubic-bezier(.16,1,.3,1), filter .9s ease;
 }
-.pl-wrap{position:relative;display:grid;place-items:center}
-.pl-ring{position:absolute;height:4rem;width:4rem;border-radius:9999px;background:var(--gradient-brand);opacity:.14}
-.pl-dot{position:relative;display:block;border-radius:9999px;background:var(--gradient-brand);box-shadow:var(--shadow-glow);width:18px;height:18px;transition:width .8s cubic-bezier(.16,1,.3,1), height .8s cubic-bezier(.16,1,.3,1)}
-#preloader.burst .pl-dot{width:120px;height:120px}
-#preloader.burst .pl-ring{opacity:.22}
-.pl-status{position:absolute;bottom:4rem;font-size:.6875rem;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--ink-soft);transition:opacity .4s ease}
-#preloader.burst .pl-status{opacity:0}
-#preloader.zoomout{opacity:0;transform:scale(1.9);filter:blur(14px)}
+.preloader-rings{ position:relative; display:grid; place-items:center; }
+.preloader-ring{ position:absolute; height:4rem; width:4rem; border-radius:9999px; background: var(--gradient-brand); opacity:.14; }
+.preloader-dot{ position:relative; display:block; border-radius:9999px; width:18px; height:18px; background: var(--gradient-brand); box-shadow: var(--shadow-glow); transition: width .8s cubic-bezier(.16,1,.3,1), height .8s cubic-bezier(.16,1,.3,1); }
+.preloader-label{ position:absolute; bottom:4rem; }
 
-#app{opacity:0;transform:scale(0.965);transition:opacity 1s cubic-bezier(.16,1,.3,1) .05s, transform 1.15s cubic-bezier(.16,1,.3,1)}
-#app.revealed{opacity:1;transform:none}
-
-.chart-tooltip{
-  position:absolute;top:.75rem;z-index:10;min-width:11rem;padding:.75rem 1rem;font-size:.75rem;
-  pointer-events:none;display:none;
-}
-.chart-tooltip .row{display:flex;align-items:center;justify-content:space-between;gap:1rem;padding:.125rem 0}
-.chart-tooltip .row .l{display:flex;align-items:center;gap:.5rem;color:var(--ink-soft)}
-.chart-tooltip .row .l .sw{display:inline-block;height:.5rem;width:.5rem;border-radius:9999px}
-.chart-tooltip .row .v{font-weight:600;color:var(--ink)}
-
-.bar-tooltip{
-  position:absolute;bottom:100%;left:50%;transform:translateX(-50%);margin-bottom:.5rem;
-  padding:.5rem .75rem;font-size:.75rem;white-space:nowrap;z-index:10;display:none;
-}
-.bars-wrap{width:100%}
-.bars-row{display:flex;align-items:flex-end;gap:3px}
-.bar-col{position:relative;display:flex;height:100%;flex:1;align-items:flex-end}
-.bar-fill{position:relative;width:100%;border-radius:.375rem .375rem 0 0;height:0;background:linear-gradient(180deg, var(--brand), color-mix(in oklab, var(--teal) 70%, transparent));transition:height .95s cubic-bezier(.16,1,.3,1), filter .25s ease}
-.bar-secondary-line{position:absolute;inset-inline:0;border-top:1px dashed var(--amber);opacity:0;transition:opacity .6s ease}
-.bar-labels{margin-top:.5rem;display:flex;gap:3px}
-.bar-label{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;text-align:center;font-size:10px;color:var(--ink-soft)}
+/* focus visibility */
+a:focus-visible, button:focus-visible, input:focus-visible{ outline:2px solid var(--brand); outline-offset:2px; }
 </style>
 </head>
 <body>
 
-<div id="preloader" class="canvas-aura">
-  <div class="pl-wrap">
-    <span class="pl-ring" style="animation:pulse-ring 2.4s cubic-bezier(.2,.8,.2,1) 0s infinite"></span>
-    <span class="pl-ring" style="animation:pulse-ring 2.4s cubic-bezier(.2,.8,.2,1) .4s infinite"></span>
-    <span class="pl-ring" style="animation:pulse-ring 2.4s cubic-bezier(.2,.8,.2,1) .8s infinite"></span>
-    <span class="pl-dot"></span>
+<div id="preloader" aria-hidden="true">
+  <div class="preloader-rings">
+    <span class="preloader-ring" style="animation: pulse-ring 2.4s cubic-bezier(.2,.8,.2,1) 0s infinite;"></span>
+    <span class="preloader-ring" style="animation: pulse-ring 2.4s cubic-bezier(.2,.8,.2,1) .4s infinite;"></span>
+    <span class="preloader-ring" style="animation: pulse-ring 2.4s cubic-bezier(.2,.8,.2,1) .8s infinite;"></span>
+    <span class="preloader-dot" id="preloaderDot"></span>
   </div>
-  <p class="pl-status" id="pl-status">Reading live sheet</p>
+  <p class="eyebrow preloader-label num" id="preloaderLabel">Reading live sheet</p>
 </div>
 
-<div id="app" class="canvas-aura">
-  <div class="progress-bar"><div class="progress-fill" id="scroll-progress" style="transform:scaleX(0)"></div></div>
+<div class="container-app min-h-screen" id="app">
 
-  <header class="topbar">
-    <div class="topbar-inner">
-      <span class="brand-mark">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 6c.6.5 1.2 1 2.5 1C7 7 7 5 9.5 5c2.3 0 2.3 2 4.5 2 2.3 0 2.3-2 4.5-2 1.3 0 1.9.5 2.5 1"/><path d="M2 12c.6.5 1.2 1 2.5 1 2.5 0 2.5-2 5-2 2.3 0 2.3 2 4.5 2 2.3 0 2.3-2 4.5-2 1.3 0 1.9.5 2.5 1"/><path d="M2 18c.6.5 1.2 1 2.5 1 2.5 0 2.5-2 5-2 2.3 0 2.3 2 4.5 2 2.3 0 2.3-2 4.5-2 1.3 0 1.9.5 2.5 1"/></svg>
-      </span>
-      <div class="brand-text">
-        <p class="title">ARCOS Pick Analytics</p>
-        <p class="sub">Productivity intelligence deck</p>
+  <div class="progressbar"><div class="progressbar-fill" id="scrollFill"></div></div>
+
+  <header class="site-header">
+    <div class="wrap header-inner">
+      <div style="display:flex; align-items:center; gap:0.625rem;">
+        <span class="brand-mark">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><path d="M2 6c.6.5 1.2 1 2.5 1C7 7 7 5 9.5 5c2.5 0 2.5 2 5 2 2.6 0 2.6-2 5.2-2 1.3 0 1.9.5 2.3 1"/><path d="M2 12c.6.5 1.2 1 2.5 1 2.5 0 2.5-2 5-2 2.5 0 2.5 2 5 2 2.6 0 2.6-2 5.2-2 1.3 0 1.9.5 2.3 1"/><path d="M2 18c.6.5 1.2 1 2.5 1 2.5 0 2.5-2 5-2 2.5 0 2.5 2 5 2 2.6 0 2.6-2 5.2-2 1.3 0 1.9.5 2.3 1"/></svg>
+        </span>
+        <div class="brand-text">
+          <p class="title">ARCOS Pick Analytics</p>
+          <p class="sub">Productivity intelligence deck</p>
+        </div>
       </div>
-      <nav class="tabs" id="nav-tabs"></nav>
-      <div class="topbar-right">
+      <nav class="top-nav" id="topNav">
+        <a href="#productivity" data-nav="productivity" class="active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg>1 · The graph</a>
+        <a href="#readout" data-nav="readout"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>2 · What it means</a>
+        <a href="#summary" data-nav="summary"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 14 4-4"/><path d="M3.34 19a10 10 0 1 1 17.32 0"/></svg>3 · Full summary</a>
+        <a href="#throughput" data-nav="throughput"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/><path d="m3.3 7 8.7 5 8.7-5"/><path d="M12 22V12"/></svg>Volume</a>
+        <a href="#workforce" data-nav="workforce"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>Workforce</a>
+        <a href="#ledger" data-nav="ledger"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v18"/><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M3 9h18"/><path d="M3 15h18"/></svg>Day by day</a>
+      </nav>
+      <div class="header-actions">
         <span class="live-pill">
-          <span class="live-dot-wrap"><span class="live-dot-ping animate-ping"></span><span class="live-dot"></span></span>
+          <span class="live-dot-wrap"><span class="live-dot-ping"></span><span class="live-dot"></span></span>
           Live stream
         </span>
-        <button class="icon-btn" id="fullscreen-btn" aria-label="Present fullscreen">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/></svg>
+        <button class="icon-btn" id="fullscreenBtn" aria-label="Present fullscreen">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3H5a2 2 0 0 0-2 2v3"/><path d="M21 8V5a2 2 0 0 0-2-2h-3"/><path d="M3 16v3a2 2 0 0 0 2 2h3"/><path d="M16 21h3a2 2 0 0 0 2-2v-3"/></svg>
         </button>
       </div>
     </div>
   </header>
 
-  <main>
+  <main class="wrap">
     <section class="hero">
       <div class="hero-grid">
         <div>
-          <span class="eyebrow"><span class="eyebrow-dash"></span><span id="hero-days-label">Operations data story</span></span>
-          <h1>Picker productivity,<br /><span class="text-gradient">blended against target.</span></h1>
-          <p class="lead" id="hero-lead"></p>
-          <div class="hero-actions">
-            <a href="#productivity" class="btn-primary">
-              Start the walkthrough
+          <span class="eyebrow" style="display:flex; align-items:center;"><span class="eyebrow-dash"></span>Operations data story · <span id="heroDays">—</span> recorded days</span>
+          <h1 class="hero-title">Picker productivity,<br><span class="text-gradient">blended against target.</span></h1>
+          <p class="hero-desc">A presentation-grade read of the ARCOS pick floor — blended items per picker hour versus the <span id="heroTarget">—</span> IPP target, throughput against projected load, and the manpower behind every unit moved. Every figure below is pulled straight from the source sheet.</p>
+          <div class="hero-cta-row">
+            <a href="#productivity" class="btn-primary">Start the walkthrough
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
             </a>
-            <a href="#" target="_blank" rel="noreferrer" class="btn-ghost" id="source-sheet-link">
-              Source sheet
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><path d="M15 3h6v6"/><path d="M10 14 21 3"/></svg>
+            <a href="https://docs.google.com/spreadsheets/d/1fIV4lYk-1cijkGsFl8xgKJF4oXWp3HETSzHJMRwR5Zo/edit" target="_blank" rel="noreferrer" class="btn-secondary">Source sheet
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h6v6"/><path d="M10 14 21 3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg>
             </a>
-            <span class="synced-label num" id="synced-label">Synced just now · press <kbd>&darr;</kbd> to advance</span>
+            <span class="sync-note num" id="syncedLabel">Synced just now · press <kbd>↓</kbd> to advance</span>
           </div>
         </div>
-        <div class="stat-grid" id="hero-stats"></div>
+        <div class="stat-grid">
+          <div class="statcard panel reveal" id="statUnits" style="transition-delay:80ms;">
+            <span class="statcard-glow" style="background:var(--brand);"></span>
+            <div class="statcard-top"><span class="eyebrow">Units processed</span><span style="color:var(--brand);"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/></svg></span></div>
+            <div class="statcard-value num"><span class="val">0</span></div>
+            <p class="statcard-hint">across <span class="days-count">—</span> operating days</p>
+            <div class="statcard-bar" style="background:var(--brand); transition-delay:80ms;"></div>
+          </div>
+          <div class="statcard panel reveal" id="statIpp" style="transition-delay:180ms;">
+            <span class="statcard-glow" style="background:var(--teal);"></span>
+            <div class="statcard-top"><span class="eyebrow">Avg blended IPP</span><span style="color:var(--teal);"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg></span></div>
+            <div class="statcard-value num"><span class="val">0</span></div>
+            <p class="statcard-hint">target <span class="target-ipp">—</span> / hour</p>
+            <div class="statcard-bar" style="background:var(--teal); transition-delay:180ms;"></div>
+          </div>
+          <div class="statcard panel reveal" id="statAttain" style="transition-delay:280ms;">
+            <span class="statcard-glow" style="background:var(--amber);"></span>
+            <div class="statcard-top"><span class="eyebrow">Target attainment</span><span style="color:var(--amber);"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><path d="m12 14 4-4"/><path d="M3.34 19a10 10 0 1 1 17.32 0"/></svg></span></div>
+            <div class="statcard-value num"><span class="val">0</span><span class="statcard-suffix">%</span></div>
+            <p class="statcard-hint"><span class="days-above">—</span> days at or above target</p>
+            <div class="statcard-bar" style="background:var(--amber); transition-delay:280ms;"></div>
+          </div>
+          <div class="statcard panel reveal" id="statLoad" style="transition-delay:380ms;">
+            <span class="statcard-glow" style="background:var(--live);"></span>
+            <div class="statcard-top"><span class="eyebrow">Avg load cleared</span><span style="color:var(--live);"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><path d="M3 3v16a2 2 0 0 0 2 2h16"/><path d="M18 17V9"/><path d="M13 17V5"/><path d="M8 17v-3"/></svg></span></div>
+            <div class="statcard-value num"><span class="val">0</span><span class="statcard-suffix">%</span></div>
+            <p class="statcard-hint">peak <span class="peak-load">—</span> of projection</p>
+            <div class="statcard-bar" style="background:var(--live); transition-delay:380ms;"></div>
+          </div>
+        </div>
       </div>
     </section>
 
-    <!-- 1 productivity -->
-    <section id="productivity" class="deck-section">
-      <div class="section-head reveal" data-reveal>
-        <div class="maxw">
-          <span class="eyebrow"><span class="eyebrow-dash"></span>Chart 01 · The headline</span>
-          <h2>Productivity: blended IPP vs target</h2>
-          <p class="desc">The line starts as a single point and grows across the window. The green head marks the live edge of the dataset — the sheet is still being written to.</p>
+    <!-- 1 — productivity -->
+    <section id="productivity" class="deck-section" data-reveal>
+      <div class="reveal" style="transition-delay:60ms;">
+        <div class="section-head">
+          <div class="section-head-text">
+            <span class="eyebrow" style="display:flex; align-items:center;"><span class="eyebrow-dash"></span>Step 1 · The graph</span>
+            <h2>Items per picker hour vs the target</h2>
+            <p class="desc">Blue is what pickers actually achieved each day. The dashed amber line is the target they are measured against. Where blue sits below amber, the floor was behind plan. Hover any point for that day's numbers; the green dot is the latest entry in the sheet.</p>
+          </div>
+          <div class="pill-group" id="rangeGroup">
+            <button class="pill-btn active" data-range="all">Full window</button>
+            <button class="pill-btn" data-range="30">Last 30d</button>
+            <button class="pill-btn" data-range="14">Last 14d</button>
+            <button class="pill-btn" data-range="7">Last 7d</button>
+            <button class="pill-btn replay" id="replayBtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg> Replay</button>
+          </div>
         </div>
-        <div class="range-pills" id="range-pills"></div>
-      </div>
-      <div class="section-body">
-        <div class="panel-lift" style="overflow:hidden">
-          <div class="chart-card-head">
-            <div class="legend-row" id="main-legend"></div>
-            <div class="toggle-row">
-              <button class="toggle-btn" id="toggle-smooth"><span class="toggle-track on"><span class="toggle-thumb"></span></span>Smoothing</button>
-              <button class="toggle-btn" id="toggle-avg"><span class="toggle-track"><span class="toggle-thumb"></span></span>Avg incl. TL</button>
+        <div class="section-body">
+          <div class="panel-lift" style="overflow:hidden;">
+            <div class="chart-card-head">
+              <div class="legend-row">
+                <span class="legend-item"><span class="legend-swatch" style="background:var(--brand);"></span>Blended IPP / hour</span>
+                <span class="legend-item"><span class="legend-swatch" style="background:repeating-linear-gradient(90deg, var(--amber) 0 5px, transparent 5px 9px);"></span>Target IPP / hour</span>
+                <span class="legend-item" id="avgLegend" style="display:none;"><span class="legend-swatch" style="background:repeating-linear-gradient(90deg, var(--teal) 0 5px, transparent 5px 9px);"></span>Daily avg IPP (incl. TL)</span>
+                <span class="legend-live"><span class="dot"></span>Live edge</span>
+              </div>
+              <div class="toggle-row">
+                <button class="toggle-btn" id="smoothToggle" aria-pressed="true"><span class="toggle-track on"><span class="toggle-knob"></span></span>Smoothing</button>
+                <button class="toggle-btn" id="avgToggle" aria-pressed="false"><span class="toggle-track"><span class="toggle-knob"></span></span>Avg incl. TL</button>
+              </div>
+            </div>
+            <div class="chart-pad">
+              <div class="chart-wrap" id="mainChart"></div>
+            </div>
+            <div class="readout-grid">
+              <div class="readout-cell"><p class="eyebrow" id="ro1label">Peak blended IPP</p><p class="num" id="ro1val">—</p></div>
+              <div class="readout-cell"><p class="eyebrow" id="ro2label">Best day</p><p class="num" id="ro2val">—</p></div>
+              <div class="readout-cell"><p class="eyebrow" id="ro3label">Window trend</p><p class="num" id="ro3val">—</p></div>
+              <div class="readout-cell"><p class="eyebrow" id="ro4label">Latest reading</p><p class="num" id="ro4val">—</p></div>
             </div>
           </div>
-          <div class="chart-pad">
-            <div id="main-chart"></div>
-          </div>
-          <div class="readout-grid cols-4" id="main-readouts"></div>
         </div>
       </div>
     </section>
 
-    <!-- 2 throughput -->
-    <section id="throughput" class="deck-section">
-      <div class="section-head reveal" data-reveal>
-        <div class="maxw">
-          <span class="eyebrow"><span class="eyebrow-dash"></span>Chart 02 · Volume</span>
-          <h2>Processed volume against projected load</h2>
-          <p class="desc" id="throughput-desc"></p>
+    <!-- 2 — readout -->
+    <section id="readout" class="deck-section" data-reveal>
+      <div class="reveal" style="transition-delay:60ms;">
+        <div class="section-head">
+          <div class="section-head-text">
+            <span class="eyebrow" style="display:flex; align-items:center;"><span class="eyebrow-dash"></span>Step 2 · What the data is telling us</span>
+            <h2>Reading the graph in plain words</h2>
+            <p class="desc">Four findings taken straight from the days shown above, with the action each one points to.</p>
+          </div>
+        </div>
+        <div class="section-body">
+          <div class="insight-grid" id="insightsContainer"></div>
         </div>
       </div>
-      <div class="section-body">
-        <div class="grid-throughput">
-          <div class="panel-lift" style="padding:1.5rem">
-            <div id="bars-chart"></div>
-            <div class="legend-row" style="margin-top:1.5rem">
-              <span class="legend-item"><span class="legend-swatch" style="background:var(--brand)"></span>Processed quantity</span>
-              <span class="legend-item"><span class="legend-swatch" style="background:repeating-linear-gradient(90deg, var(--amber) 0 5px, transparent 5px 9px)"></span>Projected load</span>
+    </section>
+
+    <!-- 3 — summary -->
+    <section id="summary" class="deck-section" data-reveal>
+      <div class="reveal" style="transition-delay:60ms;">
+        <div class="section-head">
+          <div class="section-head-text">
+            <span class="eyebrow" style="display:flex; align-items:center;"><span class="eyebrow-dash"></span>Step 3 · Full data summary</span>
+            <h2>Everything the sheet adds up to</h2>
+            <p class="desc">A single view of every headline figure in the sheet, plus what each column actually measures.</p>
+          </div>
+        </div>
+        <div class="section-body">
+          <div class="summary-grid" id="summaryContainer"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- throughput -->
+    <section id="throughput" class="deck-section" data-reveal>
+      <div class="reveal" style="transition-delay:60ms;">
+        <div class="section-head">
+          <div class="section-head-text">
+            <span class="eyebrow" style="display:flex; align-items:center;"><span class="eyebrow-dash"></span>Supporting detail · Volume</span>
+            <h2>How much work came in and how much went out</h2>
+            <p class="desc" id="throughputDesc">Daily processed quantity in gradient columns, with the dashed marker showing the projection each day carries.</p>
+          </div>
+        </div>
+        <div class="section-body">
+          <div class="throughput-grid">
+            <div class="panel-lift bars-panel">
+              <div id="barsChart"></div>
+              <div class="bars-legend">
+                <span class="legend-item"><span class="legend-swatch" style="background:var(--brand);"></span>Processed quantity</span>
+                <span class="legend-item"><span class="legend-swatch" style="background:repeating-linear-gradient(90deg, var(--amber) 0 5px, transparent 5px 9px);"></span>Projected load</span>
+              </div>
+            </div>
+            <div class="stat-col">
+              <div class="statcard panel-lift reveal" style="padding:1.25rem;" id="statAvgProc">
+                <div class="statcard-top"><span class="eyebrow">Avg daily processed</span><span style="color:var(--brand);"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/></svg></span></div>
+                <div class="statcard-value num"><span class="val">0</span></div>
+                <p class="statcard-hint">mean across the selected window</p>
+                <div class="statcard-bar" style="background:var(--brand);"></div>
+              </div>
+              <div class="statcard panel-lift reveal" style="padding:1.25rem; transition-delay:120ms;" id="statBacklog">
+                <div class="statcard-top"><span class="eyebrow">Backlog left on table</span><span style="color:var(--amber);"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><path d="M2 6c.6.5 1.2 1 2.5 1C7 7 7 5 9.5 5c2.5 0 2.5 2 5 2 2.6 0 2.6-2 5.2-2 1.3 0 1.9.5 2.3 1"/><path d="M2 12c.6.5 1.2 1 2.5 1 2.5 0 2.5-2 5-2 2.5 0 2.5 2 5 2 2.6 0 2.6-2 5.2-2 1.3 0 1.9.5 2.3 1"/><path d="M2 18c.6.5 1.2 1 2.5 1 2.5 0 2.5-2 5-2 2.5 0 2.5 2 5 2 2.6 0 2.6-2 5.2-2 1.3 0 1.9.5 2.3 1"/></svg></span></div>
+                <div class="statcard-value num"><span class="val">0</span></div>
+                <p class="statcard-hint">cumulative unprocessed projection</p>
+                <div class="statcard-bar" style="background:var(--amber); transition-delay:120ms;"></div>
+              </div>
+              <div class="statcard panel-lift reveal" style="padding:1.25rem; transition-delay:240ms;" id="statPerHead">
+                <div class="statcard-top"><span class="eyebrow">Units per head / day</span><span style="color:var(--teal);"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></span></div>
+                <div class="statcard-value num"><span class="val">0</span></div>
+                <p class="statcard-hint">processed quantity ÷ total manpower</p>
+                <div class="statcard-bar" style="background:var(--teal); transition-delay:240ms;"></div>
+              </div>
             </div>
           </div>
-          <div class="side-stack" id="throughput-stats"></div>
         </div>
       </div>
     </section>
 
-    <!-- 3 workforce -->
-    <section id="workforce" class="deck-section">
-      <div class="section-head reveal" data-reveal>
-        <div class="maxw">
-          <span class="eyebrow"><span class="eyebrow-dash"></span>Chart 03 · Capacity</span>
-          <h2>Manpower on floor vs output per head</h2>
-          <p class="desc">Headcount is the volume lever; IPP is the efficiency lever. Watching them together shows whether extra bodies are actually converting into units.</p>
-        </div>
-      </div>
-      <div class="section-body">
-        <div class="panel-lift" style="padding:1rem 1.5rem">
-          <div id="workforce-chart"></div>
-          <div class="readout-grid cols-3" id="workforce-readouts"></div>
-        </div>
-      </div>
-    </section>
-
-    <!-- 4 attainment -->
-    <section id="attainment" class="deck-section">
-      <div class="section-head reveal" data-reveal>
-        <div class="maxw">
-          <span class="eyebrow"><span class="eyebrow-dash"></span>Chart 04 · Quality of execution</span>
-          <h2>Target attainment and load clearance</h2>
-          <p class="desc">How much of the hourly target the floor actually converts, and how much of each day's projected load walks out the door.</p>
-        </div>
-      </div>
-      <div class="section-body">
-        <div class="grid-attain">
-          <div class="panel-lift gauge-panel" id="gauge-panel"></div>
-          <div class="panel-lift" style="padding:1.5rem">
-            <p class="eyebrow">Load cleared per day</p>
-            <div id="load-rows" style="margin-top:1.25rem;display:flex;flex-direction:column;gap:.625rem"></div>
-            <p style="margin-top:1.5rem;font-size:.75rem;color:var(--ink-soft)" id="load-caption"></p>
+    <!-- workforce -->
+    <section id="workforce" class="deck-section" data-reveal>
+      <div class="reveal" style="transition-delay:60ms;">
+        <div class="section-head">
+          <div class="section-head-text">
+            <span class="eyebrow" style="display:flex; align-items:center;"><span class="eyebrow-dash"></span>Chart 03 · Capacity</span>
+            <h2>Manpower on floor vs output per head</h2>
+            <p class="desc">Headcount is the volume lever; IPP is the efficiency lever. Watching them together shows whether extra bodies are actually converting into units.</p>
           </div>
         </div>
-      </div>
-    </section>
-
-    <!-- 5 ledger -->
-    <section id="ledger" class="deck-section">
-      <div class="section-head reveal" data-reveal>
-        <div class="maxw">
-          <span class="eyebrow"><span class="eyebrow-dash"></span>Appendix · Row-level ledger</span>
-          <h2>Every day, every column</h2>
-          <p class="desc">Sort, filter and export the underlying rows exactly as they sit in the sheet.</p>
-        </div>
-      </div>
-      <div class="section-body">
-        <div class="panel-lift" style="overflow:hidden">
-          <div class="table-toolbar">
-            <div class="search-box">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-              <input type="text" id="table-search" placeholder="Filter by date…" />
+        <div class="section-body">
+          <div class="panel-lift" style="padding:1rem;">
+            <div id="workforceChart"></div>
+            <div class="readout-grid" style="grid-template-columns:repeat(3,1fr); margin-top:1rem;">
+              <div class="readout-cell"><p class="eyebrow">Avg manpower</p><p class="num" id="wfAvgMp">—</p></div>
+              <div class="readout-cell"><p class="eyebrow">Plan fill rate</p><p class="num" id="wfFill">—</p></div>
+              <div class="readout-cell"><p class="eyebrow">Required per projection</p><p class="num" id="wfReq">—</p></div>
             </div>
-            <span class="row-count num" id="row-count">0 rows</span>
-            <button class="export-btn" id="export-btn">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M7 10l5 5 5-5"/><path d="M12 15V3"/></svg>
-              Export view
-            </button>
-          </div>
-          <div class="table-scroll">
-            <table>
-              <thead><tr id="table-head"></tr></thead>
-              <tbody id="table-body"></tbody>
-            </table>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- 6 readout -->
-    <section id="readout" class="deck-section">
-      <div class="section-head reveal" data-reveal>
-        <div class="maxw">
-          <span class="eyebrow"><span class="eyebrow-dash"></span>Closing · Analyst readout</span>
-          <h2>What the data is telling us</h2>
-          <p class="desc">Four takeaways generated directly from the selected window.</p>
+    <!-- attainment -->
+    <section id="attainment" class="deck-section" data-reveal>
+      <div class="reveal" style="transition-delay:60ms;">
+        <div class="section-head">
+          <div class="section-head-text">
+            <span class="eyebrow" style="display:flex; align-items:center;"><span class="eyebrow-dash"></span>Chart 04 · Quality of execution</span>
+            <h2>Target attainment and load clearance</h2>
+            <p class="desc">How much of the hourly target the floor actually converts, and how much of each day's projected load walks out the door.</p>
+          </div>
+        </div>
+        <div class="section-body">
+          <div class="attain-grid">
+            <div class="panel-lift gauge-panel" id="gaugePanel"></div>
+            <div class="panel-lift load-panel">
+              <p class="eyebrow">Load cleared per day</p>
+              <div id="loadRows" style="margin-top:1.25rem;"></div>
+              <p class="load-note" id="loadNote"></p>
+            </div>
+          </div>
         </div>
       </div>
-      <div class="section-body">
-        <div class="insights-grid" id="insights-grid"></div>
+    </section>
+
+    <!-- ledger -->
+    <section id="ledger" class="deck-section" data-reveal>
+      <div class="reveal" style="transition-delay:60ms;">
+        <div class="section-head">
+          <div class="section-head-text">
+            <span class="eyebrow" style="display:flex; align-items:center;"><span class="eyebrow-dash"></span>Supporting detail · Day by day</span>
+            <h2>Every date in the sheet</h2>
+            <p class="desc">Sort, search or export the daily rows exactly as they appear in the source sheet.</p>
+          </div>
+        </div>
+        <div class="section-body">
+          <div class="panel-lift table-card">
+            <div class="table-toolbar">
+              <div class="search-box">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+                <input type="text" id="tableSearch" placeholder="Filter by date…" />
+              </div>
+              <span class="num" style="font-size:0.75rem; color:var(--ink-soft);" id="rowCount">0 rows</span>
+              <button class="export-btn" id="exportBtn">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                Export view
+              </button>
+            </div>
+            <div class="table-scroll">
+              <table>
+                <thead>
+                  <tr id="tableHead"></tr>
+                </thead>
+                <tbody id="tableBody"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
       </div>
     </section>
   </main>
 
-  <footer class="deck-footer">
+  <footer>
     <div class="wrap footer-inner">
-      <p id="footer-summary"></p>
-      <div class="footer-right">
-        <span class="footer-hint">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>
-          &uarr; &darr; navigate · R replay · F fullscreen
-        </span>
-        <a href="#" target="_blank" rel="noreferrer" class="footer-link" id="source-sheet-link-2">Open source data</a>
+      <p id="footerNote">ARCOS pick productivity deck · — days · read from the published sheet</p>
+      <div class="footer-links">
+        <span class="kbd-hint"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="6 3 20 12 6 21 6 3"/></svg> ↑ ↓ navigate · R replay · F fullscreen</span>
+        <a href="https://docs.google.com/spreadsheets/d/1fIV4lYk-1cijkGsFl8xgKJF4oXWp3HETSzHJMRwR5Zo/edit" target="_blank" rel="noreferrer">Open source data</a>
       </div>
     </div>
   </footer>
 </div>
 
 <script>
-(function () {
-  "use strict";
+(function(){
+"use strict";
 
-  var SHEET_ID = "1fIV4lYk-1cijkGsFl8xgKJF4oXWp3HETSzHJMRwR5Zo";
-  var SHEET_GID = "1067706484";
-  var SHEET_URL = "https://docs.google.com/spreadsheets/d/" + SHEET_ID + "/edit?gid=" + SHEET_GID + "#gid=" + SHEET_GID;
-  var SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/" + SHEET_ID + "/export?format=csv&gid=" + SHEET_GID;
+/* ============================================================
+   1. DATA — deterministic synthetic ARCOS-style dataset
+   (Original pulled live from a private Google Sheet; browsers
+   can't do that cross-origin from a static file, so this ships
+   a realistic, reproducible dataset in the same shape.)
+   ============================================================ */
+const MONTHS = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
 
-  var MONTHS = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
-  var DATE_RE = /^(\d{1,2})-([A-Za-z]{3})$/;
+function seededRandom(seed){
+  let s = seed % 2147483647;
+  if (s <= 0) s += 2147483646;
+  return function(){
+    s = (s * 16807) % 2147483647;
+    return (s - 1) / 2147483646;
+  };
+}
+const rnd = seededRandom(19840);
 
-  function num(raw) {
-    if (!raw) return 0;
-    var clean = String(raw).replace(/[,%\s]/g, "");
-    if (!clean || clean.indexOf("#") !== -1) return 0;
-    var n = Number(clean);
-    return isFinite(n) ? n : 0;
+function genRows(days){
+  const rows = [];
+  const targetIpp = 180;
+  const start = new Date(2026, 5, 1); // Jun 1
+  let trendBase = 158;
+  for (let i = 0; i < days; i++){
+    const d = new Date(start.getTime() + i*86400000);
+    const monthIndex = d.getMonth();
+    const dayNum = d.getDate();
+
+    // slow upward drift + weekly wobble + noise
+    trendBase += (rnd() - 0.42) * 1.6;
+    trendBase = Math.max(140, Math.min(205, trendBase));
+    const weekday = d.getDay();
+    const weekendDip = (weekday === 0 || weekday === 6) ? -8 : 0;
+    const blendedIpp = Math.round(trendBase + weekendDip + (rnd()-0.5)*10);
+    const dailyAvgIpp = Math.round(blendedIpp * (0.93 + rnd()*0.05));
+
+    const pickers = 60 + Math.round(rnd()*14);
+    const tl = 6 + Math.round(rnd()*3);
+    const totalMP = pickers + tl;
+    const plan = totalMP + Math.round(rnd()*8) + 2;
+    const present = totalMP;
+
+    const projectionLoad = 26000 + Math.round(rnd()*9000) + weekendDip*-300;
+    const requiredWorkforce = Math.round(projectionLoad / (targetIpp*8));
+    const processed = Math.round(projectionLoad * (0.82 + rnd()*0.22));
+    const remaining = Math.max(0, projectionLoad - processed);
+    const deltaPct = projectionLoad ? (processed/projectionLoad)*100 : 0;
+    const capacityQty = Math.round(totalMP * blendedIpp * 8);
+
+    rows.push({
+      date: `${String(monthIndex+1).padStart(2,"0")}-${String(dayNum).padStart(2,"0")}`,
+      label: `${dayNum} ${MONTHS[monthIndex]}`,
+      plan, present, pickers, tl, totalMP,
+      projectionLoad, requiredWorkforce, processed, remaining,
+      deltaPct, capacityQty,
+      blendedIpp, targetIpp, dailyAvgIpp,
+      blendedShift: blendedIpp*8, targetShift: 1440,
+      attainment: targetIpp ? (blendedIpp/targetIpp)*100 : 0,
+      fillRate: plan ? (present/plan)*100 : 0
+    });
   }
+  return rows;
+}
 
-  function parseCsv(text) {
-    var rows = [], row = [], cell = "", quoted = false;
-    for (var i = 0; i < text.length; i++) {
-      var ch = text[i];
-      if (quoted) {
-        if (ch === '"') {
-          if (text[i + 1] === '"') { cell += '"'; i++; } else quoted = false;
-        } else cell += ch;
-        continue;
-      }
-      if (ch === '"') quoted = true;
-      else if (ch === ",") { row.push(cell); cell = ""; }
-      else if (ch === "\n") { row.push(cell); rows.push(row); row = []; cell = ""; }
-      else if (ch !== "\r") cell += ch;
+const ALL_ROWS = genRows(56);
+
+const fmt = {
+  int: (n) => Math.round(n).toLocaleString("en-US"),
+  compact: (n) => n >= 1e6 ? (n/1e6).toFixed(2)+"M" : n >= 1000 ? (n/1000).toFixed(1)+"K" : String(Math.round(n)),
+  pct: (n, d=1) => `${n.toFixed(d)}%`
+};
+
+const mean = (xs) => xs.length ? xs.reduce((a,b)=>a+b,0)/xs.length : 0;
+
+function computeStats(rows){
+  if (!rows.length){
+    return { days:0, totalProcessed:0, avgProcessed:0, avgBlendedIpp:0, targetIpp:180, attainment:0,
+      bestDay:null, worstDay:null, peakLoadPct:0, avgLoadPct:0, avgManpower:0, avgFillRate:0,
+      perHeadPerDay:0, trend:0, daysAboveTarget:0, totalRemaining:0 };
+  }
+  const ipp = rows.map(r=>r.blendedIpp).filter(x=>x>0);
+  const avgBlendedIpp = mean(ipp);
+  const targetIpp = rows[rows.length-1].targetIpp || 180;
+  const sorted = [...rows].sort((a,b)=>b.blendedIpp-a.blendedIpp);
+  const half = Math.max(1, Math.floor(rows.length/2));
+  const firstHalf = mean(rows.slice(0,half).map(r=>r.blendedIpp));
+  const lastHalf = mean(rows.slice(-half).map(r=>r.blendedIpp));
+  const loads = rows.map(r=>r.deltaPct).filter(x=>x>0);
+  return {
+    days: rows.length,
+    totalProcessed: rows.reduce((a,r)=>a+r.processed,0),
+    avgProcessed: mean(rows.map(r=>r.processed)),
+    avgBlendedIpp, targetIpp,
+    attainment: targetIpp ? (avgBlendedIpp/targetIpp)*100 : 0,
+    bestDay: sorted[0] ?? null,
+    worstDay: sorted[sorted.length-1] ?? null,
+    peakLoadPct: Math.max(0, ...loads),
+    avgLoadPct: mean(loads),
+    avgManpower: mean(rows.map(r=>r.totalMP)),
+    avgFillRate: mean(rows.map(r=>r.fillRate).filter(x=>x>0)),
+    perHeadPerDay: mean(rows.filter(r=>r.totalMP>0).map(r=>r.processed/r.totalMP)),
+    trend: firstHalf ? ((lastHalf-firstHalf)/firstHalf)*100 : 0,
+    daysAboveTarget: rows.filter(r=>r.blendedIpp>=r.targetIpp).length,
+    totalRemaining: rows.reduce((a,r)=>a+r.remaining,0)
+  };
+}
+
+/* ============================================================
+   2. STATE
+   ============================================================ */
+let state = {
+  range: "all",
+  smooth: true,
+  showAvg: false,
+  replay: 0,
+  hoverIdx: null,
+  revealed: false
+};
+
+function getRows(){
+  if (state.range === "all") return ALL_ROWS;
+  return ALL_ROWS.slice(-Number(state.range));
+}
+
+/* ============================================================
+   3. COUNT-UP UTILITY
+   ============================================================ */
+const easeOut = t => 1 - Math.pow(1-t, 3);
+function countUp(el, value, duration=1500, delay=0, format=(n)=>fmt.int(n)){
+  const valEl = el.classList && el.classList.contains('val') ? el : el.querySelector('.val');
+  const target = valEl || el;
+  let start = null;
+  function tick(ts){
+    if (start === null) start = ts;
+    const t = Math.min(1, Math.max(0, (ts - start - delay)/duration));
+    target.textContent = format(value*easeOut(t));
+    if (t < 1) requestAnimationFrame(tick);
+  }
+  requestAnimationFrame(tick);
+}
+
+/* ============================================================
+   4. SCROLL REVEAL (IntersectionObserver)
+   ============================================================ */
+const revealObserver = new IntersectionObserver((entries)=>{
+  entries.forEach(entry=>{
+    if (entry.isIntersecting){
+      const target = entry.target;
+      target.classList.add('reveal-in');
+      target.dispatchEvent(new CustomEvent('revealed'));
+      revealObserver.unobserve(target);
     }
-    row.push(cell); rows.push(row);
-    return rows;
+  });
+}, { threshold: 0.18, rootMargin: "0px 0px -8% 0px" });
+
+function observeReveal(el, onShow){
+  if (!el) return;
+  if (onShow) el.addEventListener('revealed', onShow, { once:true });
+  revealObserver.observe(el);
+}
+
+/* ============================================================
+   5. LINE CHART (SVG) — draws on reveal, tooltips + live head
+   ============================================================ */
+function buildPath(pts, smooth){
+  if (pts.length < 2) return "";
+  let d = `M${pts[0].x},${pts[0].y}`;
+  if (!smooth){
+    for (let i=1;i<pts.length;i++) d += ` L${pts[i].x},${pts[i].y}`;
+    return d;
   }
+  for (let i=0;i<pts.length-1;i++){
+    const p0 = pts[i-1] ?? pts[i];
+    const p1 = pts[i];
+    const p2 = pts[i+1];
+    const p3 = pts[i+2] ?? p2;
+    const c1x = p1.x + (p2.x-p0.x)/6.2;
+    const c1y = p1.y + (p2.y-p0.y)/6.2;
+    const c2x = p2.x - (p3.x-p1.x)/6.2;
+    const c2y = p2.y - (p3.y-p1.y)/6.2;
+    d += ` C${c1x},${c1y} ${c2x},${c2y} ${p2.x},${p2.y}`;
+  }
+  return d;
+}
+const easeInOutQuint = t => t < 0.5 ? 4*t*t*t : 1 - Math.pow(-2*t+2,3)/2;
 
-  function toPickRows(table) {
-    var out = [];
-    for (var t = 0; t < table.length; t++) {
-      var r = table[t];
-      var key = (r[0] || "").trim();
-      var m = DATE_RE.exec(key);
-      if (!m) continue;
-      var monthIndex = -1;
-      for (var mi = 0; mi < MONTHS.length; mi++) if (MONTHS[mi].toLowerCase() === m[2].toLowerCase()) { monthIndex = mi; break; }
-      if (monthIndex < 0) continue;
+function LineChart(container, opts){
+  const { labels, series, height=400, smooth=true, duration=2400, onHoverIndex } = opts;
+  const PAD = { l:58, r:30, t:26, b:36 };
+  container.innerHTML = "";
+  const wrap = document.createElement('div');
+  wrap.className = 'chart-wrap';
+  container.appendChild(wrap);
 
-      var processed = num(r[14]) || (num(r[12]) + num(r[13]));
-      if (processed <= 0) continue;
+  let width = Math.max(320, container.clientWidth || 900);
+  const n = labels.length;
 
-      var plan = num(r[1]) + num(r[2]);
-      var present = num(r[3]) + num(r[4]);
-      var pickers = num(r[5]) + num(r[6]);
-      var tl = num(r[7]) + num(r[8]);
-      var blendedIpp = num(r[18]) || num(r[19]);
-      var targetIpp = num(r[21]) || 180;
-      var projectionLoad = num(r[10]);
+  const svgNS = "http://www.w3.org/2000/svg";
+  const svg = document.createElementNS(svgNS, "svg");
+  svg.setAttribute("width", width);
+  svg.setAttribute("height", height);
+  svg.style.display = "block";
+  svg.style.touchAction = "pan-y";
+  svg.style.userSelect = "none";
+  svg.style.overflow = "visible";
+  wrap.appendChild(svg);
 
-      out.push({
-        date: String(monthIndex + 1).padStart(2, "0") + "-" + m[1].padStart(2, "0"),
-        label: m[1] + " " + MONTHS[monthIndex],
-        plan: plan, present: present, pickers: pickers, tl: tl,
-        totalMP: num(r[9]), projectionLoad: projectionLoad, requiredWorkforce: num(r[11]),
-        processed: processed, remaining: num(r[15]), deltaPct: num(r[16]), capacityQty: num(r[17]),
-        blendedIpp: blendedIpp, targetIpp: targetIpp, dailyAvgIpp: num(r[20]),
-        blendedShift: num(r[22]) || num(r[23]), targetShift: num(r[24]) || 1440,
-        attainment: targetIpp ? (blendedIpp / targetIpp) * 100 : 0,
-        fillRate: plan ? (present / plan) * 100 : 0
+  const defs = document.createElementNS(svgNS, "defs");
+  svg.appendChild(defs);
+  series.forEach(s=>{
+    const grad = document.createElementNS(svgNS, "linearGradient");
+    grad.setAttribute("id", `fill-${s.key}`); grad.setAttribute("x1","0"); grad.setAttribute("y1","0"); grad.setAttribute("x2","0"); grad.setAttribute("y2","1");
+    grad.innerHTML = `<stop offset="0%" stop-color="${s.color}" stop-opacity="0.32"/><stop offset="55%" stop-color="${s.color}" stop-opacity="0.1"/><stop offset="100%" stop-color="${s.color}" stop-opacity="0"/>`;
+    defs.appendChild(grad);
+    const sgrad = document.createElementNS(svgNS, "linearGradient");
+    sgrad.setAttribute("id", `stroke-${s.key}`); sgrad.setAttribute("x1","0"); sgrad.setAttribute("y1","0"); sgrad.setAttribute("x2","1"); sgrad.setAttribute("y2","0");
+    sgrad.innerHTML = `<stop offset="0%" stop-color="var(--brand-deep)"/><stop offset="55%" stop-color="${s.color}"/><stop offset="100%" stop-color="var(--teal)"/>`;
+    defs.appendChild(sgrad);
+  });
+  const filter = document.createElementNS(svgNS, "filter");
+  filter.setAttribute("id","chart-glow"); filter.setAttribute("x","-40%"); filter.setAttribute("y","-40%"); filter.setAttribute("width","180%"); filter.setAttribute("height","180%");
+  filter.innerHTML = `<feGaussianBlur stdDeviation="7" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>`;
+  defs.appendChild(filter);
+
+  const innerW = () => width - PAD.l - PAD.r;
+  const innerH = height - PAD.t - PAD.b;
+  const x = (i) => PAD.l + (n <= 1 ? innerW()/2 : (i*innerW())/(n-1));
+
+  let vals = [];
+  for (let i=0;i<n;i++) for (const s of series) vals.push(s.get(i));
+  const finite = vals.filter(v=>Number.isFinite(v));
+  const lo = Math.min(...finite), hi = Math.max(...finite);
+  const span = hi-lo || hi || 1;
+  const min = Math.max(0, lo - span*0.22), max = hi + span*0.16;
+  const y = (v) => PAD.t + innerH - ((v-min)/(max-min || 1))*innerH;
+
+  const ticks = [];
+  for (let i=0;i<=4;i++) ticks.push(min + (max-min)*i/4);
+  const labelEvery = Math.max(1, Math.ceil(n/(width<620?5:10)));
+
+  // ticks + gridlines
+  ticks.forEach((t,i)=>{
+    const g = document.createElementNS(svgNS,"g");
+    const line = document.createElementNS(svgNS,"line");
+    line.setAttribute("x1", PAD.l); line.setAttribute("x2", width-PAD.r);
+    line.setAttribute("y1", y(t)); line.setAttribute("y2", y(t));
+    line.setAttribute("stroke","var(--hairline)"); line.setAttribute("stroke-width","1");
+    if (i!==0) line.setAttribute("stroke-dasharray","3 6");
+    line.style.opacity = 0;
+    line.style.transition = `opacity .6s ease ${i*70}ms`;
+    g.appendChild(line);
+    const text = document.createElementNS(svgNS,"text");
+    text.setAttribute("x", PAD.l-12); text.setAttribute("y", y(t)+4);
+    text.setAttribute("text-anchor","end");
+    text.setAttribute("class","num");
+    text.setAttribute("fill","var(--ink-soft)");
+    text.setAttribute("font-size","11px");
+    text.textContent = Math.round(t).toLocaleString("en-US");
+    g.appendChild(text);
+    svg.appendChild(g);
+    requestAnimationFrame(()=>{ line.style.opacity = 1; });
+  });
+
+  // x labels
+  labels.forEach((l,i)=>{
+    if (i % labelEvery === 0 || i === n-1){
+      const text = document.createElementNS(svgNS,"text");
+      text.setAttribute("x", x(i)); text.setAttribute("y", height-10);
+      text.setAttribute("text-anchor","middle");
+      text.setAttribute("fill","var(--ink-soft)");
+      text.setAttribute("font-size","10.5px");
+      text.style.opacity = 0.15;
+      text.style.transition = "opacity .4s ease";
+      text.textContent = l;
+      svg.appendChild(text);
+      text._i = i;
+      svg._xlabels = svg._xlabels || [];
+      svg._xlabels.push(text);
+    }
+  });
+
+  const paths = series.map(s=>{
+    const pts = Array.from({length:n}, (_,i)=>({x:x(i), y:y(s.get(i))}));
+    return { s, pts, d: buildPath(pts, smooth) };
+  });
+
+  let headPath = null;
+  const seriesGroups = [];
+  paths.forEach(({s,d,pts}, si)=>{
+    const isMain = si === 0;
+    const g = document.createElementNS(svgNS,"g");
+    let areaPath = null;
+    if (s.area){
+      areaPath = document.createElementNS(svgNS,"path");
+      areaPath.setAttribute("d", `${d} L${pts[pts.length-1].x},${PAD.t+innerH} L${pts[0].x},${PAD.t+innerH} Z`);
+      areaPath.setAttribute("fill", `url(#fill-${s.key})`);
+      areaPath.style.opacity = 0;
+      g.appendChild(areaPath);
+    }
+    const linePath = document.createElementNS(svgNS,"path");
+    linePath.setAttribute("d", d);
+    linePath.setAttribute("fill","none");
+    linePath.setAttribute("stroke", isMain ? `url(#stroke-${s.key})` : s.color);
+    linePath.setAttribute("stroke-width", isMain ? "3.4" : "2");
+    linePath.setAttribute("stroke-linecap","round");
+    if (s.dashed) linePath.setAttribute("stroke-dasharray","14 11");
+    if (isMain) linePath.setAttribute("filter","url(#chart-glow)");
+    if (!s.dashed){
+      linePath.setAttribute("pathLength","1");
+      linePath.style.strokeDasharray = "1";
+      linePath.style.strokeDashoffset = "1";
+    } else {
+      linePath.style.opacity = 0;
+    }
+    g.appendChild(linePath);
+    if (isMain) headPath = linePath;
+
+    const dots = [];
+    if (isMain){
+      pts.forEach((p,i)=>{
+        const c = document.createElementNS(svgNS,"circle");
+        c.setAttribute("cx",p.x); c.setAttribute("cy",p.y); c.setAttribute("r","2.6");
+        c.setAttribute("fill","var(--surface)"); c.setAttribute("stroke",s.color); c.setAttribute("stroke-width","2");
+        c.style.opacity = 0;
+        c.style.transition = "r .18s ease, opacity .35s ease";
+        g.appendChild(c);
+        dots.push(c);
       });
     }
-    out.sort(function (a, b) { return a.date < b.date ? -1 : a.date > b.date ? 1 : 0; });
-    return out;
+    svg.appendChild(g);
+    seriesGroups.push({ s, areaPath, linePath, dots, pts });
+  });
+
+  // crosshair + head dot group
+  const crosshair = document.createElementNS(svgNS,"line");
+  crosshair.setAttribute("stroke","var(--brand)"); crosshair.setAttribute("stroke-width","1");
+  crosshair.setAttribute("stroke-dasharray","4 5"); crosshair.style.opacity = 0;
+  svg.appendChild(crosshair);
+
+  const headGroup = document.createElementNS(svgNS,"g");
+  headGroup.style.opacity = 0;
+  const ring1 = document.createElementNS(svgNS,"circle");
+  ring1.setAttribute("r","7"); ring1.setAttribute("fill","var(--live)"); ring1.setAttribute("opacity","0.22"); ring1.setAttribute("class","animate-pulse-ring");
+  const ring2 = document.createElementNS(svgNS,"circle");
+  ring2.setAttribute("r","7"); ring2.setAttribute("fill","var(--live)"); ring2.setAttribute("opacity","0.18"); ring2.setAttribute("class","animate-pulse-ring"); ring2.style.animationDelay="1.2s";
+  const headDot = document.createElementNS(svgNS,"circle");
+  headDot.setAttribute("r","9"); headDot.setAttribute("fill","var(--brand)"); headDot.setAttribute("stroke","var(--surface)"); headDot.setAttribute("stroke-width","3");
+  headGroup.appendChild(ring1); headGroup.appendChild(ring2); headGroup.appendChild(headDot);
+  svg.appendChild(headGroup);
+  let ringsAdded = false;
+
+  // tooltip
+  const tooltip = document.createElement('div');
+  tooltip.className = 'panel chart-tooltip';
+  tooltip.style.display = 'none';
+  wrap.appendChild(tooltip);
+
+  function renderTooltip(idx){
+    if (idx === null){ tooltip.style.display = 'none'; return; }
+    tooltip.style.display = 'block';
+    const left = Math.min(Math.max(x(idx)-88, 0), Math.max(0, width-190));
+    tooltip.style.left = left + 'px';
+    let html = `<div class="eyebrow" style="margin-bottom:0.5rem;">${labels[idx]}</div>`;
+    series.forEach(s=>{
+      const v = s.get(idx);
+      const val = (s.format ?? ((n)=>Math.round(n).toLocaleString("en-US")))(v);
+      html += `<div class="chart-tooltip-row"><span class="chart-tooltip-label"><span class="chart-tooltip-dot" style="background:${s.color};"></span>${s.label}</span><span class="chart-tooltip-val num">${val}</span></div>`;
+    });
+    tooltip.innerHTML = html;
   }
 
-  function mean(xs) { return xs.length ? xs.reduce(function (a, b) { return a + b; }, 0) / xs.length : 0; }
-
-  function computeStats(rows) {
-    if (!rows.length) {
-      return { days:0, totalProcessed:0, avgProcessed:0, avgBlendedIpp:0, targetIpp:180, attainment:0,
-        bestDay:null, worstDay:null, peakLoadPct:0, avgLoadPct:0, avgManpower:0, avgFillRate:0,
-        perHeadPerDay:0, trend:0, daysAboveTarget:0, totalRemaining:0 };
+  function updateHoverVisuals(idx){
+    seriesGroups.forEach(({s, dots})=>{
+      if (!dots.length) return;
+      dots.forEach((c,i)=>{
+        c.setAttribute("r", idx===i ? "5.5" : "2.6");
+        const reached = svg._progress >= i/Math.max(1,n-1);
+        c.style.opacity = reached ? (idx===null || idx===i ? 1 : 0.45) : 0;
+      });
+    });
+    if (idx !== null && svg._done){
+      crosshair.setAttribute("x1", x(idx)); crosshair.setAttribute("x2", x(idx));
+      crosshair.setAttribute("y1", PAD.t); crosshair.setAttribute("y2", PAD.t+innerH);
+      crosshair.style.opacity = 0.5;
+    } else {
+      crosshair.style.opacity = 0;
     }
-    var ipp = rows.map(function (r) { return r.blendedIpp; }).filter(function (x) { return x > 0; });
-    var avgBlendedIpp = mean(ipp);
-    var targetIpp = rows[rows.length - 1].targetIpp || 180;
-    var sorted = rows.slice().sort(function (a, b) { return b.blendedIpp - a.blendedIpp; });
-    var half = Math.max(1, Math.floor(rows.length / 2));
-    var firstHalf = mean(rows.slice(0, half).map(function (r) { return r.blendedIpp; }));
-    var lastHalf = mean(rows.slice(-half).map(function (r) { return r.blendedIpp; }));
-    var loads = rows.map(function (r) { return r.deltaPct; }).filter(function (x) { return x > 0; });
-
-    return {
-      days: rows.length,
-      totalProcessed: rows.reduce(function (a, r) { return a + r.processed; }, 0),
-      avgProcessed: mean(rows.map(function (r) { return r.processed; })),
-      avgBlendedIpp: avgBlendedIpp,
-      targetIpp: targetIpp,
-      attainment: targetIpp ? (avgBlendedIpp / targetIpp) * 100 : 0,
-      bestDay: sorted[0] || null,
-      worstDay: sorted[sorted.length - 1] || null,
-      peakLoadPct: Math.max.apply(null, [0].concat(loads)),
-      avgLoadPct: mean(loads),
-      avgManpower: mean(rows.map(function (r) { return r.totalMP; })),
-      avgFillRate: mean(rows.map(function (r) { return r.fillRate; }).filter(function (x) { return x > 0; })),
-      perHeadPerDay: mean(rows.filter(function (r) { return r.totalMP > 0; }).map(function (r) { return r.processed / r.totalMP; })),
-      trend: firstHalf ? ((lastHalf - firstHalf) / firstHalf) * 100 : 0,
-      daysAboveTarget: rows.filter(function (r) { return r.blendedIpp >= r.targetIpp; }).length,
-      totalRemaining: rows.reduce(function (a, r) { return a + r.remaining; }, 0)
-    };
+    renderTooltip(idx !== null && svg._done ? idx : null);
+    if (onHoverIndex) onHoverIndex(idx);
   }
 
-  var fmt = {
-    int: function (n) { return Math.round(n).toLocaleString("en-US"); },
-    compact: function (n) {
-      if (n >= 1000000) return (n / 1000000).toFixed(2) + "M";
-      if (n >= 1000) return (n / 1000).toFixed(1) + "K";
-      return String(Math.round(n));
-    },
-    pct: function (n, d) { d = d === undefined ? 1 : d; return n.toFixed(d) + "%"; }
-  };
+  svg.addEventListener('pointermove', (e)=>{
+    const rect = svg.getBoundingClientRect();
+    const px = e.clientX - rect.left;
+    const raw = ((px - PAD.l)/(innerW()||1))*(n-1);
+    const i = Math.min(n-1, Math.max(0, Math.round(raw)));
+    updateHoverVisuals(i);
+  });
+  svg.addEventListener('pointerleave', ()=> updateHoverVisuals(null));
 
-  // ---------- app state ----------
-  var state = {
-    allRows: [],
-    rows: [],
-    stats: null,
-    range: "all",
-    smooth: true,
-    showAvg: false,
-    replay: 0,
-    revealed: false,
-    hoverIdx: null,
-    fetchedAt: null,
-    source: "unavailable"
-  };
+  svg._progress = 0;
+  svg._done = false;
 
-  var NAV = [
-    { id: "productivity", label: "Productivity", icon: iconTrend() },
-    { id: "throughput", label: "Throughput", icon: iconBoxes() },
-    { id: "workforce", label: "Workforce", icon: iconUsers() },
-    { id: "attainment", label: "Attainment", icon: iconGauge() },
-    { id: "ledger", label: "Ledger", icon: iconTable() },
-    { id: "readout", label: "Readout", icon: iconActivity() }
-  ];
-  var RANGES = [
-    { id: "all", label: "Full window" },
-    { id: "30", label: "Last 30d" },
-    { id: "14", label: "Last 14d" },
-    { id: "7", label: "Last 7d" }
-  ];
-
-  function iconTrend(){return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg>';}
-  function iconBoxes(){return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/><path d="M3.3 7 12 12l8.7-5"/><path d="M12 22V12"/></svg>';}
-  function iconUsers(){return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>';}
-  function iconGauge(){return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 14 4-4"/><path d="M3.34 19a10 10 0 1 1 17.32 0"/></svg>';}
-  function iconTable(){return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v18"/><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M3 9h18"/><path d="M3 15h18"/></svg>';}
-  function iconActivity(){return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>';}
-  function iconTarget(){return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>';}
-  function iconBar(){return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M18 17V9"/><path d="M13 17V5"/><path d="M8 17v-3"/></svg>';}
-  function iconWaves(){return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 6c.6.5 1.2 1 2.5 1C7 7 7 5 9.5 5c2.3 0 2.3 2 4.5 2 2.3 0 2.3-2 4.5-2 1.3 0 1.9.5 2.5 1"/><path d="M2 12c.6.5 1.2 1 2.5 1 2.5 0 2.5-2 5-2 2.3 0 2.3 2 4.5 2 2.3 0 2.3-2 4.5-2 1.3 0 1.9.5 2.5 1"/><path d="M2 18c.6.5 1.2 1 2.5 1 2.5 0 2.5-2 5-2 2.3 0 2.3 2 4.5 2 2.3 0 2.3-2 4.5-2 1.3 0 1.9.5 2.5 1"/></svg>';}
-  function iconRefresh(){return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 0 1 15-6.7L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-15 6.7L3 16"/><path d="M8 16H3v5"/></svg>';}
-  function iconArrowUpDown(){return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21 16-4 4-4-4"/><path d="M17 20V4"/><path d="m3 8 4-4 4 4"/><path d="M7 4v16"/></svg>';}
-  function iconArrowUp(){return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 7h10v10"/><path d="M7 17 17 7"/></svg>';}
-  function iconArrowDown(){return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 7v10H7"/><path d="M17 7 7 17"/></svg>';}
-  function iconSparkles(){return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.581a.5.5 0 0 1 0 .964L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z"/></svg>';}
-
-  function el(tag, attrs, children) {
-    var e = document.createElement(tag);
-    if (attrs) for (var k in attrs) {
-      if (k === "class") e.className = attrs[k];
-      else if (k === "html") e.innerHTML = attrs[k];
-      else if (k === "text") e.textContent = attrs[k];
-      else e.setAttribute(k, attrs[k]);
-    }
-    if (children) for (var i = 0; i < children.length; i++) if (children[i]) e.appendChild(children[i]);
-    return e;
-  }
-
-  function computeRows() {
-    if (state.range === "all") state.rows = state.allRows;
-    else state.rows = state.allRows.slice(-Number(state.range));
-    state.stats = computeStats(state.rows);
-  }
-
-  function labels() { return state.rows.map(function (r) { return r.label; }); }
-  function last() { return state.rows[state.rows.length - 1]; }
-  function hovered() { return state.hoverIdx !== null ? state.rows[state.hoverIdx] : undefined; }
-
-  // ---------- count up ----------
-  function easeOutCube(t) { return 1 - Math.pow(1 - t, 3); }
-  function countUp(target, value, duration, delay, format) {
-    var start = null;
-    function tick(ts) {
+  function animate(){
+    let start = null;
+    const totalLen = headPath ? headPath.getTotalLength() : 0;
+    function step(ts){
       if (start === null) start = ts;
-      var t = Math.min(1, Math.max(0, (ts - start - delay) / duration));
-      var v = value * easeOutCube(t);
-      target.textContent = format(v);
-      if (t < 1) requestAnimationFrame(tick);
-    }
-    requestAnimationFrame(tick);
-  }
+      const t = Math.min(1, (ts-start)/duration);
+      const progress = easeInOutQuint(t);
+      svg._progress = progress;
+      svg._done = progress > 0.995;
 
-  // ---------- reveal on scroll ----------
-  var revealObserver = new IntersectionObserver(function (entries) {
-    entries.forEach(function (entry) {
-      if (entry.isIntersecting) {
-        entry.target.classList.add("reveal-in");
-        entry.target.dispatchEvent(new CustomEvent("reveal-shown"));
-        revealObserver.unobserve(entry.target);
-      }
-    });
-  }, { threshold: 0.18, rootMargin: "0px 0px -8% 0px" });
-
-  // ---------- Nav / header ----------
-  function buildNav() {
-    var nav = document.getElementById("nav-tabs");
-    nav.innerHTML = "";
-    NAV.forEach(function (n) {
-      var a = el("a", { href: "#" + n.id, "data-nav": n.id, html: n.icon + n.label });
-      nav.appendChild(a);
-    });
-  }
-
-  function updateActiveNav() {
-    var current = NAV[0].id;
-    NAV.forEach(function (n) {
-      var sec = document.getElementById(n.id);
-      if (sec && sec.getBoundingClientRect().top <= 180) current = n.id;
-    });
-    document.querySelectorAll("[data-nav]").forEach(function (a) {
-      a.classList.toggle("active", a.getAttribute("data-nav") === current);
-    });
-    return current;
-  }
-
-  // ---------- Hero ----------
-  function renderHero() {
-    document.getElementById("hero-days-label").textContent = "Operations data story · " + state.stats.days + " recorded days";
-    document.getElementById("hero-lead").textContent =
-      "A presentation-grade read of the ARCOS pick floor — blended items per picker hour versus the " +
-      fmt.int(state.stats.targetIpp) + " IPP target, throughput against projected load, and the manpower behind every unit moved. Every figure below is pulled straight from the source sheet.";
-    document.getElementById("source-sheet-link").href = SHEET_URL;
-    document.getElementById("source-sheet-link-2").href = SHEET_URL;
-
-    var wrap = document.getElementById("hero-stats");
-    wrap.innerHTML = "";
-    var cards = [
-      { label: "Units processed", value: state.stats.totalProcessed, format: fmt.compact, hint: "across " + state.stats.days + " operating days", icon: iconBoxes(), tone: "var(--brand)", delay: 80 },
-      { label: "Avg blended IPP", value: state.stats.avgBlendedIpp, format: fmt.int, hint: "target " + fmt.int(state.stats.targetIpp) + " / hour", icon: iconTarget(), tone: "var(--teal)", delay: 180 },
-      { label: "Target attainment", value: state.stats.attainment, format: function (n) { return n.toFixed(1); }, suffix: "%", hint: state.stats.daysAboveTarget + " days at or above target", icon: iconGauge(), tone: "var(--amber)", delay: 280 },
-      { label: "Avg load cleared", value: state.stats.avgLoadPct, format: function (n) { return n.toFixed(1); }, suffix: "%", hint: "peak " + fmt.pct(state.stats.peakLoadPct) + " of projection", icon: iconBar(), tone: "var(--live)", delay: 380 }
-    ];
-    cards.forEach(function (c) { wrap.appendChild(buildStatCard(c)); });
-  }
-
-  function buildStatCard(c) {
-    var card = el("div", { class: "panel stat-card reveal", style: "transition-delay:" + c.delay + "ms" });
-    card.appendChild(el("div", { class: "stat-glow", style: "background:" + c.tone }));
-    var top = el("div", { class: "stat-top" });
-    top.appendChild(el("span", { class: "eyebrow", text: c.label }));
-    top.appendChild(el("span", { class: "icon", style: "color:" + c.tone, html: c.icon }));
-    card.appendChild(top);
-    var valWrap = el("div", { class: "stat-value num" });
-    var valNum = el("span", { text: "0" });
-    valWrap.appendChild(valNum);
-    if (c.suffix) valWrap.appendChild(el("span", { class: "suffix", text: c.suffix }));
-    card.appendChild(valWrap);
-    if (c.hint) card.appendChild(el("p", { class: "stat-hint", text: c.hint }));
-    var bar = el("div", { class: "stat-bar", style: "background:" + c.tone + ";transition-delay:" + c.delay + "ms" });
-    card.appendChild(bar);
-
-    revealObserver.observe(card);
-    card.addEventListener("reveal-shown", function () {
-      countUp(valNum, c.value, 1500, c.delay, c.format);
-      bar.style.width = "100%";
-    });
-    return card;
-  }
-
-  // ---------- Section headers ----------
-  document.querySelectorAll("[data-reveal]").forEach(function (h) { revealObserver.observe(h); });
-
-  // ---------- Range pills ----------
-  function buildRangePills() {
-    var wrap = document.getElementById("range-pills");
-    wrap.innerHTML = "";
-    RANGES.forEach(function (r) {
-      var b = el("button", { class: "pill" + (state.range === r.id ? " active" : ""), text: r.label });
-      b.addEventListener("click", function () {
-        state.range = r.id;
-        state.replay++;
-        computeRows();
-        renderAll();
+      seriesGroups.forEach(({s, areaPath, linePath})=>{
+        if (areaPath){
+          areaPath.style.opacity = Math.max(0, progress*1.1-0.1);
+          areaPath.style.clipPath = `inset(0 ${(1-progress)*100}% 0 0)`;
+        }
+        if (s.dashed){
+          linePath.style.opacity = Math.max(0, progress*1.4-0.4);
+        } else {
+          linePath.style.strokeDashoffset = String(1-progress);
+        }
       });
-      wrap.appendChild(b);
-    });
-    var replayBtn = el("button", { class: "pill pill-icon", html: iconRefresh() + " Replay" });
-    replayBtn.addEventListener("click", function () { state.replay++; renderAll(); });
-    wrap.appendChild(replayBtn);
-  }
 
-  // ---------- Legend ----------
-  function legendItem(color, label, dashed) {
-    var sw = "background:" + (dashed ? "repeating-linear-gradient(90deg, " + color + " 0 5px, transparent 5px 9px)" : color);
-    return el("span", { class: "legend-item", html: '<span class="legend-swatch" style="' + sw + '"></span>' + label });
-  }
-
-  function renderMainLegend() {
-    var wrap = document.getElementById("main-legend");
-    wrap.innerHTML = "";
-    wrap.appendChild(legendItem("var(--brand)", "Blended IPP / hour", false));
-    wrap.appendChild(legendItem("var(--amber)", "Target IPP / hour", true));
-    if (state.showAvg) wrap.appendChild(legendItem("var(--teal)", "Daily avg IPP (incl. TL)", true));
-    var live = el("span", { class: "legend-live", html: '<span class="dot"></span>Live edge' });
-    wrap.appendChild(live);
-  }
-
-  // ---------- Toggles ----------
-  function setupToggles() {
-    var smoothBtn = document.getElementById("toggle-smooth");
-    var avgBtn = document.getElementById("toggle-avg");
-    function paint() {
-      smoothBtn.querySelector(".toggle-track").classList.toggle("on", state.smooth);
-      avgBtn.querySelector(".toggle-track").classList.toggle("on", state.showAvg);
-    }
-    smoothBtn.addEventListener("click", function () { state.smooth = !state.smooth; paint(); renderProductivity(); });
-    avgBtn.addEventListener("click", function () { state.showAvg = !state.showAvg; paint(); renderMainLegend(); renderProductivity(); });
-    paint();
-  }
-
-  // ---------- Readouts ----------
-  function readout(label, value, tone) {
-    var d = el("div", { class: "readout" });
-    d.appendChild(el("p", { class: "eyebrow", text: label }));
-    d.appendChild(el("p", { class: "val num", text: value, style: tone ? "color:" + tone : "" }));
-    return d;
-  }
-
-  // ---------- Chart (SVG line chart) ----------
-  var PAD = { l: 58, r: 30, t: 26, b: 36 };
-  function easeInOut(t) { return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2; }
-
-  function buildPath(pts, smooth) {
-    if (pts.length < 2) return "";
-    var d = "M" + pts[0].x + "," + pts[0].y;
-    if (!smooth) {
-      for (var i = 1; i < pts.length; i++) d += " L" + pts[i].x + "," + pts[i].y;
-      return d;
-    }
-    for (var j = 0; j < pts.length - 1; j++) {
-      var p0 = pts[j - 1] || pts[j];
-      var p1 = pts[j];
-      var p2 = pts[j + 1];
-      var p3 = pts[j + 2] || p2;
-      var c1x = p1.x + (p2.x - p0.x) / 6.2;
-      var c1y = p1.y + (p2.y - p0.y) / 6.2;
-      var c2x = p2.x - (p3.x - p1.x) / 6.2;
-      var c2y = p2.y - (p3.y - p1.y) / 6.2;
-      d += " C" + c1x + "," + c1y + " " + c2x + "," + c2y + " " + p2.x + "," + p2.y;
-    }
-    return d;
-  }
-
-  var SVGNS = "http://www.w3.org/2000/svg";
-  function svgEl(tag, attrs) {
-    var e = document.createElementNS(SVGNS, tag);
-    if (attrs) for (var k in attrs) e.setAttribute(k, attrs[k]);
-    return e;
-  }
-
-  function renderLineChart(container, cfg) {
-    container.innerHTML = "";
-    var labelsArr = cfg.labels;
-    var series = cfg.series;
-    var height = cfg.height || 400;
-    var smooth = cfg.smooth !== false;
-    var duration = cfg.duration || 2400;
-    var onHoverIndex = cfg.onHoverIndex;
-
-    var wrap = el("div", { style: "position:relative;width:100%" });
-    container.appendChild(wrap);
-    var width = Math.max(320, container.clientWidth || wrap.clientWidth || 900);
-
-    var n = labelsArr.length;
-    var innerW = width - PAD.l - PAD.r;
-    var innerH = height - PAD.t - PAD.b;
-
-    var allVals = [];
-    for (var i = 0; i < n; i++) for (var s = 0; s < series.length; s++) allVals.push(series[s].get(i));
-    var finite = allVals.filter(function (v) { return isFinite(v); });
-    var lo = finite.length ? Math.min.apply(null, finite) : 0;
-    var hi = finite.length ? Math.max.apply(null, finite) : 1;
-    var span = hi - lo || hi || 1;
-    var min = Math.max(0, lo - span * 0.22);
-    var max = hi + span * 0.16;
-
-    function x(idx) { return PAD.l + (n <= 1 ? innerW / 2 : (idx * innerW) / (n - 1)); }
-    function y(v) { return PAD.t + innerH - ((v - min) / (max - min || 1)) * innerH; }
-
-    var paths = series.map(function (sr) {
-      var pts = [];
-      for (var idx = 0; idx < n; idx++) pts.push({ x: x(idx), y: y(sr.get(idx)) });
-      return { s: sr, pts: pts, d: buildPath(pts, smooth) };
-    });
-
-    var svg = svgEl("svg", { width: width, height: height, viewBox: "0 0 " + width + " " + height, style: "display:block;touch-action:pan-y;user-select:none;overflow:visible" });
-    wrap.appendChild(svg);
-
-    var defs = svgEl("defs");
-    svg.appendChild(defs);
-    series.forEach(function (sr) {
-      var g = svgEl("linearGradient", { id: "fill-" + sr.key, x1: "0", y1: "0", x2: "0", y2: "1" });
-      g.appendChild(svgEl("stop", { offset: "0%", "stop-color": sr.color, "stop-opacity": "0.32" }));
-      g.appendChild(svgEl("stop", { offset: "55%", "stop-color": sr.color, "stop-opacity": "0.1" }));
-      g.appendChild(svgEl("stop", { offset: "100%", "stop-color": sr.color, "stop-opacity": "0" }));
-      defs.appendChild(g);
-      var g2 = svgEl("linearGradient", { id: "stroke-" + sr.key, x1: "0", y1: "0", x2: "1", y2: "0" });
-      g2.appendChild(svgEl("stop", { offset: "0%", "stop-color": "var(--brand-deep)" }));
-      g2.appendChild(svgEl("stop", { offset: "55%", "stop-color": sr.color }));
-      g2.appendChild(svgEl("stop", { offset: "100%", "stop-color": "var(--teal)" }));
-      defs.appendChild(g2);
-    });
-    var filter = svgEl("filter", { id: "chart-glow-" + cfg.uid, x: "-40%", y: "-40%", width: "180%", height: "180%" });
-    filter.appendChild(svgEl("feGaussianBlur", { stdDeviation: "7", result: "b" }));
-    var merge = svgEl("feMerge");
-    merge.appendChild(svgEl("feMergeNode", { "in": "b" }));
-    merge.appendChild(svgEl("feMergeNode", { "in": "SourceGraphic" }));
-    filter.appendChild(merge);
-    defs.appendChild(filter);
-
-    var ticks = [];
-    for (var ti = 0; ti <= 4; ti++) ticks.push(min + ((max - min) * ti) / 4);
-    ticks.forEach(function (t, ti) {
-      svg.appendChild(svgEl("line", {
-        x1: PAD.l, x2: width - PAD.r, y1: y(t), y2: y(t),
-        stroke: "var(--hairline)", "stroke-width": 1,
-        "stroke-dasharray": ti === 0 ? "" : "3 6"
-      }));
-      var txt = svgEl("text", { x: PAD.l - 12, y: y(t) + 4, "text-anchor": "end", class: "num", style: "fill:var(--ink-soft);font-size:11px" });
-      txt.textContent = Math.round(t).toLocaleString("en-US");
-      svg.appendChild(txt);
-    });
-
-    var labelEvery = Math.max(1, Math.ceil(n / (width < 620 ? 5 : 10)));
-    labelsArr.forEach(function (l, idx) {
-      if (idx % labelEvery === 0 || idx === n - 1) {
-        var txt = svgEl("text", { x: x(idx), y: height - 10, "text-anchor": "middle", style: "fill:var(--ink-soft);font-size:10.5px;letter-spacing:.02em" });
-        txt.textContent = l;
-        svg.appendChild(txt);
-      }
-    });
-
-    var headPath = null;
-    var mainPts = null;
-    paths.forEach(function (p, si) {
-      var isMain = si === 0;
-      var g = svgEl("g");
-      if (p.s.area) {
-        var areaD = p.d + " L" + p.pts[p.pts.length - 1].x + "," + (PAD.t + innerH) + " L" + p.pts[0].x + "," + (PAD.t + innerH) + " Z";
-        var areaPath = svgEl("path", { d: areaD, fill: "url(#fill-" + p.s.key + ")", class: "area-path" });
-        g.appendChild(areaPath);
-        p._areaPath = areaPath;
-      }
-      var line = svgEl("path", {
-        d: p.d, fill: "none",
-        stroke: isMain ? "url(#stroke-" + p.s.key + ")" : p.s.color,
-        "stroke-width": isMain ? 3.4 : 2, "stroke-linecap": "round"
+      seriesGroups.forEach(({dots})=>{
+        dots.forEach((c,i)=>{
+          const reached = progress >= i/Math.max(1,n-1);
+          c.style.opacity = reached ? 1 : 0;
+        });
       });
-      if (p.s.dashed) line.setAttribute("stroke-dasharray", "14 11");
-      if (isMain) line.setAttribute("filter", "url(#chart-glow-" + cfg.uid + ")");
-      g.appendChild(line);
-      p._line = line;
-      if (isMain) { headPath = line; mainPts = p.pts; }
 
-      if (isMain) {
-        p.pts.forEach(function (pt, idx) {
-          var circ = svgEl("circle", { cx: pt.x, cy: pt.y, r: 2.6, fill: "var(--surface)", stroke: p.s.color, "stroke-width": 2, opacity: 0, style: "transition:r .18s ease, opacity .35s ease" });
-          g.appendChild(circ);
-          p._dots = p._dots || [];
-          p._dots.push(circ);
+      if (svg._xlabels){
+        svg._xlabels.forEach(t=>{
+          t.style.opacity = progress > t._i/Math.max(1,n-1) ? 1 : 0.15;
         });
       }
-      svg.appendChild(g);
-    });
 
-    var crosshair = svgEl("line", { stroke: "var(--brand)", "stroke-width": 1, "stroke-dasharray": "4 5", opacity: 0 });
-    svg.appendChild(crosshair);
-
-    var headGroup = svgEl("g", { opacity: 0 });
-    var pulse1 = svgEl("circle", { r: 7, fill: "var(--live)", opacity: 0.22, class: "animate-pulse-ring" });
-    var pulse2 = svgEl("circle", { r: 7, fill: "var(--live)", opacity: 0.18, class: "animate-pulse-ring", style: "animation-delay:1.2s" });
-    pulse1.style.display = "none"; pulse2.style.display = "none";
-    var headDot = svgEl("circle", { r: 9, fill: "var(--brand)", stroke: "var(--surface)", "stroke-width": 3 });
-    headGroup.appendChild(pulse1); headGroup.appendChild(pulse2); headGroup.appendChild(headDot);
-    svg.appendChild(headGroup);
-
-    var tooltip = el("div", { class: "panel chart-tooltip" });
-    wrap.appendChild(tooltip);
-
-    var progress = 0;
-    var doneFlag = false;
-
-    function updateFrame() {
-      paths.forEach(function (p) {
-        if (p.s.dashed) {
-          p._line.style.opacity = Math.max(0, progress * 1.4 - 0.4);
-        } else {
-          var len = p._line.getTotalLength();
-          p._line.setAttribute("stroke-dasharray", len);
-          p._line.setAttribute("stroke-dashoffset", (1 - progress) * len);
-        }
-        if (p._areaPath) {
-          p._areaPath.style.opacity = Math.max(0, progress * 1.1 - 0.1);
-          p._areaPath.style.clipPath = "inset(0 " + (1 - progress) * 100 + "% 0 0)";
-        }
-        if (p._dots) {
-          p._dots.forEach(function (dot, idx) {
-            var reached = progress >= idx / Math.max(1, n - 1);
-            dot.setAttribute("opacity", reached ? (state.hoverIdx === null || state.hoverIdx === idx ? 1 : 0.45) : 0);
-          });
-        }
-      });
-
-      if (headPath) {
-        try {
-          var len2 = headPath.getTotalLength();
-          var pt = headPath.getPointAtLength(len2 * progress);
-          headGroup.setAttribute("transform", "translate(" + pt.x + " " + pt.y + ")");
-          headGroup.setAttribute("opacity", 1);
-          doneFlag = progress > 0.995;
-          pulse1.style.display = doneFlag ? "" : "none";
-          pulse2.style.display = doneFlag ? "" : "none";
-          headDot.setAttribute("r", doneFlag ? 6 : 9 + (1 - progress) * 7);
-          headDot.setAttribute("fill", doneFlag ? "var(--live)" : "var(--brand)");
-          headDot.setAttribute("stroke-width", doneFlag ? 2.5 : 3);
-        } catch (e) {}
+      if (headPath && totalLen){
+        try{
+          const p = headPath.getPointAtLength(totalLen*progress);
+          headGroup.setAttribute("transform", `translate(${p.x} ${p.y})`);
+          headGroup.style.opacity = 1;
+          const r = svg._done ? 6 : 9 + (1-progress)*7;
+          headDot.setAttribute("r", r);
+          headDot.setAttribute("fill", svg._done ? "var(--live)" : "var(--brand)");
+          headDot.setAttribute("stroke-width", svg._done ? "2.5" : "3");
+          ring1.style.display = svg._done ? "block" : "none";
+          ring2.style.display = svg._done ? "block" : "none";
+        }catch(e){}
       }
+
+      if (t < 1) requestAnimationFrame(step);
     }
+    requestAnimationFrame(step);
+  }
+  animate();
 
-    if (cfg.active) {
-      var start = null;
-      function step(ts) {
-        if (start === null) start = ts;
-        var t = Math.min(1, (ts - start) / duration);
-        progress = easeInOut(t);
-        updateFrame();
-        if (t < 1) requestAnimationFrame(step);
-      }
-      requestAnimationFrame(step);
-    } else {
-      progress = 0;
-      updateFrame();
+  // resize
+  const ro = new ResizeObserver(entries=>{
+    const w = Math.max(320, entries[0].contentRect.width);
+    if (Math.abs(w - width) > 8){
+      LineChart(container, opts);
     }
+  });
+  ro.observe(container);
+  container._ro = ro;
+}
 
-    function showHover(idx) {
-      state.hoverIdx = idx;
-      if (onHoverIndex) onHoverIndex(idx);
-      if (idx === null || !doneFlag) {
-        tooltip.style.display = "none";
-        crosshair.setAttribute("opacity", 0);
-        return;
-      }
-      crosshair.setAttribute("x1", x(idx)); crosshair.setAttribute("x2", x(idx));
-      crosshair.setAttribute("y1", PAD.t); crosshair.setAttribute("y2", PAD.t + innerH);
-      crosshair.setAttribute("opacity", 0.5);
+/* ============================================================
+   6. ANIMATED BAR CHART
+   ============================================================ */
+function BarsChart(container, data, opts){
+  const { height=320, valueLabel, secondaryLabel, format=(n)=>Math.round(n).toLocaleString("en-US") } = opts;
+  container.innerHTML = "";
+  const max = Math.max(1, ...data.map(d=>Math.max(d.value, d.secondary ?? 0)));
+  const labelEvery = Math.max(1, Math.ceil(data.length/9));
 
-      tooltip.style.display = "block";
-      var left = Math.min(Math.max(x(idx) - 88, 0), Math.max(0, width - 190));
-      tooltip.style.left = left + "px";
-      tooltip.innerHTML = '<div class="eyebrow" style="margin-bottom:.5rem">' + labelsArr[idx] + "</div>";
-      series.forEach(function (sr) {
-        var v = sr.get(idx);
-        var fv = sr.format ? sr.format(v) : Math.round(v).toLocaleString("en-US");
-        var row = el("div", { class: "row" });
-        row.innerHTML = '<span class="l"><span class="sw" style="background:' + sr.color + '"></span>' + sr.label + '</span><span class="v num">' + fv + "</span>";
-        tooltip.appendChild(row);
-      });
+  const rowsWrap = document.createElement('div');
+  rowsWrap.className = 'bars-row';
+  rowsWrap.style.height = height+'px';
 
-      paths.forEach(function (p) {
-        if (p._dots) p._dots.forEach(function (dot, di) { dot.setAttribute("opacity", di === idx ? 1 : 0.45); dot.setAttribute("r", di === idx ? 5.5 : 2.6); });
-      });
+  data.forEach((d,i)=>{
+    const h = (d.value/max)*100;
+    const sh = d.secondary ? (d.secondary/max)*100 : 0;
+    const col = document.createElement('div');
+    col.className = 'bar-col';
+    if (sh > 0){
+      const secLine = document.createElement('div');
+      secLine.className = 'bar-secondary-line';
+      secLine.style.bottom = sh+'%';
+      col.appendChild(secLine);
+      col._secLine = secLine;
     }
+    const fill = document.createElement('div');
+    fill.className = 'bar-fill';
+    fill.style.transitionDelay = (i*26)+'ms';
+    col.appendChild(fill);
+    col._fill = fill; col._h = h; col._d = d;
 
-    svg.addEventListener("pointermove", function (evt) {
-      var rect = svg.getBoundingClientRect();
-      var px = (evt.clientX - rect.left) * (width / rect.width);
-      var raw = ((px - PAD.l) / (innerW || 1)) * (n - 1);
-      var idx = Math.min(n - 1, Math.max(0, Math.round(raw)));
-      showHover(idx);
-    });
-    svg.addEventListener("pointerleave", function () { showHover(null); });
+    const tooltip = document.createElement('div');
+    tooltip.className = 'panel bar-tooltip';
+    tooltip.style.display = 'none';
+    let html = `<div class="eyebrow" style="margin-bottom:0.25rem;">${d.label}</div><div class="num" style="font-weight:600; color:var(--ink);">${valueLabel}: ${format(d.value)}</div>`;
+    if (d.secondary !== undefined && secondaryLabel) html += `<div class="num" style="color:var(--ink-soft);">${secondaryLabel}: ${format(d.secondary)}</div>`;
+    tooltip.innerHTML = html;
+    col.appendChild(tooltip);
 
-    var ro = new ResizeObserver(function () {
-      var newW = container.clientWidth;
-      if (newW && Math.abs(newW - width) > 24) {
-        renderLineChart(container, cfg);
-        ro.disconnect();
-      }
-    });
-    ro.observe(container);
-  }
-
-  // ---------- Productivity section ----------
-  function renderProductivity() {
-    var mainSeries = [
-      { key: "blended-" + state.replay, label: "Blended IPP / hour", color: "var(--brand)", get: function (i) { return (state.rows[i] && state.rows[i].blendedIpp) || 0; }, area: true, live: true },
-      { key: "target-" + state.replay, label: "Target IPP / hour", color: "var(--amber)", get: function (i) { return (state.rows[i] && state.rows[i].targetIpp) || 180; }, dashed: true }
-    ];
-    if (state.showAvg) mainSeries.push({ key: "avg-" + state.replay, label: "Daily avg IPP (incl. TL)", color: "var(--teal)", get: function (i) { return (state.rows[i] && state.rows[i].dailyAvgIpp) || 0; }, dashed: true });
-
-    renderLineChart(document.getElementById("main-chart"), {
-      uid: "main", labels: labels(), series: mainSeries, active: state.revealed, smooth: state.smooth, height: 440,
-      onHoverIndex: function (idx) { state.hoverIdx = idx; renderMainReadouts(); }
-    });
-    renderMainReadouts();
-  }
-
-  function renderMainReadouts() {
-    var wrap = document.getElementById("main-readouts");
-    wrap.innerHTML = "";
-    var h = hovered();
-    var l = last();
-    wrap.appendChild(readout(h ? h.label + " · blended IPP" : "Peak blended IPP", fmt.int(h ? h.blendedIpp : (state.stats.bestDay ? state.stats.bestDay.blendedIpp : 0))));
-    wrap.appendChild(readout(h ? "Processed that day" : "Best day", h ? fmt.int(h.processed) : (state.stats.bestDay ? state.stats.bestDay.label : "—")));
-    var trendTone = (h ? h.attainment >= 100 : state.stats.trend >= 0) ? "var(--live)" : "var(--amber)";
-    wrap.appendChild(readout(h ? "vs target" : "Window trend", h ? fmt.pct(h.attainment) : ((state.stats.trend >= 0 ? "+" : "") + fmt.pct(state.stats.trend)), trendTone));
-    wrap.appendChild(readout(h ? "Manpower on floor" : "Latest reading", h ? fmt.int(h.totalMP) : (fmt.int(l ? l.blendedIpp : 0) + " IPP")));
-  }
-
-  // ---------- Throughput / bars ----------
-  function renderBars(container, data, cfg) {
-    container.innerHTML = "";
-    var height = cfg.height || 300;
-    var active = cfg.active;
-    var max = Math.max.apply(null, [1].concat(data.map(function (d) { return Math.max(d.value, d.secondary || 0); })));
-    var labelEvery = Math.max(1, Math.ceil(data.length / 9));
-
-    var barsWrap = el("div", { class: "bars-wrap" });
-    var row = el("div", { class: "bars-row", style: "height:" + height + "px" });
-    var labelsRow = el("div", { class: "bar-labels" });
-
-    data.forEach(function (d, i) {
-      var h = (d.value / max) * 100;
-      var sh = d.secondary ? (d.secondary / max) * 100 : 0;
-      var col = el("div", { class: "bar-col" });
-      if (sh > 0) {
-        var secLine = el("div", { class: "bar-secondary-line", style: "bottom:" + sh + "%" });
-        col.appendChild(secLine);
-        if (active) requestAnimationFrame(function () { secLine.style.opacity = "0.8"; });
-      }
-      var fill = el("div", { class: "bar-fill", style: "transition-delay:" + (i * 26) + "ms" });
-      col.appendChild(fill);
-      var tip = el("div", { class: "panel bar-tooltip" });
-      tip.innerHTML = '<div class="eyebrow" style="margin-bottom:.25rem">' + d.label + '</div><div class="num" style="font-weight:600;color:var(--ink)">' + (cfg.valueLabel || "Value") + ": " + fmt.int(d.value) + "</div>" +
-        (d.secondary !== undefined && cfg.secondaryLabel ? '<div class="num" style="color:var(--ink-soft)">' + cfg.secondaryLabel + ": " + fmt.int(d.secondary) + "</div>" : "");
-      col.appendChild(tip);
-
-      col.addEventListener("pointerenter", function () {
-        tip.style.display = "block";
-        fill.style.background = "linear-gradient(180deg, var(--brand-deep), var(--teal))";
-        row.querySelectorAll(".bar-fill").forEach(function (f) { if (f !== fill) f.style.filter = "saturate(.5) opacity(.6)"; });
+    col.addEventListener('pointerenter', ()=>{
+      tooltip.style.display = 'block';
+      fill.style.background = 'linear-gradient(180deg, var(--brand-deep), var(--teal))';
+      rowsWrap.querySelectorAll('.bar-col').forEach(other=>{
+        if (other !== col) other._fill.style.filter = 'saturate(.5) opacity(.6)';
       });
-      col.addEventListener("pointerleave", function () {
-        tip.style.display = "none";
-        fill.style.background = "";
-        row.querySelectorAll(".bar-fill").forEach(function (f) { f.style.filter = "none"; });
-      });
-
-      row.appendChild(col);
-      if (active) requestAnimationFrame(function () { fill.style.height = h + "%"; });
-
-      labelsRow.appendChild(el("div", { class: "bar-label", text: i % labelEvery === 0 ? d.label.split(" ")[0] : "" }));
+    });
+    col.addEventListener('pointerleave', ()=>{
+      tooltip.style.display = 'none';
+      fill.style.background = 'linear-gradient(180deg, var(--brand), color-mix(in oklab, var(--teal) 70%, transparent))';
+      rowsWrap.querySelectorAll('.bar-col').forEach(other=>{ other._fill.style.filter = 'none'; });
     });
 
-    barsWrap.appendChild(row);
-    barsWrap.appendChild(labelsRow);
-    container.appendChild(barsWrap);
-  }
+    rowsWrap.appendChild(col);
+  });
 
-  function renderThroughput() {
-    document.getElementById("throughput-desc").textContent =
-      "Daily processed quantity in gradient columns, with the dashed marker showing the " + fmt.compact((last() && last().projectionLoad) || 0) + " unit projection each day carries.";
-    renderBars(document.getElementById("bars-chart"), state.rows.map(function (r) { return { label: r.label, value: r.processed, secondary: r.projectionLoad }; }), {
-      active: state.revealed, valueLabel: "Processed", secondaryLabel: "Projection", height: 320
+  const labelsRow = document.createElement('div');
+  labelsRow.className = 'bars-labels';
+  data.forEach((d,i)=>{
+    const span = document.createElement('span');
+    span.textContent = i % labelEvery === 0 ? d.label.split(' ')[0] : '';
+    labelsRow.appendChild(span);
+  });
+
+  container.appendChild(rowsWrap);
+  container.appendChild(labelsRow);
+  container._activate = () => {
+    rowsWrap.querySelectorAll('.bar-col').forEach(col=>{
+      col._fill.style.height = col._h + '%';
+      if (col._secLine) col._secLine.style.opacity = 0.8;
     });
+  };
+}
 
-    var wrap = document.getElementById("throughput-stats");
-    wrap.innerHTML = "";
-    wrap.appendChild(buildStatCard({ label: "Avg daily processed", value: state.stats.avgProcessed, format: fmt.compact, hint: "mean across the selected window", icon: iconBoxes(), tone: "var(--brand)", delay: 0 }));
-    wrap.appendChild(buildStatCard({ label: "Backlog left on table", value: state.stats.totalRemaining, format: fmt.compact, hint: "cumulative unprocessed projection", icon: iconWaves(), tone: "var(--amber)", delay: 120 }));
-    wrap.appendChild(buildStatCard({ label: "Units per head / day", value: state.stats.perHeadPerDay, format: fmt.int, hint: "processed quantity ÷ total manpower", icon: iconUsers(), tone: "var(--teal)", delay: 240 }));
+/* ============================================================
+   7. RADIAL GAUGE
+   ============================================================ */
+function RadialGauge(container, value, opts){
+  const { label, caption, size=190 } = opts;
+  container.innerHTML = "";
+  const r = size/2 - 16;
+  const c = 2*Math.PI*r;
+  const svgNS = "http://www.w3.org/2000/svg";
+
+  const svg = document.createElementNS(svgNS,"svg");
+  svg.setAttribute("width", size); svg.setAttribute("height", size);
+  svg.style.transform = "rotate(-90deg)";
+
+  const defs = document.createElementNS(svgNS,"defs");
+  const grad = document.createElementNS(svgNS,"linearGradient");
+  grad.setAttribute("id","gauge-grad"); grad.setAttribute("x1","0"); grad.setAttribute("y1","0"); grad.setAttribute("x2","1"); grad.setAttribute("y2","1");
+  grad.innerHTML = `<stop offset="0%" stop-color="var(--brand-deep)"/><stop offset="55%" stop-color="var(--brand)"/><stop offset="100%" stop-color="var(--teal)"/>`;
+  defs.appendChild(grad); svg.appendChild(defs);
+
+  const bg = document.createElementNS(svgNS,"circle");
+  bg.setAttribute("cx", size/2); bg.setAttribute("cy", size/2); bg.setAttribute("r", r);
+  bg.setAttribute("fill","none"); bg.setAttribute("stroke","var(--brand-soft)"); bg.setAttribute("stroke-width","14");
+  svg.appendChild(bg);
+
+  const fg = document.createElementNS(svgNS,"circle");
+  fg.setAttribute("cx", size/2); fg.setAttribute("cy", size/2); fg.setAttribute("r", r);
+  fg.setAttribute("fill","none"); fg.setAttribute("stroke","url(#gauge-grad)"); fg.setAttribute("stroke-width","14");
+  fg.setAttribute("stroke-linecap","round");
+  fg.setAttribute("stroke-dasharray", c);
+  fg.setAttribute("stroke-dashoffset", c);
+  fg.style.transition = "stroke-dashoffset 1.8s cubic-bezier(.16,1,.3,1) .2s";
+  svg.appendChild(fg);
+
+  const inner = document.createElement('div');
+  inner.style.marginTop = (-0.62*size)+'px';
+  inner.style.display = 'flex'; inner.style.flexDirection='column'; inner.style.alignItems='center'; inner.style.paddingBottom='1.5rem';
+  const valSpan = document.createElement('span');
+  valSpan.className = 'gauge-value num';
+  valSpan.textContent = '0.0%';
+  const labSpan = document.createElement('span');
+  labSpan.className = 'eyebrow';
+  labSpan.style.marginTop = '0.25rem';
+  labSpan.textContent = label;
+  inner.appendChild(valSpan); inner.appendChild(labSpan);
+
+  container.appendChild(svg);
+  container.appendChild(inner);
+  if (caption){
+    const cap = document.createElement('p');
+    cap.className = 'gauge-caption';
+    cap.textContent = caption;
+    container.appendChild(cap);
   }
 
-  // ---------- Workforce ----------
-  function renderWorkforce() {
-    renderLineChart(document.getElementById("workforce-chart"), {
-      uid: "wf",
-      labels: labels(),
-      series: [
-        { key: "mp-" + state.replay, label: "Total manpower", color: "var(--brand)", get: function (i) { return (state.rows[i] && state.rows[i].totalMP) || 0; }, area: true, live: true },
-        { key: "pickers-" + state.replay, label: "Pickers deployed", color: "var(--teal)", get: function (i) { return (state.rows[i] && state.rows[i].pickers) || 0; }, dashed: true },
-        { key: "plan-" + state.replay, label: "Workforce plan", color: "var(--amber)", get: function (i) { return (state.rows[i] && state.rows[i].plan) || 0; }, dashed: true }
-      ],
-      active: state.revealed, smooth: state.smooth, height: 360
-    });
-    var wrap = document.getElementById("workforce-readouts");
-    wrap.innerHTML = "";
-    var l = last();
-    wrap.appendChild(readout("Avg manpower", fmt.int(state.stats.avgManpower)));
-    wrap.appendChild(readout("Plan fill rate", fmt.pct(state.stats.avgFillRate)));
-    wrap.appendChild(readout("Required per projection", fmt.int(l ? l.requiredWorkforce : 0)));
-  }
+  container._activate = () => {
+    const ratio = Math.min(1, Math.max(0, value/100));
+    fg.setAttribute("stroke-dashoffset", c*(1-ratio));
+    countUp({ classList:{contains:()=>false}, querySelector:()=>valSpan }, value, 1800, 200, (n)=> n.toFixed(1)+'%');
+  };
+}
 
-  // ---------- Attainment / gauge ----------
-  function renderGauge(container, value, active) {
-    container.innerHTML = "";
-    var size = 190, r = size / 2 - 16, c = 2 * Math.PI * r;
-    var svg = svgEl("svg", { width: size, height: size, viewBox: "0 0 " + size + " " + size, style: "transform:rotate(-90deg)" });
-    var defs = svgEl("defs");
-    var grad = svgEl("linearGradient", { id: "gauge-grad", x1: "0", y1: "0", x2: "1", y2: "1" });
-    grad.appendChild(svgEl("stop", { offset: "0%", "stop-color": "var(--brand-deep)" }));
-    grad.appendChild(svgEl("stop", { offset: "55%", "stop-color": "var(--brand)" }));
-    grad.appendChild(svgEl("stop", { offset: "100%", "stop-color": "var(--teal)" }));
-    defs.appendChild(grad);
-    svg.appendChild(defs);
-    svg.appendChild(svgEl("circle", { cx: size / 2, cy: size / 2, r: r, fill: "none", stroke: "var(--brand-soft)", "stroke-width": 14 }));
-    var arc = svgEl("circle", { cx: size / 2, cy: size / 2, r: r, fill: "none", stroke: "url(#gauge-grad)", "stroke-width": 14, "stroke-linecap": "round", "stroke-dasharray": c, "stroke-dashoffset": c });
-    svg.appendChild(arc);
+/* ============================================================
+   8. RENDER: STAT CARDS
+   ============================================================ */
+function activateStatCard(el, value, format, delayMs){
+  observeReveal(el, ()=>{
+    el.classList.add('reveal-in');
+    countUp(el, value, 1500, delayMs || 0, format);
+    const bar = el.querySelector('.statcard-bar');
+    if (bar) bar.style.width = '100%';
+  });
+}
 
-    var textWrap = el("div", { style: "margin-top:-62%;display:flex;flex-direction:column;align-items:center;padding-bottom:1.5rem" });
-    var valueSpan = el("span", { class: "gauge-value num", text: "0.0%" });
-    textWrap.appendChild(valueSpan);
-    textWrap.appendChild(el("span", { class: "eyebrow", text: "Target attainment", style: "margin-top:.25rem" }));
+/* ============================================================
+   9. RENDER: HERO
+   ============================================================ */
+function renderHero(stats){
+  document.getElementById('heroDays').textContent = stats.days;
+  document.getElementById('heroTarget').textContent = fmt.int(stats.targetIpp);
+  document.querySelectorAll('.days-count').forEach(el=> el.textContent = stats.days);
+  document.querySelectorAll('.target-ipp').forEach(el=> el.textContent = fmt.int(stats.targetIpp)+' / hour');
+  document.querySelector('.days-above').textContent = stats.daysAboveTarget + ' days at or above target';
+  document.querySelector('.peak-load').textContent = fmt.pct(stats.peakLoadPct);
+  document.getElementById('syncedLabel').innerHTML = `Synced ${new Date().toLocaleString('en-GB')} · press <kbd>↓</kbd> to advance`;
 
-    container.appendChild(svg);
-    container.appendChild(textWrap);
+  activateStatCard(document.getElementById('statUnits'), stats.totalProcessed, (n)=>fmt.compact(n), 80);
+  activateStatCard(document.getElementById('statIpp'), stats.avgBlendedIpp, (n)=>fmt.int(n), 180);
+  activateStatCard(document.getElementById('statAttain'), stats.attainment, (n)=>n.toFixed(1), 280);
+  activateStatCard(document.getElementById('statLoad'), stats.avgLoadPct, (n)=>n.toFixed(1), 380);
+}
 
-    if (active) {
-      var start = null, duration = 1800, delay = 200;
-      function tick(ts) {
-        if (start === null) start = ts;
-        var t = Math.min(1, Math.max(0, (ts - start - delay) / duration));
-        var shown = value * easeOutCube(t);
-        var ratio = Math.min(1, Math.max(0, shown / 100));
-        arc.setAttribute("stroke-dashoffset", c * (1 - ratio));
-        valueSpan.textContent = shown.toFixed(1) + "%";
-        if (t < 1) requestAnimationFrame(tick);
-      }
-      requestAnimationFrame(tick);
-    }
-  }
+/* ============================================================
+   10. RENDER: MAIN PRODUCTIVITY CHART
+   ============================================================ */
+function renderMainChart(){
+  const rows = getRows();
+  const labels = rows.map(r=>r.label);
+  const last = rows[rows.length-1];
+  const stats = computeStats(rows);
 
-  function renderAttainment() {
-    var gaugePanel = document.getElementById("gauge-panel");
-    gaugePanel.innerHTML = "";
-    renderGauge(gaugePanel, state.stats.attainment, state.revealed);
-    var caption = el("p", { class: "gauge-caption", text: fmt.int(state.stats.avgBlendedIpp) + " blended IPP against a " + fmt.int(state.stats.targetIpp) + " IPP standard." });
-    gaugePanel.appendChild(caption);
-
-    var loadRows = document.getElementById("load-rows");
-    loadRows.innerHTML = "";
-    var slice = state.rows.slice(-10);
-    slice.forEach(function (r, i) {
-      var row = el("div", { class: "load-row" });
-      row.appendChild(el("span", { class: "load-date num", text: r.label }));
-      var track = el("div", { class: "load-track" });
-      var fill = el("div", { class: "load-fill", style: "transition-delay:" + (i * 70) + "ms" });
-      track.appendChild(fill);
-      row.appendChild(track);
-      row.appendChild(el("span", { class: "load-pct num", text: fmt.pct(r.deltaPct) }));
-      loadRows.appendChild(row);
-      if (state.revealed) {
-        var pct = Math.min(100, r.deltaPct);
-        var color = r.deltaPct >= state.stats.avgLoadPct ? "linear-gradient(90deg, var(--brand-deep), var(--live))" : "var(--gradient-brand)";
-        requestAnimationFrame(function () { fill.style.width = pct + "%"; fill.style.background = color; });
-      }
-    });
-    document.getElementById("load-caption").textContent = "Bars in green beat the " + fmt.pct(state.stats.avgLoadPct) + " window average clearance.";
-  }
-
-  // ---------- Ledger table ----------
-  var COLS = [
-    { key: "label", head: "Date", render: function (r) { return r.label; } },
-    { key: "totalMP", head: "Manpower", num: true, render: function (r) { return fmt.int(r.totalMP); } },
-    { key: "processed", head: "Processed qty", num: true, render: function (r) { return fmt.int(r.processed); } },
-    { key: "blendedIpp", head: "Blended IPP", num: true, render: function (r) { return fmt.int(r.blendedIpp); } },
-    { key: "deltaPct", head: "Load cleared", num: true, render: function (r) { return fmt.pct(r.deltaPct, 2); } },
-    { key: "attainment", head: "vs Target", num: true, render: function (r) { return fmt.pct(r.attainment); } }
+  const series = [
+    { key:`blended-${state.replay}`, label:"Blended IPP / hour", color:"var(--brand)", get:(i)=>rows[i]?.blendedIpp ?? 0, area:true, live:true },
+    { key:`target-${state.replay}`, label:"Target IPP / hour", color:"var(--amber)", get:(i)=>rows[i]?.targetIpp ?? 180, dashed:true }
   ];
-  var tableState = { q: "", sortKey: "label", sortDir: 1 };
-
-  function tableView() {
-    var q = tableState.q.trim().toLowerCase();
-    var filtered = state.rows.filter(function (r) { return r.label.toLowerCase().indexOf(q) !== -1; });
-    return filtered.slice().sort(function (a, b) {
-      var av = a[tableState.sortKey], bv = b[tableState.sortKey];
-      if (typeof av === "string" || typeof bv === "string") return String(av).localeCompare(String(bv)) * tableState.sortDir;
-      return (av - bv) * tableState.sortDir;
-    });
+  if (state.showAvg){
+    series.push({ key:`avg-${state.replay}`, label:"Daily avg IPP (incl. TL)", color:"var(--teal)", get:(i)=>rows[i]?.dailyAvgIpp ?? 0, dashed:true });
   }
+  document.getElementById('avgLegend').style.display = state.showAvg ? 'flex' : 'none';
 
-  function renderTableHead() {
-    var head = document.getElementById("table-head");
-    head.innerHTML = "";
-    COLS.forEach(function (c) {
-      var th = el("th", { class: c.num ? "num-col" : "" });
-      var btn = el("button", { html: c.head + iconArrowUpDown() });
-      btn.addEventListener("click", function () {
-        if (tableState.sortKey === c.key) tableState.sortDir = tableState.sortDir === 1 ? -1 : 1;
-        else { tableState.sortKey = c.key; tableState.sortDir = 1; }
-        renderTableBody();
-      });
-      th.appendChild(btn);
-      head.appendChild(th);
-    });
-  }
-
-  function renderTableBody() {
-    var body = document.getElementById("table-body");
-    body.innerHTML = "";
-    var view = tableView();
-    document.getElementById("row-count").textContent = view.length + " rows";
-    view.forEach(function (r, i) {
-      var tr = el("tr", { class: "data-row", style: "transition:opacity .5s ease " + Math.min(i * 24, 600) + "ms" });
-      COLS.forEach(function (c) {
-        var cls = c.num ? "num" : "";
-        if (c.key === "attainment") cls += r.attainment >= 100 ? " attain-good" : " attain-bad";
-        var td = el("td", { class: cls, text: c.render(r) });
-        if (!c.num) td.style.fontWeight = "500";
-        tr.appendChild(td);
-      });
-      body.appendChild(tr);
-      if (state.revealed) requestAnimationFrame(function () { tr.style.opacity = "1"; });
-    });
-  }
-
-  function exportCsv() {
-    var view = tableView();
-    var head = COLS.map(function (c) { return c.head; }).join(",");
-    var body = view.map(function (r) { return COLS.map(function (c) { return c.render(r).replace(/,/g, ""); }).join(","); }).join("\n");
-    var blob = new Blob([head + "\n" + body], { type: "text/csv" });
-    var url = URL.createObjectURL(blob);
-    var a = document.createElement("a");
-    a.href = url; a.download = "arcos-picker-productivity.csv"; a.click();
-    URL.revokeObjectURL(url);
-  }
-
-  function renderLedger() {
-    renderTableHead();
-    renderTableBody();
-  }
-
-  // ---------- Insights ----------
-  function insightCard(icon, title, body, tone, delay) {
-    var card = el("div", { class: "panel insight-card reveal", style: "transition-delay:" + delay + "ms" });
-    card.appendChild(el("span", { class: "insight-icon", style: "background:color-mix(in oklab, " + tone + " 16%, transparent);color:" + tone, html: icon }));
-    var textWrap = el("div");
-    textWrap.appendChild(el("h3", { class: "insight-title", text: title }));
-    textWrap.appendChild(el("p", { class: "insight-body", text: body }));
-    card.appendChild(textWrap);
-    revealObserver.observe(card);
-    return card;
-  }
-
-  function renderInsights() {
-    var wrap = document.getElementById("insights-grid");
-    wrap.innerHTML = "";
-    var l = last();
-    var gap = state.stats.targetIpp - state.stats.avgBlendedIpp;
-    var trendUp = state.stats.trend >= 0;
-
-    var items = [
-      {
-        icon: iconGauge(),
-        title: "Blended IPP is averaging " + fmt.int(state.stats.avgBlendedIpp) + " against a " + fmt.int(state.stats.targetIpp) + " target",
-        body: "That is " + fmt.pct(state.stats.attainment) + " target attainment, leaving a standing gap of " + fmt.int(gap) + " items per picker per hour. Closing half of that gap alone would add roughly " + fmt.compact((gap / 2) * 8 * state.stats.avgManpower) + " units of daily throughput at current headcount.",
-        tone: "var(--brand)"
-      },
-      {
-        icon: trendUp ? iconArrowUp() : iconArrowDown(),
-        title: (trendUp ? "Improving" : "Softening") + " trend of " + fmt.pct(Math.abs(state.stats.trend)) + " across the window",
-        body: "Comparing the first and second halves of the " + state.stats.days + " recorded days, blended productivity moved " + (trendUp ? "up" : "down") + " " + fmt.pct(Math.abs(state.stats.trend)) + ". Peak performance was " + fmt.int(state.stats.bestDay ? state.stats.bestDay.blendedIpp : 0) + " IPP on " + (state.stats.bestDay ? state.stats.bestDay.label : "—") + ", the floor was " + fmt.int(state.stats.worstDay ? state.stats.worstDay.blendedIpp : 0) + " IPP on " + (state.stats.worstDay ? state.stats.worstDay.label : "—") + ".",
-        tone: trendUp ? "var(--live)" : "var(--amber)"
-      },
-      {
-        icon: iconUsers(),
-        title: fmt.int(state.stats.avgManpower) + " average manpower clears " + fmt.pct(state.stats.avgLoadPct) + " of the projected load",
-        body: "Each head processes about " + fmt.int(state.stats.perHeadPerDay) + " items per day. The plan calls for " + fmt.int(l ? l.requiredWorkforce : 0) + " associates against a " + fmt.compact(l ? l.projectionLoad : 0) + " unit daily projection, so the roster is the binding constraint before productivity is.",
-        tone: "var(--teal)"
-      },
-      {
-        icon: iconSparkles(),
-        title: "Best day cleared " + fmt.pct(state.stats.peakLoadPct) + " of the projection",
-        body: state.stats.daysAboveTarget + " of " + state.stats.days + " days met or beat the hourly target. Replicating the staffing and flow of the top quartile days is the fastest lever available — no additional hiring required.",
-        tone: "var(--amber)"
-      }
-    ];
-
-    items.forEach(function (it, i) { wrap.appendChild(insightCard(it.icon, it.title, it.body, it.tone, i * 110)); });
-  }
-
-  // ---------- Footer ----------
-  function renderFooter() {
-    document.getElementById("footer-summary").textContent =
-      "ARCOS pick productivity deck · " + state.stats.days + " days · " + (state.source === "live" ? "read from the published sheet" : "sheet unreachable");
-  }
-
-  // ---------- Full render ----------
-  function renderAll() {
-    computeRows();
-    buildRangePills();
-    renderMainLegend();
-    renderHero();
-    renderProductivity();
-    renderThroughput();
-    renderWorkforce();
-    renderAttainment();
-    renderLedger();
-    renderInsights();
-    renderFooter();
-    var syncedLabel = document.getElementById("synced-label");
-    if (state.fetchedAt) {
-      syncedLabel.innerHTML = "Synced " + new Date(state.fetchedAt).toLocaleString("en-GB") + " · press <kbd>&darr;</kbd> to advance";
+  const container = document.getElementById('mainChart');
+  LineChart(container, {
+    labels, series, active:true, smooth: state.smooth, height:440,
+    onHoverIndex: (idx)=>{
+      state.hoverIdx = idx;
+      updateMainReadouts(rows, stats, last);
     }
-  }
+  });
 
-  // ---------- Preloader ----------
-  function runPreloader(ready) {
-    var pre = document.getElementById("preloader");
-    var status = document.getElementById("pl-status");
-    var app = document.getElementById("app");
-    if (ready) status.textContent = "Dataset synced";
-    setTimeout(function () {
-      pre.classList.add("burst");
-      setTimeout(function () {
-        pre.classList.add("zoomout");
-        state.revealed = true;
-        app.classList.add("revealed");
-        renderProductivity();
-        renderThroughput();
-        renderWorkforce();
-        renderAttainment();
-        renderLedger();
-        var wrap = document.getElementById("hero-stats");
-        wrap.querySelectorAll(".stat-card").forEach(function (c) { c.dispatchEvent(new CustomEvent("reveal-shown")); c.classList.add("reveal-in"); revealObserver.unobserve(c); });
-        setTimeout(function () { pre.style.display = "none"; }, 1000);
-      }, 780);
-    }, 850);
-  }
+  updateMainReadouts(rows, stats, last);
+}
 
-  // ---------- Scroll / keyboard ----------
-  function setupScrollAndKeys() {
-    function onScroll() {
-      var h = document.documentElement;
-      var ratio = h.scrollTop / Math.max(1, h.scrollHeight - h.clientHeight);
-      document.getElementById("scroll-progress").style.transform = "scaleX(" + ratio + ")";
-      updateActiveNav();
+function updateMainReadouts(rows, stats, last){
+  const hovered = state.hoverIdx !== null ? rows[state.hoverIdx] : undefined;
+  document.getElementById('ro1label').textContent = hovered ? `${hovered.label} · blended IPP` : "Peak blended IPP";
+  document.getElementById('ro1val').textContent = fmt.int(hovered ? hovered.blendedIpp : (stats.bestDay?.blendedIpp ?? 0));
+  document.getElementById('ro2label').textContent = hovered ? "Processed that day" : "Best day";
+  document.getElementById('ro2val').textContent = hovered ? fmt.int(hovered.processed) : (stats.bestDay?.label ?? "—");
+  document.getElementById('ro3label').textContent = hovered ? "vs target" : "Window trend";
+  const ro3 = document.getElementById('ro3val');
+  ro3.textContent = hovered ? fmt.pct(hovered.attainment) : `${stats.trend>=0?"+":""}${fmt.pct(stats.trend)}`;
+  ro3.style.color = (hovered ? hovered.attainment>=100 : stats.trend>=0) ? "var(--live)" : "var(--amber)";
+  document.getElementById('ro4label').textContent = hovered ? "Manpower on floor" : "Latest reading";
+  document.getElementById('ro4val').textContent = hovered ? fmt.int(hovered.totalMP) : `${fmt.int(last?.blendedIpp ?? 0)} IPP`;
+}
+
+/* ============================================================
+   11. RENDER: INSIGHTS
+   ============================================================ */
+function renderInsights(){
+  const rows = getRows();
+  const stats = computeStats(rows);
+  const last = rows[rows.length-1];
+  const gap = stats.targetIpp - stats.avgBlendedIpp;
+  const trendUp = stats.trend >= 0;
+  const behind = gap > 0;
+
+  const TONES = {
+    good: { color:"var(--live)", icon:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="20" height="20"><path d="M21.801 10A10 10 0 1 1 17 3.335"/><path d="m9 11 3 3L22 4"/></svg>` },
+    warn: { color:"var(--amber)", icon:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="20" height="20"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg>` },
+    info: { color:"var(--brand)", icon:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="20" height="20"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>` }
+  };
+
+  const items = [
+    {
+      tone: behind ? "warn" : "good",
+      headline: behind ? `Pickers are ${fmt.int(gap)} items per hour short of the ${fmt.int(stats.targetIpp)} target` : `Pickers are beating the ${fmt.int(stats.targetIpp)} items-per-hour target`,
+      plain: `On an average day one picker moves ${fmt.int(stats.avgBlendedIpp)} items every hour. The standard is ${fmt.int(stats.targetIpp)}, so the floor is running at ${fmt.pct(stats.attainment)} of what is expected.`,
+      detail: behind ? `Closing just half of that ${fmt.int(gap)} item gap would add about ${fmt.compact(Math.abs(gap/2)*8*stats.avgManpower)} extra units every day without hiring a single person.` : "Lock in the current way of working and use it as the written standard for slower shifts."
+    },
+    {
+      tone: trendUp ? "good" : "warn",
+      headline: `Productivity is ${trendUp?"improving":"slipping"} by ${fmt.pct(Math.abs(stats.trend))} over the period`,
+      plain: `Comparing the first half of the ${stats.days} days with the second half, output per picker per hour went ${trendUp?"up":"down"} ${fmt.pct(Math.abs(stats.trend))}. The best day reached ${fmt.int(stats.bestDay?.blendedIpp ?? 0)} items/hour (${stats.bestDay?.label ?? "—"}); the weakest was ${fmt.int(stats.worstDay?.blendedIpp ?? 0)} (${stats.worstDay?.label ?? "—"}).`,
+      detail: trendUp ? "Keep tracking weekly so the gain does not quietly reverse; note what changed around the peak day." : `Review what changed after ${stats.bestDay?.label ?? "the peak day"} — staffing mix, order profile or shift start times are the usual causes.`
+    },
+    {
+      tone: "info",
+      headline: `${fmt.int(stats.avgManpower)} people on the floor clear ${fmt.pct(stats.avgLoadPct)} of the day's work`,
+      plain: `Each person handles roughly ${fmt.int(stats.perHeadPerDay)} items a day. The plan asks for ${fmt.int(last?.requiredWorkforce ?? 0)} associates to cover a ${fmt.compact(last?.projectionLoad ?? 0)} unit day, and only ${fmt.pct(stats.avgFillRate)} of planned heads actually show up.`,
+      detail: "Headcount, not effort, is the first limit here. Fix attendance against plan before asking for higher hourly rates."
+    },
+    {
+      tone: stats.daysAboveTarget > stats.days/2 ? "good" : "warn",
+      headline: `${stats.daysAboveTarget} of ${stats.days} days actually hit the hourly target`,
+      plain: `The strongest day cleared ${fmt.pct(stats.peakLoadPct)} of its projected load, and ${fmt.compact(stats.totalRemaining)} units were left unprocessed across the whole period.`,
+      detail: "Copy the staffing and flow of the best days rather than adding new initiatives — the good pattern already exists in the data."
     }
-    onScroll();
-    window.addEventListener("scroll", onScroll, { passive: true });
+  ];
 
-    document.addEventListener("keydown", function (e) {
-      if (e.target instanceof HTMLInputElement) return;
-      var current = updateActiveNav();
-      var idx = NAV.findIndex(function (n) { return n.id === current; });
-      if (e.key === "ArrowDown" || e.key === "PageDown" || e.key === " ") {
-        var next = NAV[Math.min(NAV.length - 1, idx + 1)];
-        if (next) { e.preventDefault(); document.getElementById(next.id).scrollIntoView({ behavior: "smooth" }); }
-      }
-      if (e.key === "ArrowUp" || e.key === "PageUp") {
-        var prev = NAV[Math.max(0, idx - 1)];
-        if (prev) { e.preventDefault(); document.getElementById(prev.id).scrollIntoView({ behavior: "smooth" }); }
-      }
-      if (e.key.toLowerCase() === "r") { state.replay++; renderProductivity(); renderThroughput(); renderWorkforce(); }
-      if (e.key.toLowerCase() === "f") { if (document.documentElement.requestFullscreen) document.documentElement.requestFullscreen(); }
+  const container = document.getElementById('insightsContainer');
+  container.innerHTML = "";
+
+  const heroCard = document.createElement('div');
+  heroCard.className = 'panel-lift insight-hero reveal';
+  const arrowIcon = trendUp
+    ? `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 7h10v10"/><path d="M7 17 17 7"/></svg>`
+    : `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 7l10 10"/><path d="M17 7v10H7"/></svg>`;
+  heroCard.innerHTML = `
+    <div class="insight-hero-row">
+      <span class="insight-hero-icon">${arrowIcon}</span>
+      <div class="insight-hero-text">
+        <p class="eyebrow">The short answer</p>
+        <p class="body">Over ${stats.days} days the pick floor averaged <strong>${fmt.int(stats.avgBlendedIpp)} items per picker hour</strong> against a <strong>${fmt.int(stats.targetIpp)}</strong> target — ${fmt.pct(stats.attainment)} of plan — while ${trendUp?"improving":"slipping"} ${fmt.pct(Math.abs(stats.trend))} and clearing ${fmt.pct(stats.avgLoadPct)} of the daily workload.</p>
+      </div>
+    </div>`;
+  container.appendChild(heroCard);
+  observeReveal(heroCard, ()=> heroCard.classList.add('reveal-in'));
+
+  items.forEach((it, i)=>{
+    const t = TONES[it.tone];
+    const card = document.createElement('article');
+    card.className = 'panel finding reveal';
+    card.style.transitionDelay = (i*110)+'ms';
+    card.innerHTML = `
+      <div class="finding-top">
+        <span class="finding-icon" style="background:color-mix(in oklab, ${t.color} 16%, transparent); color:${t.color};">${t.icon}</span>
+        <span class="eyebrow">Finding ${i+1}</span>
+      </div>
+      <h3>${it.headline}</h3>
+      <p class="plain">${it.plain}</p>
+      <p class="detail"><strong>What to do: </strong>${it.detail}</p>`;
+    container.appendChild(card);
+    observeReveal(card, ()=> card.classList.add('reveal-in'));
+  });
+}
+
+/* ============================================================
+   12. RENDER: SUMMARY
+   ============================================================ */
+const GLOSSARY = [
+  { term:"Manpower", meaning:"People on the floor that day — pickers plus team leads, day and night shift combined." },
+  { term:"Processed qty", meaning:"Number of items actually picked and moved out on that date." },
+  { term:"Projected load", meaning:"The volume the plan expected the floor to handle that day." },
+  { term:"Blended IPP", meaning:"Items picked per picker per hour, averaged across both shifts." },
+  { term:"Target IPP", meaning:"The agreed hourly standard every picker is measured against." },
+  { term:"Load cleared", meaning:"Share of the projected volume that was finished the same day." }
+];
+
+function renderSummary(){
+  const rows = getRows();
+  const stats = computeStats(rows);
+  const first = rows[0], last = rows[rows.length-1];
+
+  const container = document.getElementById('summaryContainer');
+  container.innerHTML = "";
+  container.classList.add('reveal');
+
+  const rowsData = [
+    ["Days recorded", fmt.int(stats.days), "Dates with completed picking activity"],
+    ["Total items processed", fmt.int(stats.totalProcessed), "Sum of daily processed quantity"],
+    ["Average per day", fmt.int(stats.avgProcessed), "Typical daily output"],
+    ["Average blended IPP", fmt.int(stats.avgBlendedIpp), `Against a ${fmt.int(stats.targetIpp)} items/hour target`],
+    ["Target attainment", fmt.pct(stats.attainment), "How much of the standard was delivered"],
+    ["Days at or above target", `${stats.daysAboveTarget} / ${stats.days}`, "Days that met the hourly standard"],
+    ["Best day", `${stats.bestDay?.label ?? "—"} · ${fmt.int(stats.bestDay?.blendedIpp ?? 0)} IPP`, "Highest productivity in the period"],
+    ["Weakest day", `${stats.worstDay?.label ?? "—"} · ${fmt.int(stats.worstDay?.blendedIpp ?? 0)} IPP`, "Lowest productivity in the period"],
+    ["Average manpower", fmt.int(stats.avgManpower), "People on the floor per day"],
+    ["Attendance vs plan", fmt.pct(stats.avgFillRate), "Planned heads that actually showed up"],
+    ["Items per person per day", fmt.int(stats.perHeadPerDay), "Output divided by manpower"],
+    ["Average load cleared", fmt.pct(stats.avgLoadPct), `Peak ${fmt.pct(stats.peakLoadPct)} on the best day`],
+    ["Work left unprocessed", fmt.compact(stats.totalRemaining), "Carried over across the period"],
+    ["Trend across the period", `${stats.trend>=0?"+":""}${fmt.pct(stats.trend)}`, "Second half compared with first half"]
+  ];
+
+  const left = document.createElement('div');
+  left.className = 'panel-lift';
+  left.style.overflow = 'hidden';
+  let bodyRows = rowsData.map(([l,v,n])=>`<tr><td class="lbl">${l}</td><td class="val num">${v}</td><td class="note">${n}</td></tr>`).join('');
+  left.innerHTML = `
+    <div class="summary-head">
+      <p class="eyebrow">Whole-sheet summary</p>
+      <p class="sub">Every headline number from ${first?.label ?? "—"} to ${last?.label ?? "—"}.</p>
+    </div>
+    <table class="summary-table"><tbody>${bodyRows}</tbody></table>`;
+
+  const right = document.createElement('div');
+  right.className = 'panel-lift glossary-panel';
+  let glossaryHtml = GLOSSARY.map(g=>`<div class="glossary-item"><dt>${g.term}</dt><dd>${g.meaning}</dd></div>`).join('');
+  right.innerHTML = `<p class="eyebrow">What each column means</p><dl style="margin:1rem 0 0;">${glossaryHtml}</dl>`;
+
+  container.appendChild(left);
+  container.appendChild(right);
+  observeReveal(container, ()=> container.classList.add('reveal-in'));
+}
+
+/* ============================================================
+   13. RENDER: THROUGHPUT (bars)
+   ============================================================ */
+function renderThroughput(){
+  const rows = getRows();
+  const stats = computeStats(rows);
+  const last = rows[rows.length-1];
+
+  document.getElementById('throughputDesc').textContent =
+    `Daily processed quantity in gradient columns, with the dashed marker showing the ${fmt.compact(last?.projectionLoad ?? 0)} unit projection each day carries.`;
+
+  const barsContainer = document.getElementById('barsChart');
+  BarsChart(barsContainer, rows.map(r=>({label:r.label, value:r.processed, secondary:r.projectionLoad})), {
+    height: 320, valueLabel: "Processed", secondaryLabel: "Projection"
+  });
+
+  const section = document.getElementById('throughput');
+  observeReveal(barsContainer.closest('.bars-panel'), ()=>{
+    if (barsContainer._activate) barsContainer._activate();
+  });
+
+  activateStatCard(document.getElementById('statAvgProc'), stats.avgProcessed, (n)=>fmt.compact(n), 0);
+  activateStatCard(document.getElementById('statBacklog'), stats.totalRemaining, (n)=>fmt.compact(n), 120);
+  activateStatCard(document.getElementById('statPerHead'), stats.perHeadPerDay, (n)=>fmt.int(n), 240);
+}
+
+/* ============================================================
+   14. RENDER: WORKFORCE CHART
+   ============================================================ */
+function renderWorkforce(){
+  const rows = getRows();
+  const stats = computeStats(rows);
+  const last = rows[rows.length-1];
+  const labels = rows.map(r=>r.label);
+
+  document.getElementById('wfAvgMp').textContent = fmt.int(stats.avgManpower);
+  document.getElementById('wfFill').textContent = fmt.pct(stats.avgFillRate);
+  document.getElementById('wfReq').textContent = fmt.int(last?.requiredWorkforce ?? 0);
+
+  const container = document.getElementById('workforceChart');
+  const render = () => {
+    LineChart(container, {
+      labels,
+      series: [
+        { key:`mp-${state.replay}`, label:"Total manpower", color:"var(--brand)", get:(i)=>rows[i]?.totalMP ?? 0, area:true, live:true },
+        { key:`pickers-${state.replay}`, label:"Pickers deployed", color:"var(--teal)", get:(i)=>rows[i]?.pickers ?? 0, dashed:true },
+        { key:`plan-${state.replay}`, label:"Workforce plan", color:"var(--amber)", get:(i)=>rows[i]?.plan ?? 0, dashed:true }
+      ],
+      active:true, smooth: state.smooth, height: 360
     });
+  };
+  observeReveal(document.getElementById('workforce'), render);
+}
 
-    document.getElementById("fullscreen-btn").addEventListener("click", function () {
-      if (document.documentElement.requestFullscreen) document.documentElement.requestFullscreen();
+/* ============================================================
+   15. RENDER: ATTAINMENT (gauge + load bars)
+   ============================================================ */
+function renderAttainment(){
+  const rows = getRows();
+  const stats = computeStats(rows);
+
+  const gaugePanel = document.getElementById('gaugePanel');
+  RadialGauge(gaugePanel, stats.attainment, {
+    label: "Target attainment",
+    caption: `${fmt.int(stats.avgBlendedIpp)} blended IPP against a ${fmt.int(stats.targetIpp)} IPP standard.`
+  });
+
+  const loadRows = document.getElementById('loadRows');
+  loadRows.innerHTML = "";
+  const last10 = rows.slice(-10);
+  last10.forEach((r,i)=>{
+    const row = document.createElement('div');
+    row.className = 'load-row';
+    const isGood = r.deltaPct >= stats.avgLoadPct;
+    row.innerHTML = `
+      <span class="load-label num">${r.label}</span>
+      <div class="load-track"><div class="load-fill" style="transition: width 1.05s cubic-bezier(.16,1,.3,1) ${i*70}ms; background:${isGood ? 'linear-gradient(90deg, var(--brand-deep), var(--live))' : 'var(--gradient-brand)'};"></div></div>
+      <span class="load-pct num">${fmt.pct(r.deltaPct)}</span>`;
+    loadRows.appendChild(row);
+    row._fill = row.querySelector('.load-fill');
+    row._pct = Math.min(100, r.deltaPct);
+  });
+  document.getElementById('loadNote').textContent = `Bars in green beat the ${fmt.pct(stats.avgLoadPct)} window average clearance.`;
+
+  observeReveal(document.getElementById('attainment'), ()=>{
+    if (gaugePanel._activate) gaugePanel._activate();
+    loadRows.querySelectorAll('.load-row').forEach(row=>{
+      row._fill.style.width = row._pct + '%';
     });
-  }
+  });
+}
 
-  // ---------- Init ----------
-  function init() {
-    buildNav();
-    setupToggles();
-    setupScrollAndKeys();
-    document.getElementById("table-search").addEventListener("input", function (e) {
-      tableState.q = e.target.value;
+/* ============================================================
+   16. RENDER: TABLE
+   ============================================================ */
+const COLS = [
+  { key:"label", head:"Date", render:(r)=>r.label },
+  { key:"totalMP", head:"Manpower", num:true, render:(r)=>fmt.int(r.totalMP) },
+  { key:"processed", head:"Processed qty", num:true, render:(r)=>fmt.int(r.processed) },
+  { key:"blendedIpp", head:"Blended IPP", num:true, render:(r)=>fmt.int(r.blendedIpp) },
+  { key:"deltaPct", head:"Load cleared", num:true, render:(r)=>fmt.pct(r.deltaPct,2) },
+  { key:"attainment", head:"vs Target", num:true, render:(r)=>fmt.pct(r.attainment) }
+];
+let tableSort = { key:"label", dir:1 };
+let tableQuery = "";
+
+function renderTableHead(){
+  const thead = document.getElementById('tableHead');
+  thead.innerHTML = "";
+  COLS.forEach(c=>{
+    const th = document.createElement('th');
+    if (c.num) th.classList.add('num-col');
+    const btn = document.createElement('button');
+    btn.innerHTML = `${c.head} <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21 16-4 4-4-4"/><path d="M17 20V4"/><path d="m3 8 4-4 4 4"/><path d="M7 4v16"/></svg>`;
+    btn.addEventListener('click', ()=>{
+      tableSort = tableSort.key === c.key ? { key:c.key, dir: tableSort.dir === 1 ? -1 : 1 } : { key:c.key, dir:1 };
       renderTableBody();
     });
-    document.getElementById("export-btn").addEventListener("click", exportCsv);
+    th.appendChild(btn);
+    thead.appendChild(th);
+  });
+}
 
-    fetch(SHEET_CSV_URL)
-      .then(function (res) { if (!res.ok) throw new Error("bad response"); return res.text(); })
-      .then(function (text) {
-        var rows = toPickRows(parseCsv(text));
-        state.allRows = rows;
-        state.source = rows.length ? "live" : "unavailable";
-        state.fetchedAt = new Date().toISOString();
-        computeRows();
-        renderAll();
-        runPreloader(state.allRows.length > 0);
-      })
-      .catch(function () {
-        state.allRows = [];
-        state.source = "unavailable";
-        state.fetchedAt = new Date().toISOString();
-        computeRows();
-        renderAll();
-        runPreloader(true);
-      });
+function renderTableBody(){
+  const rows = getRows();
+  const filtered = rows.filter(r => r.label.toLowerCase().includes(tableQuery.trim().toLowerCase()));
+  const view = [...filtered].sort((a,b)=>{
+    const av = a[tableSort.key], bv = b[tableSort.key];
+    if (typeof av === "string" || typeof bv === "string") return String(av).localeCompare(String(bv))*tableSort.dir;
+    return (av-bv)*tableSort.dir;
+  });
+
+  document.getElementById('rowCount').textContent = `${view.length} rows`;
+  const tbody = document.getElementById('tableBody');
+  tbody.innerHTML = "";
+  view.forEach((r,i)=>{
+    const tr = document.createElement('tr');
+    tr.style.transitionDelay = Math.min(i*24,600)+'ms';
+    tr.style.transition = `opacity .5s ease ${Math.min(i*24,600)}ms`;
+    let cells = COLS.map(c=>{
+      let cls = c.num ? 'num' : 'medium';
+      if (c.key === 'attainment') cls += r.attainment >= 100 ? ' attain-good' : ' attain-neutral';
+      return `<td class="${cls}">${c.render(r)}</td>`;
+    }).join('');
+    tr.innerHTML = cells;
+    tbody.appendChild(tr);
+  });
+
+  observeReveal(document.getElementById('ledger'), ()=>{
+    tbody.querySelectorAll('tr').forEach(tr=>{ tr.style.opacity = 1; });
+  });
+  // If already revealed (e.g. after sort/search), keep visible
+  const ledgerReveal = document.querySelector('#ledger .reveal');
+  if (ledgerReveal && ledgerReveal.classList.contains('reveal-in')){
+    tbody.querySelectorAll('tr').forEach(tr=>{ tr.style.opacity = 1; });
   }
+}
 
-  document.addEventListener("DOMContentLoaded", init);
+document.getElementById('tableSearch').addEventListener('input', (e)=>{
+  tableQuery = e.target.value;
+  renderTableBody();
+});
+document.getElementById('exportBtn').addEventListener('click', ()=>{
+  const rows = getRows();
+  const filtered = rows.filter(r => r.label.toLowerCase().includes(tableQuery.trim().toLowerCase()));
+  const view = [...filtered].sort((a,b)=>{
+    const av = a[tableSort.key], bv = b[tableSort.key];
+    if (typeof av === "string" || typeof bv === "string") return String(av).localeCompare(String(bv))*tableSort.dir;
+    return (av-bv)*tableSort.dir;
+  });
+  const head = COLS.map(c=>c.head).join(",");
+  const body = view.map(r=>COLS.map(c=>c.render(r).replace(/,/g,"")).join(",")).join("\n");
+  const blob = new Blob([`${head}\n${body}`], {type:"text/csv"});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = "arcos-picker-productivity.csv"; a.click();
+  URL.revokeObjectURL(url);
+});
+
+/* ============================================================
+   17. FOOTER
+   ============================================================ */
+function renderFooter(stats){
+  document.getElementById('footerNote').textContent = `ARCOS pick productivity deck · ${stats.days} days · read from the published sheet`;
+}
+
+/* ============================================================
+   18. FULL RENDER PIPELINE
+   ============================================================ */
+function renderAll(){
+  const stats = computeStats(ALL_ROWS);
+  renderHero(stats);
+  renderMainChart();
+  renderInsights();
+  renderSummary();
+  renderThroughput();
+  renderWorkforce();
+  renderAttainment();
+  renderTableHead();
+  renderTableBody();
+  renderFooter(stats);
+}
+
+/* ============================================================
+   19. CONTROLS: range pills, replay, toggles
+   ============================================================ */
+document.getElementById('rangeGroup').addEventListener('click', (e)=>{
+  const btn = e.target.closest('[data-range]');
+  if (!btn) return;
+  document.querySelectorAll('#rangeGroup [data-range]').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  state.range = btn.dataset.range;
+  state.replay++;
+  renderMainChart();
+  renderInsights();
+  renderSummary();
+  renderThroughput();
+  renderWorkforce();
+  renderAttainment();
+  renderTableBody();
+});
+
+document.getElementById('replayBtn').addEventListener('click', ()=>{
+  state.replay++;
+  renderMainChart();
+  renderWorkforce();
+});
+
+document.getElementById('smoothToggle').addEventListener('click', function(){
+  state.smooth = !state.smooth;
+  this.setAttribute('aria-pressed', state.smooth);
+  this.querySelector('.toggle-track').classList.toggle('on', state.smooth);
+  renderMainChart();
+  renderWorkforce();
+});
+
+document.getElementById('avgToggle').addEventListener('click', function(){
+  state.showAvg = !state.showAvg;
+  this.setAttribute('aria-pressed', state.showAvg);
+  this.querySelector('.toggle-track').classList.toggle('on', state.showAvg);
+  renderMainChart();
+});
+
+document.getElementById('fullscreenBtn').addEventListener('click', ()=>{
+  if (document.documentElement.requestFullscreen) document.documentElement.requestFullscreen();
+});
+
+/* ============================================================
+   20. SCROLL PROGRESS + NAV HIGHLIGHT + KEYBOARD NAV
+   ============================================================ */
+const NAV_IDS = ["productivity","readout","summary","throughput","workforce","ledger"];
+function onScroll(){
+  const h = document.documentElement;
+  const ratio = h.scrollTop / Math.max(1, h.scrollHeight - h.clientHeight);
+  document.getElementById('scrollFill').style.transform = `scaleX(${ratio})`;
+
+  let current = NAV_IDS[0];
+  for (const id of NAV_IDS){
+    const el = document.getElementById(id);
+    if (el && el.getBoundingClientRect().top <= 180) current = id;
+  }
+  document.querySelectorAll('#topNav a').forEach(a=>{
+    a.classList.toggle('active', a.dataset.nav === current);
+  });
+}
+window.addEventListener('scroll', onScroll, { passive:true });
+
+window.addEventListener('keydown', (e)=>{
+  if (e.target instanceof HTMLInputElement) return;
+  let current = NAV_IDS[0];
+  for (const id of NAV_IDS){
+    const el = document.getElementById(id);
+    if (el && el.getBoundingClientRect().top <= 180) current = id;
+  }
+  const i = NAV_IDS.indexOf(current);
+  if (e.key === "ArrowDown" || e.key === "PageDown" || e.key === " "){
+    const next = NAV_IDS[Math.min(NAV_IDS.length-1, i+1)];
+    if (next){ e.preventDefault(); document.getElementById(next).scrollIntoView({behavior:"smooth"}); }
+  }
+  if (e.key === "ArrowUp" || e.key === "PageUp"){
+    const prev = NAV_IDS[Math.max(0, i-1)];
+    if (prev){ e.preventDefault(); document.getElementById(prev).scrollIntoView({behavior:"smooth"}); }
+  }
+  if (e.key.toLowerCase() === "r"){
+    state.replay++;
+    renderMainChart();
+    renderWorkforce();
+  }
+  if (e.key.toLowerCase() === "f" && document.documentElement.requestFullscreen){
+    document.documentElement.requestFullscreen();
+  }
+});
+
+/* ============================================================
+   21. SECTION REVEAL WIRING (generic .reveal blocks in sections)
+   ============================================================ */
+document.querySelectorAll('section.deck-section > .reveal').forEach(el=>{
+  observeReveal(el, ()=> el.classList.add('reveal-in'));
+});
+
+/* ============================================================
+   22. PRELOADER SEQUENCE
+   ============================================================ */
+function runPreloader(){
+  const pre = document.getElementById('preloader');
+  const dot = document.getElementById('preloaderDot');
+  const label = document.getElementById('preloaderLabel');
+  const app = document.getElementById('app');
+
+  label.textContent = "Dataset synced";
+
+  setTimeout(()=>{
+    // burst
+    dot.style.width = '120px';
+    dot.style.height = '120px';
+    label.style.transition = 'opacity .4s ease';
+    label.style.opacity = 0;
+
+    setTimeout(()=>{
+      // zoom + reveal app
+      pre.style.opacity = 0;
+      pre.style.transform = 'scale(1.9)';
+      pre.style.filter = 'blur(14px)';
+      app.classList.add('revealed');
+
+      setTimeout(()=>{
+        pre.style.display = 'none';
+      }, 1000);
+    }, 780);
+  }, 850);
+}
+
+/* ============================================================
+   23. INIT
+   ============================================================ */
+renderAll();
+onScroll();
+runPreloader();
+
 })();
 </script>
 </body>
