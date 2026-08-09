@@ -131,6 +131,24 @@
       margin: 0;
       width: 260px;
     }
+    .actions-panel {
+      scrollbar-width: thin;
+      scrollbar-color: rgba(246, 211, 101, 0.35) rgba(255, 255, 255, 0.04);
+    }
+    .actions-panel::-webkit-scrollbar {
+      width: 6px;
+    }
+    .actions-panel::-webkit-scrollbar-track {
+      background: rgba(255, 255, 255, 0.03);
+      border-radius: 8px;
+    }
+    .actions-panel::-webkit-scrollbar-thumb {
+      background: rgba(246, 211, 101, 0.32);
+      border-radius: 8px;
+    }
+    .actions-panel::-webkit-scrollbar-thumb:hover {
+      background: rgba(246, 211, 101, 0.55);
+    }
     .actions-panel .actions-heading { margin: 0 0 12px 6px; flex-shrink: 0; }
     .actions-panel .actions {
       flex-direction: column;
@@ -331,21 +349,32 @@
     margin: 0 auto;
   }
 
-  .action-btn {
+.action-btn {
     --mx: 50%;
     --my: 50%;
     position: relative;
     flex: 0 1 calc((100% - 24px) / 3);
-    min-width: 96px;
+    min-width: 92px;
     min-height: 108px;
     border-radius: 22px;
     background: var(--tile);
     border: 1px solid var(--tile-border);
     box-shadow: 0 6px 18px rgba(0,0,0,0.28);
     display: flex; flex-direction: column; align-items: center; justify-content: center;
-    gap: 10px; padding: 18px 10px; cursor: pointer; overflow: hidden;
+    gap: 10px; padding: 18px 8px; cursor: pointer; overflow: hidden;
     color: var(--text-primary); font-family: inherit;
     transition: transform .2s ease, box-shadow .2s ease, background .2s ease, border-color .2s ease;
+  }
+
+  @media (max-width: 359px) {
+    .action-btn {
+      flex-basis: calc((100% - 12px) / 2);
+      min-width: 0;
+      padding: 16px 8px;
+    }
+    .action-btn .label { font-size: 12.5px; }
+    .action-btn .icon-wrap { width: 46px; height: 46px; }
+    .action-btn .icon-wrap svg { width: 22px; height: 22px; }
   }
 
   .action-btn::before {
