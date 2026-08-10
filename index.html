@@ -11,7 +11,6 @@
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
   :root{
-    /* --- Chrome-inspired tokens --- */
     --blue: #1a73e8;
     --blue-dark: #185abc;
     --brand-red: #ea4335;
@@ -50,22 +49,6 @@
       var(--bg);
   }
 
-  /* signature: the four Chrome brand-color dots, standing in for the logo mark */
-  .dots{
-    display: flex;
-    gap: .5rem;
-    margin-bottom: 2rem;
-  }
-  .dots span{
-    width: 9px;
-    height: 9px;
-    border-radius: 50%;
-    display: block;
-  }
-  .dots span:nth-child(1){ background: var(--blue); }
-  .dots span:nth-child(2){ background: var(--brand-red); }
-  .dots span:nth-child(3){ background: var(--brand-yellow); }
-  .dots span:nth-child(4){ background: var(--brand-green); }
 
   .app-icon{
     width: 108px;
@@ -86,9 +69,13 @@
     font-size: clamp(2.1rem, 4.5vw + 1rem, 3.1rem);
     font-weight: 400;
     letter-spacing: -0.01em;
-    line-height: 1.18;
+    line-height: 1.22;
     text-align: center;
-    max-width: 18ch;
+  }
+  h1 br{
+    display: block;
+    content: "";
+    margin-top: .1em;
   }
   h1 b{
     color: var(--blue);
@@ -240,7 +227,7 @@
     <svg version="1.2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 150 150" width="150" height="150"><style>.a{fill:#373435;stroke:#373435;stroke-miterlimit:10}.b{fill:#fff;stroke:#373435;stroke-miterlimit:10}.c{fill:#fac62c}</style><path fill-rule="evenodd" class="a" d="m74.5 112.5c-21 0-38-17-38-38 0-21 17-38 38-38 21 0 38 17 38 38 0 21-17 38-38 38z"/><path fill-rule="evenodd" class="b" d="m75 104c-16 0-29-13-29-29 0-16 13-29 29-29 16 0 29 13 29 29 0 16-13 29-29 29z"/><path fill-rule="evenodd" class="a" d="m113 37v75h-9v-75z"/><path fill-rule="evenodd" class="c" d="m46.6 69.9c59.3-52.2 118.4 26.7 74 71.6 0 0 25.8-40.1-3.7-70.5-27.9-28.8-70.3-1.1-70.3-1.1z"/><path fill-rule="evenodd" class="c" d="m103.1 79.3c-59.3 52.2-118.4-26.7-74-71.6 0 0-25.8 40.1 3.6 70.5 28 28.8 70.4 1.1 70.4 1.1z"/></svg>
   </div>
 
-  <h1>All your needs on <b>Arcos</b></h1>
+  <h1>All your needs<br>on <b>Arcos</b></h1>
   <h2>Download the Arcos app now</h2>
 
   <button id="installBtn">
@@ -263,7 +250,7 @@
   <section class="features">
     <div class="feature-card">
       <div class="feature-icon">
-        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="17" rx="2"/><path d="M3 9h18M8 2v4M16 2v4"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-calendar-clock h-4 w-4 shrink-0" aria-hidden="true" data-tsd-source="/src/routes/index.tsx:266:7"><path d="M16 14v2.2l1.6 1"></path><path d="M16 2v4"></path><path d="M21 7.5V6a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h3.5"></path><path d="M3 10h5"></path><path d="M8 2v4"></path><circle cx="16" cy="16" r="6"></circle></svg>
       </div>
       <h3>Work schedules</h3>
       <p>Check your upcoming shifts and work schedules at a glance.</p>
@@ -284,7 +271,7 @@
     </div>
     <div class="feature-card">
       <div class="feature-icon">
-        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/><path d="M6 15h4"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-wallet h-4 w-4 shrink-0" aria-hidden="true" data-tsd-source="/src/routes/index.tsx:266:7"><path d="M19 7V4a1 1 0 0 0-1-1H5a2 2 0 0 0 0 4h15a1 1 0 0 1 1 1v4h-3a2 2 0 0 0 0 4h3a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1"></path><path d="M3 5v14a2 2 0 0 0 2 2h15a1 1 0 0 0 1-1v-4"></path></svg>
       </div>
       <h3>Get payslip</h3>
       <p>Access and download your payslip as soon as it's ready.</p>
