@@ -177,7 +177,7 @@ h1{
 .chart-head .sub{margin-top:0.25rem;font-size:0.86rem;color:var(--muted-foreground)}
 
 .range-tabs{
-  display:flex;border-radius:999px;border:1px solid var(--border);
+  display:flex;width:fit-content;border-radius:999px;border:1px solid var(--border);
   background:color-mix(in oklab, var(--secondary) 40%, transparent);padding:0.25rem;
 }
 .range-tabs button{
@@ -230,10 +230,10 @@ h1{
 .chart-shell svg{width:100%;height:100%;display:block;overflow:visible}
 
 .tooltip{
-  position:absolute;pointer-events:none;z-index:20;
+  position:fixed;pointer-events:none;z-index:9999;
   padding:0.75rem 1rem;border-radius:0.75rem;
   border:1px solid var(--border);
-  background:color-mix(in oklab, var(--card) 92%, transparent);
+  background:color-mix(in oklab, var(--card) 96%, transparent);
   backdrop-filter:blur(10px);
   box-shadow:0 18px 40px -28px oklch(0 0 0 / 0.9);
   font-size:0.82rem;opacity:0;transition:opacity .12s ease;white-space:nowrap;
@@ -397,6 +397,7 @@ footer{margin-top:3.5rem;border-top:1px solid var(--border);padding-top:1.5rem;f
     <p class="eyebrow">ARCOS · Picking Operations</p>
     <h1>FC Productivity Graph</h1>
     <p class="lede" id="ledeText"></p>
+    <div class="range-tabs no-print" id="avgIppTabs" style="margin:1.25rem auto 0;justify-content:center"></div>
   </header>
 
   <section class="kpis" id="kpiGrid"></section>
@@ -872,99 +873,142 @@ function animateCountUp(el, target, decimals){
 }
 
 var AVG_IPP_RANGES = [
-  { key:"14d", label:"14d" },
   { key:"full", label:"Full" },
-  { key:"30d", label:"30d" },
-  { key:"7d", label:"7d" },
-  { key:"24h", label:"24h" }
+  { key:"30d", label:"Last 30 days" },
+  { key:"7d", label:"Last 7 days" },
+  { key:"24h", label:"Last 24 hours" }
 ];
 
-function avgIppStatsForRange(a, key){
+function rowsForRange(all, key){
+  if (key === "24h") return all.slice(-1);
+  if (key === "7d") return all.slice(-7);
+  if (key === "30d") return all.slice(-30);
+  return all;
+}
+
+function rangeKpiStats(a, key){
   var all = a.all;
-  var slice;
-  if (key === "24h"){
-    slice = all.slice(-1);
-  } else if (key === "7d"){
-    slice = all.slice(-7);
-  } else if (key === "30d"){
-    slice = all.slice(-30);
-  } else if (key === "14d"){
-    slice = all.slice(-14);
-  } else {
-    slice = all;
-  }
-  var prevLen = slice.length;
-  var prevSlice = key === "full" ? [] : all.slice(Math.max(0, all.length - prevLen*2), Math.max(0, all.length - prevLen));
-  var cur = seriesStats(slice);
-  var prev = seriesStats(prevSlice);
-  return { avg: cur.avg, momentum: cur.avg - (prevSlice.length ? prev.avg : cur.avg), hasPrev: prevSlice.length > 0 };
+  var rows = rowsForRange(all, key);
+  var prevRows = key === "full" ? [] : all.slice(Math.max(0, all.length - rows.length*2), Math.max(0, all.length - rows.length));
+
+  var cur = seriesStats(rows);
+  var prev = seriesStats(prevRows);
+  var hasPrev = prevRows.length > 0;
+
+  var totalProcessed = rows.reduce(function(s,r){ return s + r.load; }, 0);
+  var totalProjection = rows.reduce(function(s,r){ return s + r.proj; }, 0);
+  var fulfilment = totalProjection ? (totalProcessed / totalProjection) * 100 : 0;
+
+  var prevProcessed = prevRows.reduce(function(s,r){ return s + r.load; }, 0);
+
+  var peak = rows.reduce(function(m,r){ return r.dailyAvg > m.dailyAvg ? r : m; }, rows[0] || {dailyAvg:0,date:"-"});
+
+  var latest = rows[rows.length-1] || {};
+  var reqWorkforce = latest.reqWorkforce || a.reqWorkforce;
+  var staffingGap = (latest.mp || 0) - reqWorkforce;
+
+  var dayIpp = mean(rows.filter(function(r){ return r.ippD > 0; }).map(function(r){ return r.ippD; }));
+  var nightIpp = mean(rows.filter(function(r){ return r.ippN > 0; }).map(function(r){ return r.ippN; }));
+
+  var attainment = TARGET_IPP ? (cur.avg / TARGET_IPP) * 100 : 0;
+  var gap = TARGET_IPP - cur.avg;
+
+  return {
+    avgIpp: cur.avg, avgMomentum: cur.avg - (hasPrev ? prev.avg : cur.avg), hasPrev: hasPrev,
+    attainment: attainment, gap: gap,
+    peak: peak,
+    totalProcessed: totalProcessed, fulfilment: fulfilment,
+    processedMomentum: totalProcessed - (hasPrev ? prevProcessed : totalProcessed),
+    reqWorkforce: reqWorkforce, staffingGap: staffingGap,
+    dayIpp: dayIpp, nightIpp: nightIpp
+  };
 }
 
 function renderKpis(a, attainment){
   var kpiGrid = document.getElementById("kpiGrid");
   kpiGrid.innerHTML = "";
 
-  /* KPI 0: interactive avg-IPP card with range tabs */
-  var kpi0 = document.createElement("div");
-  kpi0.className = "panel kpi rise d1";
-  kpi0.innerHTML =
-    '<div style="display:flex;align-items:center;justify-content:space-between;gap:0.5rem;flex-wrap:wrap">' +
-      '<p class="label" id="avgIppLabel">14d avg IPP</p>' +
-      '<div class="range-tabs no-print" id="avgIppTabs" style="padding:0.15rem"></div>' +
-    '</div>' +
-    '<p class="value"><span class="num" id="avgIppValue">0</span></p>' +
-    '<p class="hint" id="avgIppHint"></p>';
-  kpiGrid.appendChild(kpi0);
-
-  var tabsEl = kpi0.querySelector("#avgIppTabs");
-  var valueEl = kpi0.querySelector("#avgIppValue");
-  var labelEl = kpi0.querySelector("#avgIppLabel");
-  var hintEl = kpi0.querySelector("#avgIppHint");
-  var valueWrap = kpi0.querySelector(".value");
-
-  function paintAvgIpp(key){
-    var s = avgIppStatsForRange(a, key);
-    var rangeLabel = AVG_IPP_RANGES.filter(function(r){ return r.key === key; })[0].label;
-    labelEl.textContent = rangeLabel + " avg IPP";
-    valueWrap.className = "value " + (s.momentum >= 0 ? "tone-good" : "tone-warn");
-    animateCountUp(valueEl, s.avg, 1);
-    hintEl.textContent = s.hasPrev
-      ? (s.momentum >= 0 ? "+" : "") + fmt(s.momentum,1) + " vs prior " + rangeLabel + " period"
-      : "Across " + a.overall.n + " operating days on record";
+  function makeKpi(delayClass){
+    var el = document.createElement("div");
+    el.className = "panel kpi rise " + delayClass;
+    el.innerHTML =
+      '<p class="label"><span class="lbl"></span></p>' +
+      '<p class="value"><span class="num">0</span><span class="suffix"></span></p>' +
+      '<p class="hint"></p>';
+    kpiGrid.appendChild(el);
+    return {
+      root: el,
+      lbl: el.querySelector(".lbl"),
+      valueWrap: el.querySelector(".value"),
+      num: el.querySelector(".num"),
+      suffix: el.querySelector(".suffix"),
+      hint: el.querySelector(".hint")
+    };
   }
 
-  AVG_IPP_RANGES.forEach(function(r, i){
+  var kAvg = makeKpi("d1");
+  var kAttain = makeKpi("d2");
+  var kPeak = makeKpi("d3");
+  var kUnits = makeKpi("d4");
+  var kStaff = makeKpi("d5");
+  var kNight = makeKpi("d6");
+
+  function setTone(box, tone){
+    box.valueWrap.className = "value " + (tone === "good" ? "tone-good" : (tone === "warn" ? "tone-warn" : ""));
+  }
+
+  function paintKpis(key){
+    var s = rangeKpiStats(a, key);
+    var rangeLabel = AVG_IPP_RANGES.filter(function(r){ return r.key === key; })[0].label;
+
+    kAvg.lbl.textContent = rangeLabel + " avg IPP";
+    setTone(kAvg, s.avgMomentum >= 0 ? "good" : "warn");
+    animateCountUp(kAvg.num, s.avgIpp, 1);
+    kAvg.hint.textContent = s.hasPrev
+      ? (s.avgMomentum >= 0 ? "+" : "") + fmt(s.avgMomentum,1) + " vs prior period"
+      : "Across " + a.overall.n + " operating days on record";
+
+    kAttain.lbl.textContent = "Target attainment";
+    kAttain.suffix.textContent = "%";
+    setTone(kAttain, s.attainment >= 90 ? "good" : "warn");
+    animateCountUp(kAttain.num, s.attainment, 1);
+    kAttain.hint.textContent = fmt(s.gap,1) + " IPP to close vs target " + fmt(TARGET_IPP,0);
+
+    kPeak.lbl.textContent = "Peak day";
+    setTone(kPeak, "default");
+    animateCountUp(kPeak.num, s.peak.dailyAvg, 0);
+    kPeak.hint.textContent = "Recorded on " + s.peak.date;
+
+    kUnits.lbl.textContent = "Units processed";
+    setTone(kUnits, "default");
+    animateCountUp(kUnits.num, s.totalProcessed, 0);
+    kUnits.hint.textContent = fmt(s.fulfilment,1) + "% of projected load";
+
+    kStaff.lbl.textContent = "Latest staffing gap";
+    setTone(kStaff, s.staffingGap >= 0 ? "good" : "warn");
+    animateCountUp(kStaff.num, Math.abs(s.staffingGap), 0);
+    kStaff.hint.textContent = (s.staffingGap>=0?"+":"−") + fmt(Math.abs(s.staffingGap),0) + " vs required " + fmt(s.reqWorkforce,0);
+
+    kNight.lbl.textContent = "Night shift avg IPP";
+    setTone(kNight, s.nightIpp >= s.dayIpp ? "good" : "warn");
+    animateCountUp(kNight.num, s.nightIpp, 1);
+    kNight.hint.textContent = "vs " + fmt(s.dayIpp,1) + " IPP on day shift";
+  }
+
+  var tabsEl = document.getElementById("avgIppTabs");
+  tabsEl.innerHTML = "";
+  AVG_IPP_RANGES.forEach(function(r){
     var b = document.createElement("button");
     b.textContent = r.label;
-    b.className = r.key === "14d" ? "active" : "";
+    b.className = r.key === "full" ? "active" : "";
     b.addEventListener("click", function(){
       Array.prototype.forEach.call(tabsEl.children, function(btn){ btn.classList.remove("active"); });
       b.classList.add("active");
-      paintAvgIpp(r.key);
+      paintKpis(r.key);
     });
     tabsEl.appendChild(b);
   });
-  paintAvgIpp("14d");
-
-  var kpiDefs = [
-    { label:"Target attainment", value:attainment, decimals:1, suffix:"%", hint:fmt(a.gap,1)+" IPP to close vs target "+fmt(TARGET_IPP,0), tone:attainment>=90?"good":"warn" },
-    { label:"Peak day", value:a.peak.dailyAvg, decimals:0, suffix:"", hint:"Recorded on "+a.peak.date, tone:"default" },
-    { label:"Units processed", value:a.totalProcessed, decimals:0, suffix:"", hint:fmt(a.fulfilment,1)+"% of projected load", tone:"default" },
-    { label:"Latest staffing gap", value:Math.abs(a.staffingGap), decimals:0, suffix:"", hint:(a.staffingGap>=0?"+":"−")+fmt(Math.abs(a.staffingGap),0)+" vs required "+fmt(a.reqWorkforce,0), tone:a.staffingGap>=0?"good":"warn" },
-    { label:"Night shift avg IPP", value:a.nightIpp, decimals:1, suffix:"", hint:"vs "+fmt(a.dayIpp,1)+" IPP on day shift", tone:a.nightIpp>=a.dayIpp?"good":"warn" }
-  ];
-
-  kpiDefs.forEach(function(k, idx){
-    var el = document.createElement("div");
-    el.className = "panel kpi rise d" + Math.min(idx+2,6);
-    var toneClass = k.tone === "good" ? "tone-good" : (k.tone === "warn" ? "tone-warn" : "");
-    el.innerHTML =
-      '<p class="label">'+k.label+'</p>' +
-      '<p class="value '+toneClass+'"><span class="num">0</span><span class="suffix">'+k.suffix+'</span></p>' +
-      '<p class="hint">'+k.hint+'</p>';
-    kpiGrid.appendChild(el);
-    animateCountUp(el.querySelector(".num"), k.value, k.decimals);
-  });
+  paintKpis("full");
 }
 
 /* ============================== INSIGHT CARDS ============================== */
@@ -1203,8 +1247,13 @@ function hoverAt(e){
   var cx = lastScales.x(idx), cy = lastScales.y(row.dailyAvg);
   var svgRect = svg.getBoundingClientRect();
   var scaleX = svgRect.width / VB_W, scaleY = svgRect.height / VB_H;
-  tooltip.style.left = (cx * scaleX) + "px";
-  tooltip.style.top = (cy * scaleY) + "px";
+  var fixedLeft = svgRect.left + cx * scaleX;
+  var fixedTop = svgRect.top + cy * scaleY;
+  /* keep the tooltip on-screen near viewport edges */
+  fixedLeft = Math.min(Math.max(fixedLeft, 90), window.innerWidth - 90);
+  fixedTop = Math.max(fixedTop, 70);
+  tooltip.style.left = fixedLeft + "px";
+  tooltip.style.top = fixedTop + "px";
   tooltip.style.transform = "translate(-50%, -115%)";
   tooltip.innerHTML =
     '<p class="t-title">'+row.date+'</p>' +
@@ -1466,8 +1515,12 @@ function mountMiniChart(containerId, opts){
       var lines = opts.series.map(function(s){ return s.label + ": " + fmt(row[s.key] || 0, opts.decimals||0) + (opts.unit||""); }).join(" · ");
       tooltipEl.innerHTML = '<p class="t-title">'+row.date+'</p><p>'+lines+'</p>';
       var cy = yScale(row[opts.series[0].key] || 0);
-      tooltipEl.style.left = (cx*scaleX) + "px";
-      tooltipEl.style.top = (cy*scaleY) + "px";
+      var fixedLeft = svgRect.left + cx*scaleX;
+      var fixedTop = svgRect.top + cy*scaleY;
+      fixedLeft = Math.min(Math.max(fixedLeft, 90), window.innerWidth - 90);
+      fixedTop = Math.max(fixedTop, 70);
+      tooltipEl.style.left = fixedLeft + "px";
+      tooltipEl.style.top = fixedTop + "px";
       tooltipEl.style.transform = "translate(-50%, -115%)";
       tooltipEl.classList.add("show");
       hoverG.innerHTML = '<line x1="'+cx+'" y1="'+PADm.top+'" x2="'+cx+'" y2="'+(PADm.top+plotH)+'" stroke="var(--border)" stroke-width="1"/>';
