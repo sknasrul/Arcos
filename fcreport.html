@@ -303,6 +303,62 @@ footer{margin-top:3.5rem;border-top:1px solid var(--border);padding-top:1.5rem;f
 @media (prefers-reduced-motion:reduce){
   *{animation-duration:0.01ms!important;animation-iteration-count:1!important;transition-duration:0.01ms!important}
 }
+
+/* ============================== RESPONSIVE / MOBILE ============================== */
+@media (max-width:640px){
+  .wrap{padding:0 0.9rem 2.5rem}
+  header.hero{padding-top:2rem}
+  h1{font-size:1.9rem}
+  .eyebrow{font-size:0.66rem;letter-spacing:0.28em}
+  .lede{font-size:0.9rem}
+
+  .topbar{
+    padding:0.7rem 0.9rem;flex-wrap:wrap;justify-content:space-between;
+  }
+  .pdf-btn{padding:0.55rem 1rem;font-size:0.82rem;gap:0.4rem}
+  .pdf-btn svg{width:17px;height:17px}
+  .status-pill{font-size:0.68rem;padding:0.4rem 0.7rem}
+  .refresh-btn{width:2rem;height:2rem}
+
+  .kpis{margin-top:1.75rem;gap:0.75rem}
+  .kpi{padding:1rem}
+  .kpi .value{font-size:1.7rem}
+  .kpi .label{font-size:0.66rem;letter-spacing:0.12em}
+  .kpi .hint{font-size:0.78rem}
+
+  .chart-panel{padding:1rem;margin-top:1.25rem}
+  .chart-head h2{font-size:1.15rem}
+  .chart-head{gap:0.6rem}
+  .range-tabs{width:100%;overflow-x:auto;justify-content:flex-start}
+  .range-tabs button{padding:0.38rem 0.65rem;font-size:0.7rem;white-space:nowrap}
+
+  .legend{gap:0.7rem;font-size:0.7rem}
+  .zoom-controls{margin-left:0;width:100%;justify-content:flex-end}
+  .zoom-controls .hint-text{display:none}
+
+  .chart-shell{height:280px}
+  .mini-chart .chart-shell{height:200px}
+  .mini-chart{padding:1rem}
+  .mini-chart .chart-head h2{font-size:1rem}
+  .charts-grid{gap:0.9rem;margin-top:1.1rem}
+
+  .insights h2{font-size:1.4rem}
+  .cards{gap:0.75rem}
+  .card{padding:1.1rem}
+  .card h3{font-size:1rem}
+
+  table{min-width:600px;font-size:0.78rem}
+  th, td{padding:0.7rem 0.6rem}
+
+  footer{margin-top:2.5rem;flex-direction:column;gap:0.4rem}
+}
+
+@media (max-width:400px){
+  h1{font-size:1.6rem}
+  .kpi .value{font-size:1.5rem}
+  .pdf-btn span, .pdf-btn{font-size:0.78rem}
+  .chart-shell{height:240px}
+}
 </style>
 </head>
 <body>
@@ -391,6 +447,7 @@ footer{margin-top:3.5rem;border-top:1px solid var(--border);padding-top:1.5rem;f
         <g id="chartRef"></g>
         <path id="chartAreaPath" class="chart-area"></path>
         <path id="chartLinePath" class="chart-line" stroke="url(#ippStroke)"></path>
+        <g id="chartPoints"></g>
         <g id="chartHover"></g>
         <g id="chartLive"></g>
       </svg>
@@ -470,11 +527,26 @@ footer{margin-top:3.5rem;border-top:1px solid var(--border);padding-top:1.5rem;f
 
     <div class="cards" id="insightCards"></div>
 
+    <h2 style="margin-top:2.5rem;font-size:1.4rem" id="dodHeading">Day on Day</h2>
+    <p class="sub" id="dodSub">Consecutive-day deltas, live from the sheet</p>
     <div class="panel table-panel">
       <table>
         <thead>
           <tr>
-            <th>Month</th><th>Days</th><th>Avg IPP</th><th>Best</th><th>Avg manpower</th><th>Avg units/day</th><th>Fulfilment</th><th>Night avg IPP</th>
+            <th>Date</th><th>Blended IPP</th><th>Δ IPP</th><th>Δ%</th><th>Manpower</th><th>Δ MP</th><th>Volume</th><th>Δ Volume</th>
+          </tr>
+        </thead>
+        <tbody id="dayOnDayRows"></tbody>
+      </table>
+    </div>
+
+    <h2 style="margin-top:2.5rem;font-size:1.4rem" id="momHeading">Month on Month</h2>
+    <p class="sub" id="momSub">Monthly averages with change vs the prior month</p>
+    <div class="panel table-panel">
+      <table>
+        <thead>
+          <tr>
+            <th>Month</th><th>Days</th><th>Avg IPP</th><th>Δ IPP</th><th>Δ%</th><th>Best</th><th>Avg manpower</th><th>Avg units/day</th><th>Fulfilment</th><th>Night avg IPP</th>
           </tr>
         </thead>
         <tbody id="monthlyRows"></tbody>
@@ -495,7 +567,7 @@ footer{margin-top:3.5rem;border-top:1px solid var(--border);padding-top:1.5rem;f
 /* ============================== CONFIG ============================== */
 var SHEET_ID = "1fIV4lYk-1cijkGsFl8xgKJF4oXWp3HETSzHJMRwR5Zo";
 var SHEET_GID = "1067706484";
-var TARGET_IPP = 200; // internal stretch goal shown on the hero chart
+var TARGET_IPP = 180; // operating target — set dynamically from the sheet's own target column once data loads
 var FETCH_TIMEOUT_MS = 12000;
 
 var FALLBACK_DATA = JSON.parse(document.getElementById("daily-data-fallback").textContent);
@@ -753,19 +825,24 @@ function boot(isRefresh){
 refreshBtn.addEventListener("click", function(){ boot(true); });
 
 /* ============================== RENDER: INIT ============================== */
+var LAST_ANALYSIS = null;
+
 function init(dataset, isLive, fetchedAt){
   var a = buildAnalysis(dataset);
+  TARGET_IPP = a.sheetTarget || 180;
+  a.gap = TARGET_IPP - a.recent.avg;
+  LAST_ANALYSIS = a;
   var attainment = TARGET_IPP ? (a.recent.avg / TARGET_IPP) * 100 : 0;
 
   setStatus(isLive, fetchedAt);
 
   document.getElementById("ledeText").textContent =
-    "Blended IPP (items per picker-hour, day + night combined) tracked against a working goal of " +
-    TARGET_IPP + " IPP and the sheet's own operating target of " + fmt(a.sheetTarget) + " IPP/hour, across " +
+    "Blended IPP (items per picker-hour, day + night combined) tracked against the sheet's operating target of " +
+    TARGET_IPP + " IPP/hour, across " +
     a.overall.n + " operating days from " + (a.all[0] ? a.all[0].date : "-") + " to " + (a.all[a.all.length-1] ? a.all[a.all.length-1].date : "-") + ".";
 
   document.getElementById("mainChartSub").textContent =
-    "Daily blended rate · goal " + TARGET_IPP + " · sheet target " + fmt(a.sheetTarget);
+    "Daily blended rate · target " + fmt(TARGET_IPP,0);
 
   document.getElementById("footerText").innerHTML =
     "<span>Source: ARCOS Pickers Details sheet (tab gid " + SHEET_GID + ") · " + a.overall.n + " daily records</span>" +
@@ -775,6 +852,7 @@ function init(dataset, isLive, fetchedAt){
   renderMainChart(a.all);
   renderMiniCharts(a);
   renderInsights(a, attainment);
+  renderDayOnDayTable(a);
   renderMonthlyTable(a);
 
   hideLoading();
@@ -793,21 +871,92 @@ function animateCountUp(el, target, decimals){
   requestAnimationFrame(tick);
 }
 
+var AVG_IPP_RANGES = [
+  { key:"14d", label:"14d" },
+  { key:"full", label:"Full" },
+  { key:"30d", label:"30d" },
+  { key:"7d", label:"7d" },
+  { key:"24h", label:"24h" }
+];
+
+function avgIppStatsForRange(a, key){
+  var all = a.all;
+  var slice;
+  if (key === "24h"){
+    slice = all.slice(-1);
+  } else if (key === "7d"){
+    slice = all.slice(-7);
+  } else if (key === "30d"){
+    slice = all.slice(-30);
+  } else if (key === "14d"){
+    slice = all.slice(-14);
+  } else {
+    slice = all;
+  }
+  var prevLen = slice.length;
+  var prevSlice = key === "full" ? [] : all.slice(Math.max(0, all.length - prevLen*2), Math.max(0, all.length - prevLen));
+  var cur = seriesStats(slice);
+  var prev = seriesStats(prevSlice);
+  return { avg: cur.avg, momentum: cur.avg - (prevSlice.length ? prev.avg : cur.avg), hasPrev: prevSlice.length > 0 };
+}
+
 function renderKpis(a, attainment){
+  var kpiGrid = document.getElementById("kpiGrid");
+  kpiGrid.innerHTML = "";
+
+  /* KPI 0: interactive avg-IPP card with range tabs */
+  var kpi0 = document.createElement("div");
+  kpi0.className = "panel kpi rise d1";
+  kpi0.innerHTML =
+    '<div style="display:flex;align-items:center;justify-content:space-between;gap:0.5rem;flex-wrap:wrap">' +
+      '<p class="label" id="avgIppLabel">14d avg IPP</p>' +
+      '<div class="range-tabs no-print" id="avgIppTabs" style="padding:0.15rem"></div>' +
+    '</div>' +
+    '<p class="value"><span class="num" id="avgIppValue">0</span></p>' +
+    '<p class="hint" id="avgIppHint"></p>';
+  kpiGrid.appendChild(kpi0);
+
+  var tabsEl = kpi0.querySelector("#avgIppTabs");
+  var valueEl = kpi0.querySelector("#avgIppValue");
+  var labelEl = kpi0.querySelector("#avgIppLabel");
+  var hintEl = kpi0.querySelector("#avgIppHint");
+  var valueWrap = kpi0.querySelector(".value");
+
+  function paintAvgIpp(key){
+    var s = avgIppStatsForRange(a, key);
+    var rangeLabel = AVG_IPP_RANGES.filter(function(r){ return r.key === key; })[0].label;
+    labelEl.textContent = rangeLabel + " avg IPP";
+    valueWrap.className = "value " + (s.momentum >= 0 ? "tone-good" : "tone-warn");
+    animateCountUp(valueEl, s.avg, 1);
+    hintEl.textContent = s.hasPrev
+      ? (s.momentum >= 0 ? "+" : "") + fmt(s.momentum,1) + " vs prior " + rangeLabel + " period"
+      : "Across " + a.overall.n + " operating days on record";
+  }
+
+  AVG_IPP_RANGES.forEach(function(r, i){
+    var b = document.createElement("button");
+    b.textContent = r.label;
+    b.className = r.key === "14d" ? "active" : "";
+    b.addEventListener("click", function(){
+      Array.prototype.forEach.call(tabsEl.children, function(btn){ btn.classList.remove("active"); });
+      b.classList.add("active");
+      paintAvgIpp(r.key);
+    });
+    tabsEl.appendChild(b);
+  });
+  paintAvgIpp("14d");
+
   var kpiDefs = [
-    { label:"Last 14d avg IPP", value:a.recent.avg, decimals:1, suffix:"", hint:(a.momentum>=0?"+":"")+fmt(a.momentum,1)+" vs prior 14 days", tone:a.momentum>=0?"good":"warn" },
-    { label:"Target attainment", value:attainment, decimals:1, suffix:"%", hint:fmt(a.gap,1)+" IPP to close vs goal "+TARGET_IPP, tone:attainment>=90?"good":"warn" },
+    { label:"Target attainment", value:attainment, decimals:1, suffix:"%", hint:fmt(a.gap,1)+" IPP to close vs target "+fmt(TARGET_IPP,0), tone:attainment>=90?"good":"warn" },
     { label:"Peak day", value:a.peak.dailyAvg, decimals:0, suffix:"", hint:"Recorded on "+a.peak.date, tone:"default" },
     { label:"Units processed", value:a.totalProcessed, decimals:0, suffix:"", hint:fmt(a.fulfilment,1)+"% of projected load", tone:"default" },
     { label:"Latest staffing gap", value:Math.abs(a.staffingGap), decimals:0, suffix:"", hint:(a.staffingGap>=0?"+":"−")+fmt(Math.abs(a.staffingGap),0)+" vs required "+fmt(a.reqWorkforce,0), tone:a.staffingGap>=0?"good":"warn" },
     { label:"Night shift avg IPP", value:a.nightIpp, decimals:1, suffix:"", hint:"vs "+fmt(a.dayIpp,1)+" IPP on day shift", tone:a.nightIpp>=a.dayIpp?"good":"warn" }
   ];
 
-  var kpiGrid = document.getElementById("kpiGrid");
-  kpiGrid.innerHTML = "";
   kpiDefs.forEach(function(k, idx){
     var el = document.createElement("div");
-    el.className = "panel kpi rise d" + Math.min(idx+1,6);
+    el.className = "panel kpi rise d" + Math.min(idx+2,6);
     var toneClass = k.tone === "good" ? "tone-good" : (k.tone === "warn" ? "tone-warn" : "");
     el.innerHTML =
       '<p class="label">'+k.label+'</p>' +
@@ -823,22 +972,21 @@ function renderInsights(a, attainment){
   var nightMinusDay = a.nightIpp - a.dayIpp;
   var monthLift = fmt(((a.monthly[2].avg || 0) / (a.monthly[0].avg || 1) - 1) * 100, 0);
   var daysToTargetText = a.daysToTarget
-    ? "Holding the current improvement rate, the goal is reached in roughly " + a.daysToTarget + " operating days."
-    : "At the current flat slope, the goal will not be reached without an intervention.";
-  var sheetAttainment = a.sheetTarget ? (a.recent.avg / a.sheetTarget) * 100 : 0;
+    ? "Holding the current improvement rate, target is reached in roughly " + a.daysToTarget + " operating days."
+    : "At the current flat slope, target will not be reached without an intervention.";
   var nightStartText = a.nightStartRow ? a.nightStartRow.date : "the sheet's first night record";
   var staffText = a.staffingGap >= 0
     ? "currently running " + fmt(a.staffingGap,0) + " head above the required workforce"
     : "currently running " + fmt(Math.abs(a.staffingGap),0) + " head short of the required workforce";
 
   document.getElementById("insightsSub").textContent =
-    "A statistical read of the full sheet: manpower plan vs attendance, day/night split, processed volume against projection, and the trajectory toward " + TARGET_IPP + " IPP.";
+    "A statistical read of the full sheet: manpower plan vs attendance, day/night split, processed volume against projection, and the trajectory toward the " + fmt(TARGET_IPP,0) + " IPP target.";
 
   var insightDefs = [
     { title:"1. A strong, sustained upward trend",
       body:"Monthly means move from "+fmt(a.monthly[0].avg,1)+" IPP in June to "+fmt(a.monthly[1].avg,1)+" in July and "+fmt(a.monthly[2].avg,1)+" in August — a "+monthLift+"% lift over the period. The last 14 days regress at a slope of "+fmt(a.slope,2)+" IPP/day, so the trend is still positive rather than plateaued." },
-    { title:"2. Two ways to read \"target\"",
-      body:"Recent blended output averages "+fmt(a.recent.avg,1)+" IPP. Against the "+TARGET_IPP+" IPP stretch goal that's "+fmt(attainment,1)+"% attainment, a shortfall of "+fmt(a.gap,1)+" IPP. Against the sheet's own operating target of "+fmt(a.sheetTarget,0)+" IPP/hour, attainment is already "+fmt(sheetAttainment,1)+"%. "+daysToTargetText },
+    { title:"2. Reading target attainment",
+      body:"Recent blended output averages "+fmt(a.recent.avg,1)+" IPP against the sheet's operating target of "+fmt(TARGET_IPP,0)+" IPP/hour — "+fmt(attainment,1)+"% attainment, a shortfall of "+fmt(a.gap,1)+" IPP. "+daysToTargetText },
     { title:"3. Night shift now outperforms day",
       body:"Mean night IPP is "+fmt(a.nightIpp,1)+" against "+fmt(a.dayIpp,1)+" for day — a "+fmt(nightMinusDay,1)+" IPP spread since night operations began on "+nightStartText+". Night runs leaner headcount on comparable volume, which points at day-shift losses from interruptions, task switching and idle manpower rather than a raw capability gap." },
     { title:"4. Volume, not productivity, is the constraint",
@@ -852,7 +1000,7 @@ function renderInsights(a, attainment){
     { title:"8. What to act on", list:[
         "Port night-shift practices into day operations to close the "+fmt(nightMinusDay,0)+" IPP spread.",
         "Hold attendance at or above the required "+fmt(a.reqWorkforce,0)+"-head workforce to keep attacking the volume backlog.",
-        "Manage to the daily floor, not the average — variance is the main risk to the "+TARGET_IPP+" IPP goal."
+        "Manage to the daily floor, not the average — variance is the main risk to the "+fmt(TARGET_IPP,0)+" IPP target."
       ]}
   ];
 
@@ -870,24 +1018,56 @@ function renderInsights(a, attainment){
   });
 }
 
-/* ============================== MONTHLY TABLE ============================== */
+/* ============================== DAY ON DAY TABLE ============================== */
+function renderDayOnDayTable(a){
+  var rows = a.all.slice(-14); // last 14 operating days, consecutive deltas vs the prior sheet row
+  var startIdx = a.all.length - rows.length;
+  var tbody = document.getElementById("dayOnDayRows");
+  tbody.innerHTML = "";
+  rows.forEach(function(r, i){
+    var globalIdx = startIdx + i;
+    var prev = a.all[globalIdx - 1] || null;
+    var dIpp = prev ? r.dailyAvg - prev.dailyAvg : null;
+    var dPct = prev && prev.dailyAvg ? (dIpp / prev.dailyAvg) * 100 : null;
+    var dMp = prev ? r.mp - prev.mp : null;
+    var dVol = prev ? r.load - prev.load : null;
+    var tr = document.createElement("tr");
+    tr.innerHTML =
+      '<td class="month">'+r.date+'</td>' +
+      '<td class="accent">'+fmt(r.dailyAvg,0)+'</td>' +
+      '<td class="'+(dIpp===null?"muted":(dIpp>=0?"tone-good":"tone-warn"))+'">'+(dIpp===null?"—":(dIpp>=0?"+":"")+fmt(dIpp,0))+'</td>' +
+      '<td class="'+(dPct===null?"muted":(dPct>=0?"tone-good":"tone-warn"))+'">'+(dPct===null?"—":(dPct>=0?"+":"")+fmt(dPct,1)+"%")+'</td>' +
+      '<td class="muted">'+fmt(r.mp,0)+'</td>' +
+      '<td class="'+(dMp===null?"muted":(dMp>=0?"tone-good":"tone-warn"))+'">'+(dMp===null?"—":(dMp>=0?"+":"")+fmt(dMp,0))+'</td>' +
+      '<td class="muted">'+fmt(r.load,0)+'</td>' +
+      '<td class="'+(dVol===null?"muted":(dVol>=0?"tone-good":"tone-warn"))+'">'+(dVol===null?"—":(dVol>=0?"+":"")+fmt(dVol,0))+'</td>';
+    tbody.appendChild(tr);
+  });
+}
+
+/* ============================== MONTH ON MONTH TABLE ============================== */
 function renderMonthlyTable(a){
   var monthlyRows = document.getElementById("monthlyRows");
   monthlyRows.innerHTML = "";
+  var prevAvg = null;
   a.monthly.forEach(function(m){
     if (!m.n) return;
-    var fulfil = m.avgLoad && a.all.length ? (mean((a[m.label==="June"?"jun":m.label==="July"?"jul":"aug"]||[]).map(function(r){return r.deltaPct;}))) : 0;
+    var dIpp = prevAvg === null ? null : m.avg - prevAvg;
+    var dPct = (prevAvg === null || !prevAvg) ? null : (dIpp / prevAvg) * 100;
     var tr = document.createElement("tr");
     tr.innerHTML =
       '<td class="month">'+m.label+'</td>' +
       '<td class="muted">'+m.n+'</td>' +
       '<td class="accent">'+fmt(m.avg,1)+'</td>' +
+      '<td class="'+(dIpp===null?"muted":(dIpp>=0?"tone-good":"tone-warn"))+'">'+(dIpp===null?"—":(dIpp>=0?"+":"")+fmt(dIpp,1))+'</td>' +
+      '<td class="'+(dPct===null?"muted":(dPct>=0?"tone-good":"tone-warn"))+'">'+(dPct===null?"—":(dPct>=0?"+":"")+fmt(dPct,1)+"%")+'</td>' +
       '<td class="muted">'+fmt(m.best)+'</td>' +
       '<td class="muted">'+fmt(m.avgMp,1)+'</td>' +
       '<td class="muted">'+fmt(m.avgLoad)+'</td>' +
       '<td class="muted">'+fmt(m.avgFulfil,1)+'%</td>' +
       '<td class="muted">'+(m.avgNightIpp ? fmt(m.avgNightIpp,1) : "—")+'</td>';
     monthlyRows.appendChild(tr);
+    prevAvg = m.avg;
   });
 }
 
@@ -1028,7 +1208,7 @@ function hoverAt(e){
   tooltip.style.transform = "translate(-50%, -115%)";
   tooltip.innerHTML =
     '<p class="t-title">'+row.date+'</p>' +
-    '<p>IPP <span class="acc">'+fmt(row.dailyAvg)+'</span> / goal '+TARGET_IPP+'</p>' +
+    '<p>IPP <span class="acc">'+fmt(row.dailyAvg)+'</span> / target '+fmt(TARGET_IPP,0)+'</p>' +
     '<p>Day '+fmt(row.ippD)+' · Night '+fmt(row.ippN)+' · Manpower '+fmt(row.mp)+'</p>' +
     '<p>Processed '+fmt(row.load)+' units</p>';
   tooltip.classList.add("show");
@@ -1057,7 +1237,7 @@ function renderChart(resetWindow){
   var plotH = VB_H - PAD.top - PAD.bottom;
 
   var maxVal = view.length ? Math.max.apply(null, view.map(function(p){return p.dailyAvg;})) : 0;
-  var refMax = Math.max(TARGET_IPP, (mainDataset[mainDataset.length-1]||{}).targetIppHour || 0);
+  var refMax = TARGET_IPP;
   var maxY = Math.max(refMax + 40, maxVal) * 1.05;
   maxY = Math.round(maxY);
 
@@ -1095,28 +1275,12 @@ function renderChart(resetWindow){
   }
   axisXEl.innerHTML = ax;
 
-  /* reference lines: stretch goal + sheet's own operating target */
-  var sheetTarget = (mainDataset[mainDataset.length-1]||{}).targetIppHour || 0;
+  /* reference line: single operating target from the sheet */
   var refY = yScale(TARGET_IPP);
   var refHTML =
     '<line class="ref-line" x1="'+PAD.left+'" y1="'+refY+'" x2="'+(VB_W-PAD.right)+'" y2="'+refY+'"/>' +
-    '<text class="ref-label" x="'+(VB_W-PAD.right-4)+'" y="'+(refY-6)+'" text-anchor="end">Goal '+TARGET_IPP+'</text>';
-  if (sheetTarget && sheetTarget !== TARGET_IPP){
-    var refY2 = yScale(sheetTarget);
-    refHTML +=
-      '<line x1="'+PAD.left+'" y1="'+refY2+'" x2="'+(VB_W-PAD.right)+'" y2="'+refY2+'" stroke="var(--chart-4)" stroke-width="1.2" stroke-dasharray="4 5"/>' +
-      '<text x="'+(PAD.left+4)+'" y="'+(refY2-6)+'" font-size="11" font-family="var(--font-sans)" fill="var(--chart-4)">Sheet target '+fmt(sheetTarget,0)+'</text>';
-  }
+    '<text class="ref-label" x="'+(VB_W-PAD.right-4)+'" y="'+(refY-6)+'" text-anchor="end">Target '+fmt(TARGET_IPP,0)+'</text>';
   document.getElementById("chartRef").innerHTML = refHTML;
-
-  var legendEl = document.getElementById("mainLegend");
-  var legendExtra = legendEl.querySelector(".legend-extra");
-  if (!legendExtra && sheetTarget && sheetTarget !== TARGET_IPP){
-    var span = document.createElement("span");
-    span.className = "swatch legend-extra";
-    span.innerHTML = '<span class="bar dashed" style="border-color:var(--chart-4)"></span> Sheet target '+fmt(sheetTarget,0);
-    legendEl.insertBefore(span, legendEl.querySelector(".zoom-controls"));
-  }
 
   /* smooth line + area paths */
   var linePath = "", areaPath = "";
@@ -1143,6 +1307,19 @@ function renderChart(resetWindow){
     lineEl.style.strokeDashoffset = 0;
     areaEl.classList.add("in");
   });
+
+  /* point markers on every data point */
+  var pointsG = document.getElementById("chartPoints");
+  if (view.length){
+    var dotsHTML = "";
+    for (var pi=0; pi<view.length; pi++){
+      var px = xScale(pi), py = yScale(view[pi].dailyAvg);
+      dotsHTML += '<circle cx="'+px.toFixed(2)+'" cy="'+py.toFixed(2)+'" r="3.4" fill="var(--background)" stroke="var(--accent)" stroke-width="1.8"></circle>';
+    }
+    pointsG.innerHTML = dotsHTML;
+  } else {
+    pointsG.innerHTML = "";
+  }
 
   /* live dot on last visible point */
   var liveG = document.getElementById("chartLive");
@@ -1245,6 +1422,11 @@ function mountMiniChart(containerId, opts){
         seriesHTML += '<path d="'+areaD+'" fill="url(#'+gradId+')" stroke="none"></path>';
       }
       seriesHTML += '<path id="'+pid+'" class="mini-line" d="'+d+'" stroke="'+s.color+'"></path>';
+      var dotsHTML = "";
+      for (var pi=0; pi<pts.length; pi++){
+        dotsHTML += '<circle cx="'+pts[pi][0].toFixed(2)+'" cy="'+pts[pi][1].toFixed(2)+'" r="2.6" fill="var(--background)" stroke="'+s.color+'" stroke-width="1.5"></circle>';
+      }
+      seriesHTML += '<g>'+dotsHTML+'</g>';
       lineIds.push(pid);
     });
     seriesG.innerHTML = seriesHTML;
@@ -1299,7 +1481,6 @@ function mountMiniChart(containerId, opts){
 
 function renderMiniCharts(a){
   var all = a.all;
-  var nightRows = a.nightStartRow ? all.filter(function(r){ return r.date === a.nightStartRow.date || all.indexOf(r) >= all.indexOf(a.nightStartRow); }) : all;
 
   document.getElementById("daynightSub").textContent = a.nightStartRow
     ? "Hourly IPP split since night shift began ("+a.nightStartRow.date+")"
@@ -1313,7 +1494,7 @@ function renderMiniCharts(a){
       { key:"ippD", label:"Day IPP", color:"var(--accent)" },
       { key:"ippN", label:"Night IPP", color:"var(--chart-4)" }
     ],
-    refLines: [ { value: TARGET_IPP, label: "Goal " + TARGET_IPP, color: "var(--warning)" } ],
+    refLines: [ { value: TARGET_IPP, label: "Target " + fmt(TARGET_IPP,0), color: "var(--warning)" } ],
     unit: "", decimals: 0
   });
 
