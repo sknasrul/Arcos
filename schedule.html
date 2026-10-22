@@ -523,7 +523,13 @@ async function loadSchedule(){
     if (!res.ok) throw new Error('request failed');
     var data = await res.json();
     var items = parseCompactSchedule(data.value, new Date().getFullYear());
-    items.sort(function(a, b){ return b.date - a.date; });
+    var todayStart = new Date();
+    todayStart.setHours(0, 0, 0, 0);
+    var upcoming = items.filter(function(i){ return i.date >= todayStart; })
+                        .sort(function(a, b){ return a.date - b.date; });
+    var past = items.filter(function(i){ return i.date < todayStart; })
+                    .sort(function(a, b){ return b.date - a.date; });
+    items = upcoming.concat(past);
     renderItems(items);
   } catch (err){
     showError();
