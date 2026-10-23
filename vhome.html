@@ -104,6 +104,9 @@ border:1px solid rgba(246,211,101,.4);box-shadow:0 30px 50px -22px rgba(60,40,10
 background:rgba(255,255,255,.86);-webkit-backdrop-filter:blur(18px);backdrop-filter:blur(18px);border:1px solid var(--stroke);box-shadow:var(--lift);max-width:86vw;text-align:center}
 .toast.show{opacity:1;transform:translate(-50%,0)}
 @media(min-width:720px){.toast{bottom:28px}}
+@media(max-width:719px){
+.it.lk{display:none}
+.nav{width:min(calc(100% - 28px),340px)}}
 @media(max-width:899px){.home{grid-template-columns:1fr;gap:22px}.stage{max-width:430px}}
 @media(max-width:719px){.top{margin-bottom:22px}.gb.out{order:2}}
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.001s!important;animation-delay:0s!important;transition-duration:.001s!important}.aurora i{animation:none}}
@@ -210,7 +213,7 @@ nav.addEventListener("pointermove",function(e){if(!press)return;var b=at(e.clien
 nav.addEventListener("pointerup",function(){if(!press)return;press=null;nav.classList.remove("press");var b=hov;hov=null;if(b){b.classList.remove("hv");activate(b)}});
 nav.addEventListener("pointercancel",function(){press=null;hov=null;nav.classList.remove("press");btns.forEach(function(x){x.classList.remove("hv")});place(cur)});
 nav.addEventListener("click",function(e){if(e.detail!==0)return;var b=e.target.closest(".it");if(b)activate(b)});
-nav.addEventListener("keydown",function(e){var k=e.key,i=btns.indexOf(document.activeElement);if(i<0)return;var d=(k==="ArrowRight"||k==="ArrowDown")?1:(k==="ArrowLeft"||k==="ArrowUp")?-1:0;if(d){e.preventDefault();btns[(i+d+btns.length)%btns.length].focus()}});
+nav.addEventListener("keydown",function(e){var k=e.key,v=btns.filter(function(b){return b.offsetParent!==null}),i=v.indexOf(document.activeElement);if(i<0)return;var d=(k==="ArrowRight"||k==="ArrowDown")?1:(k==="ArrowLeft"||k==="ArrowUp")?-1:0;if(d){e.preventDefault();v[(i+d+v.length)%v.length].focus()}});
 function resync(){place(cur)}
 addEventListener("resize",resync);if(document.fonts&&document.fonts.ready)document.fonts.ready.then(resync);
 
