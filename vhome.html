@@ -40,6 +40,7 @@ a{color:inherit;text-decoration:none}button{font:inherit;color:inherit}
 @keyframes fade{from{opacity:0}to{opacity:1}}
 @keyframes sfade{0%{opacity:1}100%{opacity:.15}}
 @keyframes pop{from{opacity:0;transform:scale(.55) translateY(10px)}to{opacity:1;transform:none}}
+@keyframes blink{0%,80%,100%{opacity:.25}40%{opacity:1}}
 
 /* page */
 .wrap{position:relative;z-index:1;max-width:1040px;margin:0 auto;padding:calc(env(safe-area-inset-top,0px) + 30px) 20px 160px}
@@ -76,7 +77,32 @@ h1{font:700 clamp(32px,6vw,52px)/1.05 var(--gs);letter-spacing:-.03em}h1 small{d
 .ti .mi{display:grid;place-items:center;border-radius:7px;background:linear-gradient(145deg,var(--c),color-mix(in srgb,var(--c) 68%,#000))}
 .ti .mi svg{width:11px;height:11px;stroke-width:2.2}
 .tt{flex:1;min-width:0}.tt b{display:block;font:500 17px var(--gs);letter-spacing:-.01em}.tt span{font-size:12.5px;color:var(--fg2)}
-.go{width:18px;height:18px;stroke-width:2.6;color:var(--sub);transition:transform .4s var(--soft),color .3s}
+.go{width:18px;height:18px;stroke-width:2.6;color:var(--sub);transition:transform .4s var(--soft),color .3s;flex-shrink:0}
+
+/* hubs panel: every hub expanded, name first, its buttons below */
+.hub{margin-bottom:30px}
+.hub-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+@media(max-width:719px){.hub-grid{grid-template-columns:1fr}}
+
+/* AI panel */
+.chat{max-width:640px;display:flex;flex-direction:column;gap:12px}
+.chead{display:flex;align-items:center;gap:14px;padding:16px 18px}
+.chead .ti{width:44px;height:44px;border-radius:15px}
+.msgs{display:flex;flex-direction:column;gap:10px;padding:16px;min-height:240px;max-height:50vh;overflow:auto}
+.b{max-width:85%;padding:10px 14px;border-radius:20px;font-size:14.5px;line-height:1.45;white-space:pre-wrap;overflow-wrap:anywhere}
+.b.me{align-self:flex-end;background:var(--tint);color:#fff;border-bottom-right-radius:6px}
+.b.ai{align-self:flex-start;background:var(--pill);border-bottom-left-radius:6px}
+.b.ai.typing span{display:inline-block;animation:blink 1.2s infinite}.b.ai.typing span:nth-child(2){animation-delay:.2s}.b.ai.typing span:nth-child(3){animation-delay:.4s}
+.cin{display:flex;gap:10px;padding:10px}
+.cin input{flex:1;min-width:0;border:0;background:var(--pill);color:var(--fg);padding:12px 16px;border-radius:999px;font:16px var(--ui);outline:none}
+.cin input:focus-visible{outline:2.5px solid var(--tint);outline-offset:2px}
+.cin .send{width:46px;height:46px;border-radius:50%;border:0;background:var(--ai);color:#fff;display:grid;place-items:center;cursor:pointer;flex-shrink:0;transition:transform .4s var(--bounce),opacity .2s}
+.cin .send:active{transform:scale(.9)}.cin .send:disabled{opacity:.5}
+.cin .send svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+.soon{max-width:520px;padding:36px 24px;text-align:center;display:flex;flex-direction:column;align-items:center;gap:8px}
+.soon .ti{width:64px;height:64px;border-radius:22px;margin-bottom:8px}.soon .ti svg{width:32px;height:32px}
+.soon h2{font:700 22px var(--gs);letter-spacing:-.02em}
+.soon p{font-size:14.5px;color:var(--fg2);max-width:34ch}
 
 /* iOS-style folder overlay */
 .fo{position:fixed;inset:0;z-index:9;display:grid;place-items:center;padding:24px;visibility:hidden}
@@ -98,6 +124,92 @@ h1{font:700 clamp(32px,6vw,52px)/1.05 var(--gs);letter-spacing:-.03em}h1 small{d
 .stage{perspective:1000px}
 .vc{position:relative;width:100%;aspect-ratio:85.6/53.98;border-radius:24px;padding:24px 28px;color:#f5f1e6;display:flex;flex-direction:column;justify-content:space-between;overflow:hidden;
 background:radial-gradient(130% 110% at 100% 100%,rgba(201,140,60,.6) 0%,rgba(140,92,44,.22) 32%,transparent 60%),linear-gradient(160deg,#1b1c25 0%,#111119 45%,#0c0c11 100%);
+border:1px solid rgba(246,211,101,.4);box-shadow:0 30px 50px -22px rgba(60,40,10,.55);transition:transform .35s var(--out);transform-style:preserve-3d;will-change:transform}
+.vc::before{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(122deg,transparent 32%,rgba(255,255,255,.05) 42%,rgba(255,255,255,.17) 48%,rgba(255,255,255,.07) 54%,transparent 64%)}
+.vc>*{position:relative}.vt{display:flex;align-items:center;justify-content:space-between}
+.vb{display:flex;align-items:center;gap:7px;color:#F6D365;font-size:13px;font-weight:800;letter-spacing:.06em}.vb svg{width:17px;height:17px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.chip{width:48px;height:33px;border-radius:7px;background:linear-gradient(135deg,#c99a4e,#f4e2ad 45%,#e2c288 70%,#b8894a);box-shadow:0 3px 8px rgba(0,0,0,.4)}
+.vg{font-size:10px;font-weight:700;letter-spacing:.12em;color:rgba(245,241,230,.45)}
+.vn{margin-top:10px;font:500 clamp(19px,5.4vw,25px) var(--gs);letter-spacing:.04em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.vd{display:grid;grid-template-columns:1fr 1fr;gap:12px 16px}.vd .full{grid-column:1/-1}
+.vd small{display:block;font-size:9.5px;font-weight:700;letter-spacing:.12em;color:rgba(245,241,230,.45);margin-bottom:3px}.vd b{font-size:14.5px;font-weight:700}
+
+/* in-page preloader (sits under the nav bar so navigation stays visible) */
+.loader{position:fixed;inset:0;z-index:7;display:grid;place-content:center;justify-items:center;gap:18px;background:color-mix(in srgb,var(--bg) 80%,transparent);-webkit-backdrop-filter:blur(22px);backdrop-filter:blur(22px);opacity:0;visibility:hidden;transition:opacity .3s,visibility .3s}
+.loader.on{opacity:1;visibility:visible}
+.loader p{font:500 15px var(--gs);color:var(--fg2)}
+.sp{width:38px;height:38px;position:relative}
+.sp i{position:absolute;inset:0;transform:rotate(calc(var(--n)*30deg));animation:sfade 1s linear infinite;animation-delay:calc(var(--n)*83.3ms - 1s)}
+.sp i::before{content:"";display:block;margin:0 auto;width:3.5px;height:10px;border-radius:2px;background:var(--fg)}
+.err{padding:26px 22px;text-align:center}
+.err p{color:var(--fg2);margin:6px 0 16px;font-size:14px}
+.sg{border:1px solid var(--stroke);background:var(--card);color:var(--tint);padding:9px 16px;border-radius:999px;font-size:13.5px;font-weight:600;cursor:pointer;transition:transform .4s var(--bounce)}.sg:active{transform:scale(.94)}
+
+/* navigation: glass tab bar + AI button (bottom on phones, vertical rail on desktop) */
+.scrim{position:fixed;z-index:8;left:0;right:0;bottom:0;height:150px;opacity:.9;pointer-events:none;background:linear-gradient(transparent,var(--bg) 85%);-webkit-mask:linear-gradient(transparent,#000 60%);mask:linear-gradient(transparent,#000 60%)}
+.dock{position:fixed;z-index:10;left:0;right:0;bottom:0;margin:0 auto;width:min(100%,400px);padding:0 21px calc(26px + env(safe-area-inset-bottom,0px));display:flex;justify-content:space-between;align-items:flex-end;gap:12px;pointer-events:none}
+.dock>*{pointer-events:auto}
+@media(min-width:720px){.dock{left:20px;right:auto;top:50%;bottom:auto;margin:0;width:64px;padding:0;flex-direction:column;align-items:stretch;justify-content:flex-start;gap:12px;transform:translateY(-50%)}.scrim{display:none}}
+.glass{position:absolute;inset:0;border-radius:999px;pointer-events:none;background:var(--glass);-webkit-backdrop-filter:blur(14px) saturate(190%);backdrop-filter:blur(14px) saturate(190%);box-shadow:0 10px 30px var(--shadow),inset 0 1.5px 1px var(--rim1),inset 0 -1px 1px var(--rim2)}
+.lite .glass{-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px)}
+.glass::before{content:"";position:absolute;inset:0;border-radius:inherit;background:linear-gradient(rgba(255,255,255,.28),transparent 50%)}
+.tabbar{position:relative;height:64px;width:calc(100% - 76px);user-select:none;-webkit-user-select:none}
+@media(min-width:720px){.tabbar{width:64px;height:128px}}
+.pill{position:absolute;z-index:1;left:0;top:4px;height:56px;width:0;border-radius:28px;background:var(--pill);pointer-events:none;will-change:transform;transition:opacity .3s}
+@media(min-width:720px){.pill{left:4px;top:0;width:56px;height:0}}
+.tabbar.dim .pill{opacity:0}
+.items{position:absolute;z-index:2;inset:0;display:flex;padding:4px}
+@media(min-width:720px){.items{flex-direction:column}}
+.item{flex:1 1 0;min-width:0;min-height:0;overflow:hidden;white-space:nowrap;border:0;background:none;padding:0;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;font:600 10px var(--ui);color:var(--fg2);transition:color .25s}
+.item.on{color:var(--tint)}
+.item svg{width:26px;height:26px;fill:currentColor;fill-opacity:0;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;transform-origin:50% 70%;transition:fill-opacity .3s}
+.item.on svg{fill-opacity:.22}
+.label{max-height:14px}
+.aibtn{position:relative;flex:none;width:64px;height:64px;border:0;background:none;border-radius:32px;color:var(--ai);cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;font:600 10px var(--ui);transition:transform .45s cubic-bezier(.3,1.6,.5,1)}
+.aibtn:active{transform:scale(.92)}
+.aibtn::before{content:"";position:absolute;inset:4px;border-radius:50%;background:var(--pill);z-index:1;opacity:0;transform:scale(.7);transition:opacity .3s,transform .5s var(--spring);pointer-events:none}
+.aibtn.on::before{opacity:1;transform:none}
+.aibtn>svg,.aibtn>span{position:relative;z-index:2}
+.aibtn>svg{width:26px;height:26px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;fill:currentColor;fill-opacity:0;transition:fill-opacity .3s}
+.aibtn.on>svg{fill-opacity:.22}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.001s!important;animation-delay:0s!important;transition-duration:.001s!important}.aurora i{animation:none}}
+</style>
+</head>
+<body>
+<div class="aurora" aria-hidden="true"><i></i><i></i><i></i></div>
+
+<main class="wrap" id="wrap" style="visibility:hidden">
+  <header class="top">
+    <div>
+      <div class="eyebrow"><span class="vip">VIP</span><span id="eb"></span></div>
+      <h1 id="h1"></h1>
+      <p class="sub" id="sub"></p>
+    </div>
+    <div class="user">
+      <button class="gb out" id="out" type="button" aria-label="Log out"><div class="glass"></div><svg viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="M16 17l5-5-5-5M21 12H9"/></svg></button>
+      <div class="av" aria-hidden="true"><i class="ring"></i><b id="ini">--</b><u></u></div>
+    </div>
+  </header>
+
+  <section class="panel on" id="p-home">
+    <div class="home">
+      <div class="stage"><div class="vc" id="vc">
+        <div class="vt"><div class="vb"><svg viewBox="0 0 24 24"><path d="m2 4 3 12h14l3-12-6 7-4-7-4 7-6-7Z"/><path d="M5 20h14"/></svg>VIP ACCESS</div><div class="chip"></div></div>
+        <div><div class="vg">PREMIUM ACCESS GRANTED</div><div class="vn" id="vn">—</div></div>
+        <div class="vd"><div><small>ARCOS ID</small><b id="vi">—</b></div><div><small>TYPE</small><b id="vy">Platinum</b></div><div class="full"><small>STATUS</small><b id="vs">Active</b></div></div>
+      </div></div>
+      <div><div class="sh"><h2>Quick access</h2><p>Tap a category to open its tools</p></div><div class="tiles" id="qa"></div></div>
+    </div>
+  </section>
+  <!-- Hubs and AI are rendered into these two panels by the script below (no external files) -->
+  <section class="panel" id="p-details"></section>
+  <section class="panel" id="p-ai"></section>
+</main>
+
+<!-- iOS-style folder overlay -->
+<div class="fo" id="fo" aria-hidden="true">
+  <div class="fo-bd" id="fobd"></div>
+  <dit 100% 100%,rgba(201,140,60,.6) 0%,rgba(140,92,44,.22) 32%,transparent 60%),linear-gradient(160deg,#1b1c25 0%,#111119 45%,#0c0c11 100%);
 border:1px solid rgba(246,211,101,.4);box-shadow:0 30px 50px -22px rgba(60,40,10,.55);transition:transform .35s var(--out);transform-style:preserve-3d;will-change:transform}
 .vc::before{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(122deg,transparent 32%,rgba(255,255,255,.05) 42%,rgba(255,255,255,.17) 48%,rgba(255,255,255,.07) 54%,transparent 64%)}
 .vc>*{position:relative}.vt{display:flex;align-items:center;justify-content:space-between}
